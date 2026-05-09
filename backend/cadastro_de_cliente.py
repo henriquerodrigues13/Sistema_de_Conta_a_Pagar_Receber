@@ -1,4 +1,4 @@
-import re
+import re #Usada para validar formatos como CPF, CNPJ, e-mail, CEP e para remover caracteres não-numéricos.
 import hashlib
 from datetime import datetime
 
