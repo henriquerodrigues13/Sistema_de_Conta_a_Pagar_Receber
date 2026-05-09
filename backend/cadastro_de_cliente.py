@@ -1,8 +1,4 @@
-"""
-Sistema CPR — Contas a Pagar e Receber
-Módulo: Cadastro de Clientes e Fornecedores
-Banco de dados: SQLite via SQLAlchemy ORM
-"""
+
 
 import re
 import hashlib
