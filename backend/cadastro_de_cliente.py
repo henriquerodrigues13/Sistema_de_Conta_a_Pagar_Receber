@@ -1,4 +1,4 @@
-import re #Usada para validar formatos como CPF, CNPJ, e-mail, CEP e para remover caracteres não-numéricos.
+import re #Usada para validar formatos como CPF, CNPJ, e-mail, CEP e para remover caracteres não-numéricos.``
 import hashlib
 from datetime import datetime
 
@@ -155,8 +155,6 @@ def _fmt_tel(tel: str) -> str:
 # ─────────────────────────────────────────────
 #  CADASTRO DE CLIENTE
 # ─────────────────────────────────────────────
-
-
 def cadastrar_cliente() -> None:
     print("\n" + "═" * 50)
     print("  CADASTRO DE CLIENTE")
