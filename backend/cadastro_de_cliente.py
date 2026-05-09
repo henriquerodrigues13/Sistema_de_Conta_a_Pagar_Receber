@@ -163,6 +163,8 @@ def _fmt_tel(tel: str) -> str:
 # ─────────────────────────────────────────────
 #  CADASTRO DE CLIENTE
 # ─────────────────────────────────────────────
+
+
 def cadastrar_cliente() -> None:
     print("\n" + "═" * 50)
     print("  CADASTRO DE CLIENTE")
@@ -288,6 +290,8 @@ def cadastrar_fornecedor() -> None:
         print(f"  ✗ Erro: {e}")
     finally:
         session.close()
+
+
 
 
 # ─────────────────────────────────────────────
