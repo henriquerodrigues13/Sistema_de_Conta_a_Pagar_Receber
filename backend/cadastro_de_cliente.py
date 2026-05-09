@@ -1,5 +1,3 @@
-
-
 import re
 import hashlib
 from datetime import datetime
@@ -10,9 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-# ─────────────────────────────────────────────
-#  Configuração do banco de dados
-# ─────────────────────────────────────────────
+
 engine = create_engine("sqlite:///cpr.db", echo=False)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
