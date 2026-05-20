@@ -67,16 +67,18 @@ async function cadastrarItem() {
   }
 
   try {
+    const rota = obterTipoUsuario();
     const cpfCnpj = obterCfpCnpjUsuario();
 
     const dados = {
-      cpf_cnpj: cpfCnpj,
-      classificacao_produto_servico: tipo,
-      identidicado_produto_servico: nome,
-      detalhes_produto_servico: descricao,
-      valor_custo_de_venda: valorBrutoNum,
-      valor_final_de_venda: valorFinalNum
+      cpf_cnpj : obterCfpCnpjUsuario(),
+    classificacao_produto_servico: tipo,
+    identidicado_produto_servico: nome,
+    detalhes_produto_servico: descricao,
+    valor_custo_de_venda: valorBrutoNum,
+    valor_final_de_venda: valorFinalNum
     };
+
 
     const btnCadastrar = document.getElementById('btn-cadastroItem');
     btnCadastrar.disabled = true;
@@ -102,9 +104,5 @@ async function cadastrarItem() {
 
   } catch (error) {
     alert(`Erro ao conectar ao servidor: ${error.message}`);
-  }finally{
-    const btnCadastrar = document.getElementById('btn-cadastroItem');
-    btnCadastrar.disabled = false;
-    btnCadastrar.textContent = "Cadastrar";
   }
 }
