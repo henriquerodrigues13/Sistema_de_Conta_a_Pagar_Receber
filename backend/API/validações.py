@@ -8,7 +8,7 @@ from datetime import datetime
 
 load_dotenv()
 
-token = os.getenv('chave_api_cpf')
+token = os.getenv('CHAVE_API_CPF')
 
 def validacao_cpf(cpf, nome_completo, data_nascimento):
     url_base = f'https://api.cpfhub.io/cpf/{cpf}'

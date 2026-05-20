@@ -3,6 +3,8 @@ services:
     image: postgres:15-alpine
     container_name: banco_de_dados_postgres
     restart: always
+    env_file:
+      - .env.production
     environment:
       POSTGRES_USER:     ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -12,7 +14,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,8 +27,10 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    environment:
+      - ENV=production
     env_file:
-      - .env
+        - .env.production
     depends_on:
       postgres:
         condition: service_healthy

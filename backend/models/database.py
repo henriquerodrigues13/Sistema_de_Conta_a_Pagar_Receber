@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 import os
 
 
-load_dotenv()
+env = os.getenv("ENV", "development")
+
+if env == "production":
+    load_dotenv(".env.production")
+else:
+    load_dotenv(".env.development")
 
 db_url = os.getenv("URL_DB")
 engine = create_engine(db_url)
