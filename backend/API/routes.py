@@ -190,7 +190,7 @@ async def cadastro_produto_servico(produto_servico_cadastro: produto_servico_REQ
     return produto_servico_Response.model_validate(produto_servico_novo)
 
 @router.post('/vendas', response_model=vendas_RESPONSE)
-async def cadastro_produto_servico(vendas_cadastro: vendas_REQUEST,
+async def cadastro_vendas(vendas_cadastro: vendas_REQUEST,
                                    session: SessionDep) ->vendas_RESPONSE | HTTPException:
     cpf_cnpj_vendendor = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_vendendor)
     cpf_cnpj_comprador = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_comprador)
@@ -228,7 +228,7 @@ async def cadastro_produto_servico(vendas_cadastro: vendas_REQUEST,
     return vendas_RESPONSE.model_validate(vendas_nova)
 
 @router.post('/despesas', response_model=despesasResponse)
-async def cadastro_produto_servico(despesas_cadastro: despesasRESQUEST,
+async def cadastro_despeasas(despesas_cadastro: despesasRESQUEST,
                                    session: SessionDep) -> despesasResponse | HTTPException:
     cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_pagador)
     cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_recebedor)
@@ -263,7 +263,7 @@ async def cadastro_produto_servico(despesas_cadastro: despesasRESQUEST,
     return despesasResponse.model_validate(despesas_nova)
 
 @router.post('/receita', response_model=receitas_RESPONSE)
-async def cadastro_produto_servico(receita_cadastro: receitas_REQUEST,
+async def cadastro_receitas(receita_cadastro: receitas_REQUEST,
                                    session: SessionDep) -> receitas_RESPONSE | HTTPException:
     cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_recebedor)
     cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_pagado)
@@ -296,3 +296,7 @@ async def cadastro_produto_servico(receita_cadastro: receitas_REQUEST,
     session.refresh(receita_nova)
 
     return receitas_RESPONSE.model_validate(receita_nova)
+
+@router.post('gedador_de_relatorio')
+async def exportar_pdf(dados_gerador:dados_gerador_relatorio):
+    pass

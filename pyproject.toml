@@ -15,6 +15,8 @@ dependencies = [
     "sqlalchemy-utils>=0.41",
     "psycopg2-binary>=2.9",
     "requests>=2.33.1",
+    "weasyprint>=68.1",
+    "openpyxl>=3.1.5"
 ]
 
 [tool.setuptools]

@@ -121,7 +121,6 @@ class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
     bairro: str
     logradouro: str
 
-
 class fornecedorLOGIN(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
@@ -269,3 +268,8 @@ class receitas_RESPONSE(BaseModel):
     valor_receita: float
     data_evento_receita: str
     origem_receita: str
+
+class dados_gerador_relatorio(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    cpf_cnpj_recebedor: str
+    tipo_do_documento: str
