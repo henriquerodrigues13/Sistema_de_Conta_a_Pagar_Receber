@@ -1,14 +1,13 @@
-.card {
-    width: 100%;
-    max-width: 520px;
+#tela-cadastroUsuario {
+    width: 50%;
     margin: auto;
-    background-color: #f3f3f3;
+    background-color: #FFFFFF;
     border-radius: 12px;
     padding: 35px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.card h1 {
+#tela-cadastroUsuario h1 {
     text-align: center;
     margin-bottom: 25px;
     color: #333;
@@ -70,4 +69,10 @@
 #btn-cadastrar:hover {
     background-color: #e0a800;
     transform: scale(1.02);
+}
+
+.footer-login{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

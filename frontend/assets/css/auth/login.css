@@ -1,0 +1,95 @@
+#container-login {
+    background-color: #FFFFFF;
+    width: 30%;
+    height: 70%;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 30px;
+    border-radius: 9px;
+
+    & .login-form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        & .login-header {
+            & img {
+                width: 100px;
+                height: 100px;
+            }
+
+            & h1{
+                color: #343A40;
+            }
+
+            & p{
+                color: #6C757D;
+            }
+
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        & #systemform {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+
+            & .form-group {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+                font-weight: bold;
+
+                & input{
+                    height: 30px;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    border: 1px solid #343A40;
+                    background-color: #E9ECEF;
+                }
+
+                & label{
+                    margin-bottom: 5px;
+                }
+            }
+
+            & .btn-entrar {
+                height: 30px;
+                width: 100%;
+            }
+
+            & .btn-entrar button {
+                width: 100%;
+                background-color: #FF383C;
+                border: none;
+                color: #FFFFFF;
+                height: 100%;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+        }
+
+        & #cadastrar {
+            margin-top: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        & #cadastrar button{
+            border: none;
+            color: #FF383C;
+            font-weight: bold;
+            background-color: #FFFFFF;
+        }
+    }
+}
