@@ -3,22 +3,22 @@ from pprint import pprint
 
 
 def validacao_email(email):
-    api_key = "haI23M8iNJUOIRXpP6uYIvgJYC7JSpds"
-    url = "https://emailverifier.reoon.com/api/v1/verify"
+    api_key = '3f1c2d022729488da21f370e1a81ccf9'
+    url = "https://api.zerobounce.net/v2/validate"
 
     params = {
-        "email": email,
-        "key": api_key,
-        "mode": "power"  # modo mais preciso
+        "api_key": api_key,
+        "email": email
     }
 
     resposta = requests.get(url, params=params)
     dados = resposta.json()
 
-    if dados['status'] == 'safe' or dados['status'] == 'catch_all':
+    pprint(dados)
+    if dados['status'] == 'valid':
         return True
     return False
 
 if __name__ == '__main__':
-    resultado = validacao_email(email="henrique.rodrigues@cameta.ufpa.br")
-    pprint(resultado)
+    resultado = validacao_email(email="henriquefnaf2680@gmail.com")
+    print(resultado)

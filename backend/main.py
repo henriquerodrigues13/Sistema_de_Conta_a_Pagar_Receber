@@ -3,7 +3,7 @@ from backend.models.engine import Base
 from backend.models import database
 from backend.API import routes
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # ← Adicionar
+from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

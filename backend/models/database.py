@@ -5,20 +5,15 @@ from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import os
 
-
-env = os.getenv("ENV", "development")
-
-if env == "production":
-    load_dotenv(".env.production")
-else:
-    load_dotenv(".env.development")
-
-db_url = os.getenv("URL_DB")
-engine = create_engine(db_url)
+DATABASE_URL = os.getenv(
+    "URL_DB",
+    "postgresql+psycopg2://postgres:13092004He!@localhost:5432/meu_banco"
+)
+engine = create_engine(DATABASE_URL)
 
 def init_db():
-    if not database_exists(db_url):
-        create_database(db_url)
+    if not database_exists(DATABASE_URL):
+        create_database(DATABASE_URL)
 
     Base.metadata.create_all(bind=engine)
 
