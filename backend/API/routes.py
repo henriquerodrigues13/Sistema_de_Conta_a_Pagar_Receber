@@ -14,22 +14,17 @@ router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
-'''@router.post(path='/login', response_model=reponsa_usuario,
+@router.post(path='/login', response_model=reponsa_usuario,
              responses={404: {'description': 'Usuario nao encontrado'}})
-async def login(cliente_login: reponsa_usuario, session: SessionDep) -> clienteResponse:
-    cpf = normalizadacao_cpf_cnpj(cpf_cnpj=cliente_login.cpf)
-    cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf)
+async def login(usuario_login: login_usuario, session: SessionDep) -> reponsa_usuario:
 
-    cliente_valido = session.execute(
-        select(cliente).where(cliente.cpf == cpf_HASH)
-    ).scalar_one_or_none()
-
-    if cliente_valido:
-        if verificar_senha(senha=cliente_login.senha, hash_salvo=cliente_valido.senha):
-            return clienteResponse.model_validate(cliente_valido)
+    if (usuario_existe := session.execute(
+        select(usuario).where(usuario.email == usuario_login.email)
+    ).scalar_one_or_none()):
+        if verificar_senha(senha=usuario_existe.senha, hash_salvo=usuario_login.senha):
+            return reponsa_usuario.model_validate(login_usuario)
         raise HTTPException(status_code=401, detail="Senha incorreta")
-    raise HTTPException(status_code=404, detail='Usuario nao encontrado')'''
-
+    raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 
 @router.post('/cadastro_usuario', response_model=reponsa_usuario)
 async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: SessionDep) -> HTTPException | reponsa_usuario:

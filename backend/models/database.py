@@ -1,22 +1,22 @@
-from sqlalchemy_utils import create_database, database_exists
 from backend.models.engine import Base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from dotenv import load_dotenv
-import os
+from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = os.getenv(
-    "URL_DB",
-    "postgresql+psycopg2://postgres:13092004He!@localhost:5432/meu_banco"
+
+DATABASE_URL = "sqlite:///./cpr.db"
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}
 )
-engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
-    if not database_exists(DATABASE_URL):
-        create_database(DATABASE_URL)
 
     Base.metadata.create_all(bind=engine)
 
 def get_session():
-    with Session(bind=engine) as session:
-        yield session
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
