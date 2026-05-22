@@ -23,20 +23,7 @@ class usuario(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-<<<<<<< Updated upstream
 class cadastro_usuario(BaseModel):
-=======
-    produtos_cliente: Mapped[list['produto_servico']] = relationship(back_populates='vendedor_cpf')
-
-    vendas_cliente: Mapped[list['vendas']] = relationship(back_populates='vendas_cpf', foreign_keys='vendas.cpf_vendendor')
-    compras_cliente: Mapped[list['vendas']] = relationship(back_populates='compras_cpf', foreign_keys='vendas.cpf_comprador')
-
-    pagamento_cliente: Mapped[list['despesas']] = relationship(back_populates='pagado_cliente', foreign_keys='despesas.pagado_cliente')
-    recebedor_cliente: Mapped[list['despesas']] = relationship(back_populates='recebedor_cliente', foreign_keys='despesas.recebedor_cliente')
-
-class clientePOST(BaseModel):
->>>>>>> Stashed changes
-    model_config = ConfigDict(from_attributes=True)
     nome_completo: str
     senha: str
     email: EmailStr
@@ -321,6 +308,3 @@ class dados_gerador_relatorio(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cpf_cnpj_recebedor: str
     tipo_do_documento: str'''
-=======
-    origem_receita: str
->>>>>>> Stashed changes

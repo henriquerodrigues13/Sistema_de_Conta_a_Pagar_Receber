@@ -22,7 +22,7 @@ async def login(usuario_login: login_usuario, session: SessionDep) -> reponsa_us
         select(usuario).where(usuario.email == usuario_login.email)
     ).scalar_one_or_none()):
         if verificar_senha(senha=usuario_existe.senha, hash_salvo=usuario_login.senha):
-            return reponsa_usuario.model_validate(login_usuario)
+            return reponsa_usuario.model_validate(usuario_existe)
         raise HTTPException(status_code=401, detail="Senha incorreta")
     raise HTTPException(status_code=404, detail='Usuario nao encontrado')
 

@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from backend.models.engine import Base
 from backend.models import database
 from backend.API import routes
 from fastapi import FastAPI
