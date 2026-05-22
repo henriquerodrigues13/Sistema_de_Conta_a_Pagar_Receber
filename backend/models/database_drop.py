@@ -4,7 +4,7 @@ from backend.models.engine import Base
 from dotenv import load_dotenv
 
 load_dotenv()
-engine = create_engine(os.getenv('URL_DB'))
+engine = create_engine('postgresql+psycopg2://postgres:13092004He!@localhost:5432/meu_banco')
 
 with engine.connect() as conn:
     conn.execute(text("DROP SCHEMA public CASCADE"))

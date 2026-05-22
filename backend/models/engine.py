@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy import Integer, String, Float, ForeignKey
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 from uuid import uuid4, UUID
 
@@ -9,128 +9,42 @@ from uuid import uuid4, UUID
 class Base(DeclarativeBase):
     pass
 
-class cliente(Base):
-    __tablename__ = 'cliente'
+class usuario(Base):
+    __tablename__ = 'usuario'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    nome: Mapped[str] = mapped_column(String(150))
-    cpf: Mapped[str] = mapped_column(String(150), unique=True, index=True)
-    senha: Mapped[str] = mapped_column(String(150), index=True)
-    data_nascimento: Mapped[str] = mapped_column(String(15))
-    email: Mapped[str] = mapped_column(String(100))
-    numero_telefone_pessoal: Mapped[str] = mapped_column(String(11))
+    nome_completo: Mapped[str] = mapped_column(String(150))
+    senha: Mapped[str] = mapped_column(String(150), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+    numero_telefone: Mapped[str] = mapped_column(String(11))
     cep: Mapped[str] = mapped_column(String(30))
     estado: Mapped[str] = mapped_column(String(30))
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    produtos_cliente: Mapped[list['produto_servico']] = relationship(back_populates='vendedor_cpf')
-
-    vendas_cliente: Mapped[list['vendas']] = relationship(back_populates='vendas_cpf', foreign_keys='vendas.cpf_vendendor')
-    compras_cliente: Mapped[list['vendas']] = relationship(back_populates='compras_cpf', foreign_keys='vendas.cpf_comprador')
-
-    pagamento_de_despesas_cliente: Mapped[list['despesas']] = relationship(back_populates='pagado_cliente', foreign_keys='despesas.cpf_pagado')
-    recebemento_de_despesas_cliente: Mapped[list['despesas']] = relationship(back_populates='recebedo_cliente', foreign_keys='despesas.cpf_recebedor')
-
-    recebedor_de_receita_cliente: Mapped[list['receita']] = relationship(back_populates='recebedor_cliente',foreign_keys='receita.cpf_recebedor')
-    pagador_de_receita_cliente: Mapped[list['receita']] = relationship(back_populates='pagador_cliente',foreign_keys='receita.cpf_pagador')
-
-class clientePOST(BaseModel):
+class cadastro_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    nome: str
-    cpf: str
-    data_nascimento: str
+    nome_completo: str
     senha: str
-    email: str
-    numero_telefone_pessoal: str
+    email: EmailStr
+    numero_telefone: str
     cep: str
     estado: str
     cidade: str
     bairro: str
     logradouro: str
 
-class clienteLOGIN(BaseModel):
+class login_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    cpf : str
+    email : EmailStr
     senha : str
 
-class clienteResponse(BaseModel):
+class reponsa_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    nome: str
+    nome_completo: str
 
-class fornecedor(Base):
-    __tablename__ = 'fornecedor'
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    cnpj: Mapped[str] = mapped_column(String(150), unique=True, index=True)
-    senha: Mapped[str] = mapped_column(String(150), index=True)
-    nome_oficial_empresa: Mapped[str] = mapped_column(String(150))
-    nome_cormecial_empresa: Mapped[str] = mapped_column(String(150))
-    situacao_cadastral: Mapped[str] = mapped_column(String(20))
-    data_abertura: Mapped[str] = mapped_column(String(20))
-    natureza_juridica: Mapped[str] = mapped_column(String(150))
-    cnae: Mapped[str] = mapped_column(String(150)) # Atividade econômica
-    capital_social: Mapped[float] = mapped_column(Float)
-    porte_empresa: Mapped[str] = mapped_column(String(150))
-    email: Mapped[str] = mapped_column(String(100))
-    numero_telefone_empresa: Mapped[str] = mapped_column(String(11))
-    cep: Mapped[str] = mapped_column(String(20))
-    uf: Mapped[str] = mapped_column(String(2))
-    cidade: Mapped[str] = mapped_column(String(100))
-    bairro: Mapped[str] = mapped_column(String(100))
-    logradouro: Mapped[str] = mapped_column(String(100))
-
-    produtos_fornecedor: Mapped[list['produto_servico']] = relationship(back_populates='vendedor_cnpj')
-
-    vendas_fornecedor: Mapped[list['vendas']] = relationship(back_populates='vendas_cnpj', foreign_keys='vendas.cnpj_vendendor')
-    compras_fornecedor: Mapped[list['vendas']] = relationship(back_populates='compras_cnpj', foreign_keys='vendas.cnpj_comprador')
-
-    pagamento_de_despesas_fornecedor: Mapped[list['despesas']] = relationship(back_populates='pagado_fornecedor', foreign_keys='despesas.cnpj_pagado')
-    recebemento_de_despesas_fornecedor: Mapped[list['despesas']] = relationship(back_populates='recebedo_fornecedor', foreign_keys='despesas.cnpj_recebedor')
-
-    recebedor_de_receita_fornecedor: Mapped[list['receita']] = relationship(back_populates='recebedor_fornecedor', foreign_keys='receita.cnpj_recebedor')
-    pagador_de_receita_fornecedor: Mapped[list['receita']] = relationship(back_populates='pagador_fornecedor', foreign_keys='receita.cnpj_pagador')
-
-class fornecedorREQUEST(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    nome_oficial_empresa: str
-    cnpj: str
-    senha: str
-    email: str
-    numero_telefone_empresa: str
-
-
-class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    cnpj: str
-    senha: str
-    nome_oficial_empresa: str
-    nome_cormecial_empresa: str
-    situacao_cadastral: str
-    data_abertura: datetime
-    natureza_juridica: str
-    cnae: str
-    capital_social: float
-    porte_empresa: str
-    email: str
-    numero_telefone_empresa: str
-    cep: str
-    uf: str
-    cidade: str
-    bairro: str
-    logradouro: str
-
-class fornecedorLOGIN(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    cnpj: str
-    senha: str
-
-class fornecedorResponde(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    nome_oficial_empresa: str
-
-class produto_servico(Base):
+'''class produto_servico(Base):
     __tablename__ = 'produto_servico'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -272,4 +186,4 @@ class receitas_RESPONSE(BaseModel):
 class dados_gerador_relatorio(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cpf_cnpj_recebedor: str
-    tipo_do_documento: str
+    tipo_do_documento: str'''
