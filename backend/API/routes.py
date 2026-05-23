@@ -1,11 +1,9 @@
-from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
-from datetime import datetime
 from sqlalchemy import select
 from typing import Annotated
 
