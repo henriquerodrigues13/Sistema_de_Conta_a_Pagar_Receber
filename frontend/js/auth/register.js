@@ -7,7 +7,7 @@ function paginaCadastroUsuario(){
 
     <div class="right">
       <div class="top">
-        <div class="icon">👤</div>
+        <div class="icon"><img src="./assets/imgs/icons/do-utilizador.png"></div>
         <h2>Cadastre-se</h2>
         <p>Rápido e seguro</p>
       </div>
@@ -74,6 +74,9 @@ function paginaCadastroUsuario(){
           <button type="button" onclick="cadastrarUsuario()">Cadastre-se</button>
         </div>
       </form>
+      <div id="area-btnVoltarLogin">
+        <button type="button" onclick="renderizarPagina('login')">Voltar</button>
+      </div>
     </div>
   </div>
     `
