@@ -1,75 +1,81 @@
 function paginaCadastroUsuario(){
     return `
     <div id="tela-cadastroUsuario">
+    <div class="left">
+      <h1>REDFINANCE</h1>
+    </div>
 
-        <h1>Cadastro de Usuario</h1>
+    <div class="right">
+      <div class="top">
+        <div class="icon">👤</div>
+        <h2>Cadastre-se</h2>
+        <p>Rápido e seguro</p>
+      </div>
 
-        <form id="formCadastroUsuario">
-            <div class="form-grid">
+      <form>
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Nome Completo:</label>
+            <input type="text" id="nome-completo"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Nome Completo:</label>
-                    <input type="text" id="nome-completo" required>
-                </div>
+          <div class="input-group">
+            <label>Bairro:</label>
+            <input type="text" id="bairro" />
+          </div>
 
-                <div class="input-group">
-                    <label>Email:</label>
-                    <input type="email" id="email" required>
-                </div>
+          <div class="input-group">
+            <label>Email:</label>
+            <input type="email" id="email"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Número de Telefone:</label>
-                    <input type="text" id="telefone" required>
-                </div>
+          <div class="input-group">
+            <label>Estado:</label>
+            <input type="text" id="estado"/>
+          </div>
 
-                <div class="input-group">
-                    <label>CEP:</label>
-                    <input type="text" id="cep" required>
-                </div>
+          <div class="input-group">
+            <label>Número de Telefone:</label>
+            <input type="text" id="telefone"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Bairro:</label>
-                    <input type="text" id="bairro" required>
-                </div>
+          <div class="input-group">
+            <label>Cidade:</label>
+            <input type="text" id="cidade"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Estado:</label>
-                    <input type="text" id="estado" required>
-                </div>
+          <div class="input-group">
+            <label>CEP:</label>
+            <input type="text" id="cep"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Cidade:</label>
-                    <input type="text" id="cidade" required>
-                </div>
+          <div class="input-group">
+            <label>Rua:</label>
+            <input type="text" id="logradouro"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Rua:</label>
-                    <input type="text" id="logradouro" required>
-                </div>
+          <div class="input-group">
+            <label>Senha:</label>
+            <input type="password" id="senha"/>
+          </div>
 
-                <div class="input-group">
-                    <label>Senha:</label>
-                    <input type="password" id="senha" required>
-                </div>
-
-                <div class="input-group">
-                    <label>Confirmar senha:</label>
-                    <input type="password" id="conf-senha" required>
-                </div>
-
-            </div>
-
-            <div class="btn-area">
-                <button id="btn-cadastrar" type="button" onclick="cadastrarUsuario()">Cadastrar-se</button>
-            </div>
-
-        </form>
-
-        <div class="footer-login">
-            <p>Ja tem conta? <button id="tela-login" onclick="renderizarPagina('login')">Fazer login</button></p>
+          <div class="input-group">
+            <label>Confirmar senha:</label>
+            <input type="password" id="conf-senha"/>
+          </div>
         </div>
 
+        <div class="security-box">
+          <strong>Seus dados estão seguros</strong>
+          <p>Não compartilhamos suas informações com terceiros</p>
+        </div>
+
+        <div class="btn-area">
+          <button type="button" onclick="cadastrarUsuario()">Cadastre-se</button>
+        </div>
+      </form>
     </div>
+  </div>
     `
 }
 

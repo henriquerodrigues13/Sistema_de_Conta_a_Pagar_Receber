@@ -11,7 +11,7 @@ function paginaLogin() {
                 <form id="systemform">
                     <div class="form-group">
                         <label for="usuario">Email:</label>
-                        <input type="email" name="email" id="email" placeholder="Digite seu email" maxlength="14">
+                        <input type="email" name="email" id="email" placeholder="Digite seu email">
                     </div>
 
                     <div class="form-group" id="inputs-senha">
@@ -20,7 +20,7 @@ function paginaLogin() {
                     </div>
 
                     <div class="btn-entrar">
-                        <button type="button" id="btn-logar" onclick="fazerLoginTeste()">Entrar</button>
+                        <button type="button" id="btn-logar" onclick="fazerLogin()">Entrar</button>
                     </div>
                 </form>
 
@@ -30,4 +30,44 @@ function paginaLogin() {
             </div>
         </div>
     `;
+}
+
+
+async function fazerLogin(){
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    if(!email || !senha){
+        alert('Preencha todos os campos');
+        return;
+    }
+
+    try{
+        const dados = {
+            email: email,
+            senha: senha
+        }
+
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
+        });
+
+        if(response.ok){
+            alert('Logado');
+        }else if(response.status == 404){
+            const erro = await response.json();
+            alert(erro.detail) // Usuario não encontrado
+        }else if(response.status == 401){
+            const erro = await response.json();
+            alert(erro.detail) // senha incorreta
+        }else{
+            alert("Erro ao fazer login");
+        }
+    }catch(error){
+        alert(error);
+    }
 }
