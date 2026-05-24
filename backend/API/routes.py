@@ -32,7 +32,7 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     if (usario_ja_existe := session.execute(
             select(usuario).where(usuario.email == cadastro_do_usuario.email))
             .scalar_one_or_none()):
-        raise HTTPException(status_code=404, detail='Usuario ja existe')
+        raise HTTPException(status_code=409, detail='Usuario ja existe')
     senha_HASH = senha_hash(senha=cadastro_do_usuario.senha)
 
     novo_usuario = usuario(
@@ -53,59 +53,44 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
 
     return reponsa_usuario.model_validate(novo_usuario)
 
-'''@router.post('/produto_servico', response_model=produto_servico_Response)
-async def cadastro_produto_servico(produto_servico_cadastro: produto_servico_REQUEST,
-                                   session: SessionDep) -> produto_servico_Response | HTTPException:
-    cpf_cnpj = normalizadacao_cpf_cnpj(cpf_cnpj=produto_servico_cadastro.cpf_cnpj)
-    if len(cpf_cnpj) == 11:
-        cpf_HASH = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj)
-    else:
-        cnpj_HASH = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj)
+@router.post('/cadastro_fornecedor', response_model=reponse_fornecedor)
+async def cadastro_fornecedor(fornecedor_cadastro: cadastro_fornecedor,
+                                   session: SessionDep) -> reponse_fornecedor | HTTPException:
+    cnpj = normalizada_cnpj(cnpj=fornecedor_cadastro.cnpj)
 
-    imcs = lambda x: x * 0.18
-    valor_com_imcs = float(imcs(produto_servico_cadastro.valor_final_de_venda))
-    margem = (lambda x,y, z: x - (y + z) )
-    marga_de_lucro = float(margem(produto_servico_cadastro.valor_final_de_venda,
-                            produto_servico_cadastro.valor_custo_de_venda,
-                            valor_com_imcs))
+    if not (cnpj_valido := validacao_cnpj(cnpj=cnpj)):
+        raise HTTPException(status_code=400, detail='Cnpj não é valido')
 
-    novo_uuid =  uuid4()
-    if len(cpf_cnpj) == 11:
-        produto_servico_novo = produto_servico(
-            produto_servico_uuid = novo_uuid,
-            classificacao_produto_servico = produto_servico_cadastro.classificacao_produto_servico,
-            nome_produto_servico = produto_servico_cadastro.identidicado_produto_servico,
-            cpf_vendendor = cpf_HASH,
-            detalhes = produto_servico_cadastro.detalhes_produto_servico,
-            data_do_cadastro = datetime.strptime(datetime.today().strftime('%Y-%m-%d'), '%Y-%m-%d'),
-            valor_custo = produto_servico_cadastro.valor_custo_de_venda,
-            ICMS = "18%",
-            valor_com_IMCS = valor_com_imcs,
-            valor_final_de_venda= produto_servico_cadastro.valor_final_de_venda,
-            margem_de_lucro = marga_de_lucro,
-        )
-    else:
-        produto_servico_novo = produto_servico(
-            produto_servico_uuid=novo_uuid,
-            classificacao_produto_servico=produto_servico_cadastro.classificacao_produto_servico,
-            nome_produto_servico=produto_servico_cadastro.identidicado_produto_servico,
-            cnpj_vendendor=cnpj_HASH,
-            detalhes=produto_servico_cadastro.detalhes_produto_servico,
-            data_do_cadastro=datetime.strptime(datetime.today().strftime('%Y-%m-%d'), '%Y-%m-%d'),
-            valor_custo=produto_servico_cadastro.valor_custo_de_venda,
-            ICMS="18%",
-            valor_com_IMCS=valor_com_imcs,
-            valor_final_de_venda=produto_servico_cadastro.valor_final_de_venda,
-            margem_de_lucro=marga_de_lucro,
-        )
+    if(forncedor_ja_existe := session.execute(
+            select(fornecedores).where(fornecedores.cnpj == cnpj))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=409, detail='Usuario ja existe')
 
-    session.add(produto_servico_novo)
+    novo_fornecedor = fornecedores(
+        cnpj = cnpj_valido['cnpj'],
+        nome_oficial_empresa = cnpj_valido['razao_social'],
+        nome_cormecial_empresa = cnpj_valido['nome_fantasia'],
+        situacao_cadastral = cnpj_valido['situacao_cadastral'],
+        data_abertura = cnpj_valido['data_inicio_atividade'],
+        natureza_juridica = cnpj_valido['natureza_juridica'],
+        cnae = cnpj_valido['cnae_fiscal'],
+        capital_social = cnpj_valido['capital_social'],
+        porte_empresa = cnpj_valido['porte'],
+        cep = cnpj_valido['cep'],
+        uf = cnpj_valido['uf'],
+        cidade = cnpj_valido['municipio'],
+        bairro = cnpj_valido['bairro'],
+        logradouro = cnpj_valido['logradouro'],
+
+    )
+
+    session.add(novo_fornecedor)
     session.commit()
-    session.refresh(produto_servico_novo)
+    session.refresh(novo_fornecedor)
 
-    return produto_servico_Response.model_validate(produto_servico_novo)
+    return reponse_fornecedor.model_validate(novo_fornecedor)
 
-@router.post('/vendas', response_model=vendas_RESPONSE)
+'''@router.post('/vendas', response_model=vendas_RESPONSE)
 async def cadastro_vendas(vendas_cadastro: vendas_REQUEST,
                                    session: SessionDep) ->vendas_RESPONSE | HTTPException:
     cpf_cnpj_vendendor = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_vendendor)

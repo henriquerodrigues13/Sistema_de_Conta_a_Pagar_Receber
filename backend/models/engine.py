@@ -43,15 +43,12 @@ class reponsa_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_completo: str
 
-'''class produto_servico(Base):
-    __tablename__ = 'produto_servico'
+class fornecedores(Base):
+    __tablename__ = 'fornecedores'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-<<<<<<< Updated upstream
-=======
     cnpj: Mapped[str] = mapped_column(String(150), unique=True, index=True)
-    senha: Mapped[str] = mapped_column(String(150), index=True)
-    nome_oficial_empresa: Mapped[str] = mapped_column(String(150))
+    nome_oficial_empresa: Mapped[str] = mapped_column(String(150), index=True)
     nome_cormecial_empresa: Mapped[str] = mapped_column(String(150))
     situacao_cadastral: Mapped[str] = mapped_column(String(20))
     data_abertura: Mapped[str] = mapped_column(String(20))
@@ -59,61 +56,22 @@ class reponsa_usuario(BaseModel):
     cnae: Mapped[str] = mapped_column(String(150)) # Atividade econômica
     capital_social: Mapped[float] = mapped_column(Float)
     porte_empresa: Mapped[str] = mapped_column(String(150))
-    email: Mapped[str] = mapped_column(String(100))
-    numero_telefone_empresa: Mapped[str] = mapped_column(String(11))
     cep: Mapped[str] = mapped_column(String(20))
-    uf: Mapped[str] = mapped_column(String(2))
+    uf: Mapped[str] = mapped_column(String(20))
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    produtos_fornecedor: Mapped[list['produto_servico']] = relationship(back_populates='vendedor_cnpj')
-
-    vendas_fornecedor: Mapped[list['vendas']] = relationship(back_populates='vendas_cnpj', foreign_keys='vendas.cnpj_vendendor')
-    compras_fornecedor: Mapped[list['vendas']] = relationship(back_populates='compras_cnpj', foreign_keys='vendas.cnpj_comprador'
-
-
-
-class fornecedorREQUEST(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    nome_oficial_empresa: str
-    cnpj: str
-    senha: str
-    email: str
-    numero_telefone_empresa: str
-
-
-class fornecedorPOST(BaseModel):  # class despesasPOST(BaseModel):
+class cadastro_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
-    senha: str
-    nome_oficial_empresa: str
-    nome_cormecial_empresa: str
-    situacao_cadastral: str
-    data_abertura: datetime
-    natureza_juridica: str
-    cnae: str
-    capital_social: float
-    porte_empresa: str
-    email: str
-    numero_telefone_empresa: str
-    cep: str
-    uf: str
-    cidade: str
-    bairro: str
-    logradouro: str
 
-
-class fornecedorLOGIN(BaseModel):
+class reponse_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
-    senha: str
-
-class fornecedorResponde(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     nome_oficial_empresa: str
 
-class produto_servico(Base):
+'''class produto_servico(Base):
     __tablename__ = 'produto_servico_cliente'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

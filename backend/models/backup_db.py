@@ -73,6 +73,6 @@ def enviar_backup():
 
 async def backup():
     while True:
-        await asyncio.sleep(10)
-        backup_sqlite()
+        await asyncio.sleep(60)
+        #backup_sqlite()
         #enviar_backup()
