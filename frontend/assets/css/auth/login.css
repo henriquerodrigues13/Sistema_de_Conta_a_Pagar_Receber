@@ -66,7 +66,7 @@
                 width: 100%;
             }
 
-            & .btn-entrar button {
+            & .btn-entrar #btn-logar {
                 width: 100%;
                 background-color: #FF383C;
                 border: none;
@@ -78,7 +78,7 @@
         }
 
         & #cadastrar {
-            margin-top: 100px;
+            margin-top: 50px;
             display: flex;
             align-items: center;
             justify-content: center;

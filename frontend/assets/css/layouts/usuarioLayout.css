@@ -1,7 +1,7 @@
-#usuarioLayout{
-    display: flex;
-    width: 100%;
-    height: 100%;
+#usuarioLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 .sidebar {
@@ -21,20 +21,21 @@
   margin-bottom: 18px;
 }
 
-.menu a {
-  text-decoration: none;
+.menu button {
+  background-color: transparent;
+  border: none;
   color: #fff;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 14px 18px;
   border-radius: 10px;
-  transition: 0.3s;
   font-size: 20px;
   font-weight: 600;
+  width: 95%;
 }
 
-.menu a:hover,
+.menu button:hover,
 .menu .active {
   background: #c40000;
 }
@@ -82,6 +83,7 @@
   font-weight: bold;
 }
 
-#section{
+#section {
   width: 80vw;
+
 }

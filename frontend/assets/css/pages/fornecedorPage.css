@@ -1,0 +1,56 @@
+#container-fornecedor {
+    background-color: white;
+    width: 90%;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+}
+
+#input-pesquisarFornecedor {
+    width: 98%;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+#tabela-fornecedor {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#cabecalho-tabela-fornecedor {
+    background-color: #333;
+    color: white;
+
+    & th {
+        padding: 10px;
+        text-align: left;
+    }
+
+    & td {
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+}
+
+#baixo-sectionFornecedor {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#btn-adicionarFornecedor {
+    background-color: #ffc107;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+}
+
+#baixo-sectionFornecedor p {
+    background-color: #ffc107;
+    padding: 10px;
+    margin: 0;
+    font-weight: bold;
+}
