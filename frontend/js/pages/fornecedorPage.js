@@ -19,7 +19,7 @@ function paginaFornecedor(){
         </table>
 
         <div id="baixo-sectionFornecedor">
-            <button type="button" id="btn-adicionarFornecedor">+ Adicionar fornecedor</button>
+            <button type="button" id="btn-adicionarFornecedor" onclick="renderizarPagina('cadastroFornecedor')">+ Adicionar fornecedor</button>
             <p>Total de fornecedores: 0</p>
         </div>
 
