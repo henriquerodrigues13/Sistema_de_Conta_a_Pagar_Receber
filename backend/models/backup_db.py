@@ -19,7 +19,7 @@ SMTP_PORT = 465
 def backup_sqlite():
     caminho_db = Path(__file__).parent.parent.parent / 'cpr.sqlite'
 
-    backup_db = Path(__file__).parent.parent / 'Backup'
+    backup_db = Path.home() / 'Backup'
     Path(backup_db).mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -42,7 +42,7 @@ def backup_sqlite():
     logger.debug('backup concluido')
 
 def enviar_backup():
-    backup_dir = Path(__file__).parent.parent / 'Backup'
+    backup_dir = Path.home() / 'Backup'
     arquivos = list(Path(backup_dir).glob("*.sqlite"))
 
     arquivo_mais_recente = max(arquivos, key=lambda x: x.stat().st_mtime)

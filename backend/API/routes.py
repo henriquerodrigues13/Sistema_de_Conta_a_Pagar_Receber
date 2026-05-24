@@ -29,6 +29,10 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     if not (isEmail_valido:=validacao_email(email=cadastro_do_usuario.email)):
         raise HTTPException(status_code=401, detail='Email invalido')
 
+    if (usario_ja_existe := session.execute(
+            select(usuario).where(usuario.email == cadastro_do_usuario.email))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='Usuario ja existe')
     senha_HASH = senha_hash(senha=cadastro_do_usuario.senha)
 
     novo_usuario = usuario(
