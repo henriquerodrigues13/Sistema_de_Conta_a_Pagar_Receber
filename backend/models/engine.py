@@ -49,7 +49,7 @@ class fornecedores(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cnpj: Mapped[str] = mapped_column(String(150), unique=True, index=True)
     nome_oficial_empresa: Mapped[str] = mapped_column(String(150), index=True)
-    nome_cormecial_empresa: Mapped[str] = mapped_column(String(150))
+    nome_cormecial_empresa: Mapped[str | None] = mapped_column(String(150))
     situacao_cadastral: Mapped[str] = mapped_column(String(20))
     data_abertura: Mapped[str] = mapped_column(String(20))
     natureza_juridica: Mapped[str] = mapped_column(String(150))
