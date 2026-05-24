@@ -2,9 +2,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-BASE_DIR = Path.home()
+BASE_DIR = Path(__file__).parent.parent.parent / 'Trabalho(CPR)_logs_backup'
 LOG_DIR = BASE_DIR / "logs"
-LOG_DIR.mkdir(exist_ok=True)
+LOG_DIR.mkdir(parents=True,exist_ok=True)
 
 def setup_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
