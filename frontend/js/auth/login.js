@@ -33,46 +33,49 @@ function paginaLogin() {
 }
 
 
-async function fazerLogin(){
+async function fazerLogin() {
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
-    if(!email || !senha){
+    if (!email || !senha) {
         alert('Preencha todos os campos');
         return;
     }
 
-    if(email == 'admin' && senha == 'admin'){
+    if (email == 'admin' && senha == 'admin') {
+        localStorage.setItem('usuario', email);
         renderizarPagina('usuarioLayout');
         return;
-    }
+    } else {
+        try {
+            const dados = {
+                email: email,
+                senha: senha
+            }
 
-    try{
-        const dados = {
-            email: email,
-            senha: senha
+            const response = await fetch(`${API_BASE_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+
+            if (response.ok) {
+                const usuario = await response.json();
+                localStorage.setItem('usuario', usuario.nome_completo);
+                renderizarPagina('usuarioLayout');
+            } else if (response.status == 404) {
+                const erro = await response.json();
+                alert(erro.detail) // Usuario não encontrado
+            } else if (response.status == 401) {
+                const erro = await response.json();
+                alert(erro.detail) // senha incorreta
+            } else {
+                alert("Erro ao fazer login");
+            }
+        } catch (error) {
+            alert(error);
         }
-
-        const response = await fetch(`${API_BASE_URL}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dados)
-        });
-
-        if(response.ok){
-            renderizarPagina('usuarioLayout');
-        }else if(response.status == 404){
-            const erro = await response.json();
-            alert(erro.detail) // Usuario não encontrado
-        }else if(response.status == 401){
-            const erro = await response.json();
-            alert(erro.detail) // senha incorreta
-        }else{
-            alert("Erro ao fazer login");
-        }
-    }catch(error){
-        alert(error);
     }
 }

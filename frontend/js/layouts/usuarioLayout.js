@@ -49,6 +49,11 @@ function paginaLayoutUsuario(){
             Relatórios
           </a>
         </li>
+        <li>
+          <button type="button" onclick="logout()">
+            Sair
+          </button>
+        </li>
       </ul>
     </aside>
     <div id="section"></div>
