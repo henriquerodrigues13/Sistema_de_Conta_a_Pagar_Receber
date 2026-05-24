@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, func
 from typing import Annotated
 
+from backend.models.engine import reponse_fornecedor
 
 router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -89,6 +90,33 @@ async def cadastro_fornecedor(fornecedor_cadastro: cadastro_fornecedor,
     session.refresh(novo_fornecedor)
 
     return reponse_fornecedor.model_validate(novo_fornecedor)
+
+@router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
+async def get_fornecedor(
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_fornecedor]:
+
+    pages_size = 10
+
+    total_fornecedores = session.scalar(select(func.count()).select_from(fornecedores))
+
+    total_pages = (total_fornecedores + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total_fornecedores)
+
+    fornecedores_reponse = session.execute(
+        select(fornecedores).limit(pages_size).offset(offset)
+    ).scalars().all()
+
+    return [reponse_fornecedor.model_validate(forncedor) for forncedor in fornecedores_reponse]
 
 '''@router.post('/vendas', response_model=vendas_RESPONSE)
 async def cadastro_vendas(vendas_cadastro: vendas_REQUEST,
