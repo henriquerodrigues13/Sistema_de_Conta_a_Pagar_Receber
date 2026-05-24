@@ -12,11 +12,11 @@ function estaLogado() {
 
 function verificarLogin() {
     if (estaLogado()) {
-        renderizarPagina('layout');
-        return true;
+        renderizarPagina('usuarioLayout');
+        return;
     } else {
         renderizarPagina('login');
-        return false;
+        return;
     }
 }
 
