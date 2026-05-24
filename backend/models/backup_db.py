@@ -1,10 +1,12 @@
 from email.message import EmailMessage
+from backend.logs import setup_logger
 from datetime import datetime
 from pathlib import Path
 import asyncio
 import sqlite3
 import smtplib
 
+logger = setup_logger('backup_db')
 
 EMAIL_REMETENTE = "henriquefnaf2680@gmail.com"
 EMAIL_SENHA = "vrsn ptmn nhni aena"
@@ -36,6 +38,8 @@ def backup_sqlite():
         para_deletar = backups[:-manter]
         for antigo in para_deletar:
             antigo.unlink()
+            logger.info(f"Arquivo {antigo.name} removido")
+    logger.debug('backup concluido')
 
 def enviar_backup():
     backup_dir = Path(__file__).parent.parent.parent / 'Backup'
@@ -64,10 +68,11 @@ def enviar_backup():
     with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as smtp:
         smtp.login(EMAIL_REMETENTE, EMAIL_SENHA)
         smtp.send_message(msg)
+    logger.info(f' backup do banco de dados enviado para {EMAIL_DESTINO} as {datetime.now().strftime('%d/%m/%Y %H:%M')}')
 
 
 async def backup():
     while True:
-        await asyncio.sleep(30)
+        await asyncio.sleep(10)
         backup_sqlite()
         #enviar_backup()

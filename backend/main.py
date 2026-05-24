@@ -9,7 +9,7 @@ import asyncio
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.init_db()
-    task = asyncio.create_task(backup.agenda_backup())
+    task = asyncio.create_task(backup.backup())
     yield
     task.cancel()
 
