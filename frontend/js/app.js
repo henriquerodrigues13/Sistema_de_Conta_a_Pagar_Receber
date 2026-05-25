@@ -15,9 +15,6 @@ function renderizarPagina(pagina) {
         case 'usuarioLayout':
             app.innerHTML = paginaLayoutUsuario();
             break;
-        case 'cadastroFornecedor':
-            app.innerHTML = paginaCadastroFornecedor();
-            break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }

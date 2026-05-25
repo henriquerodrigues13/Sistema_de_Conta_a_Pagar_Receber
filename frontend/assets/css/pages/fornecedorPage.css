@@ -65,3 +65,19 @@ h2 {
     margin: 0;
     font-weight: bold;
 }
+
+#paginacao{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+
+    & .paginas{
+        border: #333 solid 1px;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+    }
+}

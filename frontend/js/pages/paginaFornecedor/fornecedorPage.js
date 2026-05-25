@@ -7,23 +7,31 @@ function paginaFornecedor(){
         <input type="text" placeholder="Pesquisar fornecedores" id="input-pesquisarFornecedor">
 
         <table id="tabela-fornecedor">
-            <tr id="cabecalho-tabela-fornecedor">
-                <th>Nome</th>
-                <th>CNPJ</th>
-                <th>E-mail</th>
-                <th>Editar</th>
-                <th>Remover</th>
-            </tr>
-
-            <!-- os dados dos fornecedores vão aparecer aqui pelo sistema -->
+            <thead>
+                <tr id="cabecalho-tabela-fornecedor">
+                    <th>Nome</th>
+                    <th>CNPJ</th>
+                    <th>E-mail</th>
+                    <th>Editar</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>    
+            <tbody>
+                <!-- os dados dos fornecedores vão aparecer aqui pelo sistema -->
+            </tbody>
         </table>
+
+        <div id="paginacao">
+            <button id="btn-anteriorPagina"><- voltar</button>
+            <div id="paginas"></div>
+            <button id="btn-proximaPagina">proximo -></button>
+        </div>
 
         <div id="carregando" style="display: block; text-align: center; padding: 20px;">
             <p>⏳ Carregando fornecedores...</p>
         </div>
 
         <div id="baixo-sectionFornecedor">
-            <button type="button" id="btn-adicionarFornecedor" onclick="renderizarPagina('cadastroFornecedor')">+ Adicionar fornecedor</button>
             <p id="total-fornecedores">Total de fornecedores: <span id="span-total">0</span></p>
         </div>
 
