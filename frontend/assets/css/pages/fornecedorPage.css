@@ -33,6 +33,10 @@ h2 {
         padding: 10px;
         border: 1px solid #ccc;
     }
+
+    & tr{
+        border: #333 solid 2px;
+    }
 }
 
 #baixo-sectionFornecedor {

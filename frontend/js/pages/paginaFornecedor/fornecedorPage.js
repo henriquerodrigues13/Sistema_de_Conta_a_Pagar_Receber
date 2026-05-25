@@ -9,7 +9,7 @@ function paginaFornecedor(){
         <table id="tabela-fornecedor">
             <tr id="cabecalho-tabela-fornecedor">
                 <th>Nome</th>
-                <th>Telefone</th>
+                <th>CNPJ</th>
                 <th>E-mail</th>
                 <th>Editar</th>
                 <th>Remover</th>
@@ -18,11 +18,17 @@ function paginaFornecedor(){
             <!-- os dados dos fornecedores vão aparecer aqui pelo sistema -->
         </table>
 
+        <div id="carregando" style="display: none; text-align: center; padding: 20px;">
+            <p>⏳ Carregando fornecedores...</p>
+        </div>
+
         <div id="baixo-sectionFornecedor">
             <button type="button" id="btn-adicionarFornecedor" onclick="renderizarPagina('cadastroFornecedor')">+ Adicionar fornecedor</button>
-            <p>Total de fornecedores: 0</p>
+            <p id="total-fornecedores">Total de fornecedores: </p>
         </div>
 
     </div>
     `
 }
+
+
