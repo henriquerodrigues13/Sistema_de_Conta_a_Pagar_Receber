@@ -1,4 +1,23 @@
+
 # DOCUMENTAÇÃO OFICIAL DA SUÍTE DE TESTES
+
+## SUMÁRIO
+
+- [1. Introdução](#1-introdução)
+- [2. Arquitetura dos Testes](#2-arquitetura-dos-testes)
+- [3. Arquivos de Teste](#3-arquivos-de-teste)
+    - [3.1 conftest.py - Configuração Global](#31-conftestpy---configuração-global)
+    - [3.2 test_criptografia.py - Testes Unitários](#32-test_criptografiapy---testes-unitários)
+    - [3.3 test_smoke.py - Testes de Saúde](#33-test_smokepy---testes-de-saúde)
+    - [3.4 test_validacoes.py - Testes de Validação](#34-test_validacoespy---testes-de-validação)
+    - [3.5 test_api.py - Testes de Integração](#35-test_apipy---testes-de-integração)
+- [4. Como Executar os Testes](#4-como-executar-os-testes)
+- [5. Estrutura e Padrões](#5-estrutura-e-padrões)
+- [6. Problemas Comuns e Soluções](#6-problemas-comuns-e-soluções)
+- [7. Próximas Etapas](#7-próximas-etapas)
+- [8. Referência Rápida](#8-referência-rápida)
+- [Apêndice: Arquivos Relacionados](#apêndice-arquivos-relacionados)
+
 
 **Sistema de Contas a Pagar e Receber**  
 **Disciplina:** Teoria de Sistemas Aplicada a Informática  
@@ -21,19 +40,14 @@ Os testes têm como objetivos:
 - ✅ Testar fluxos completos de usuário
 - ✅ Detectar regressões em novas versões
 
+
 ### 1.2 Status Atual
 
-- Fase Inicial**
 - Testes básicos de criptografia ✅
 - Testes de integração de API ✅
 - Testes de validação de dados ✅
 - Testes smoke (saúde da aplicação) ✅
 
-**Próximas Fases Planejadas:**
-- 🔄 Testes de performance e carga
-- 🔄 Testes de segurança aprofundados
-- 🔄 Testes E2E com navegador real
-- 🔄 Testes de relatórios
 
 ---
 
@@ -42,27 +56,20 @@ Os testes têm como objetivos:
 ### 2.1 Estrutura de Diretórios
 
 ```
-projeto/
-├── conftest.py                    ← Configuração global de testes
-├── pytest.ini                     ← Configuração do pytest
-│
+Sistema_de_Conta_a_Pagar_Receber/
+├── backend/
+│   ├── API/
+│   └── models/
 ├── tests/
 │   ├── unit/
-│   │   ├── test_criptografia.py   ← Testes unitários de hash
-│   │   └── test_smoke.py          ← Testes básicos de saúde
-│   │
+│   │   ├── test_criptografia.py
+│   │   └── test_smoke.py
 │   └── integracao/
-│       ├── test_api.py            ← Testes de endpoints
-│       └── test_validacoes.py     ← Testes de validações
-│
-└── backend/
-    ├── API/
-    │   ├── routes.py
-    │   ├── criptografia.py
-    │   └── validações.py
-    └── models/
-        ├── engine.py
-        └── database.py
+│       ├── test_api.py
+│       └── test_validacoes.py
+├── conftest.py
+├── requirements.txt
+└── ...
 ```
 
 ### 2.2 Fluxo de Execução dos Testes
@@ -272,86 +279,22 @@ def test_api_subida_e_chamada_init_db_no_lifespan():
 - **Por que é importante:** garante que a rotina de inicialização do banco (criação de tabelas, migrações ou checks) seja executada automaticamente no startup da aplicação. Útil para detectar regressões onde o `lifespan` não esteja disparando corretamente.
 
 
+
 ### 3.4 `test_validacoes.py` - Testes de Validação
 
 **Tipo:** Teste Unitário + Integração  
 **Localização:** `tests/integracao/test_validacoes.py`  
 **Objetivo:** Validar regras de entrada de dados
 
-#### 3.4.1 Teste: `test_validacao_email_com_resposta_valid`
+Contém testes para:
+- Validação de email (mock de API externa)
+- Rejeição de campos obrigatórios ausentes (Pydantic)
+- Rejeição de payload inválido na API (HTTP 422)
 
-```python
-def test_validacao_email_com_resposta_valid():
-    patch.stopall()
-    with patch.object(validacoes_modulo, "requests") as mock_requests:
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"status": "valid"}
-        mock_requests.post.return_value = mock_response
-
-        resultado = validacao_email("pedro.teste@ufpa.br")
-        
-        assert resultado is True
-        assert mock_requests.post.call_count == 1
-```
-
-- **O que testa:** Se email válido retorna True
-- **Mock:** Simula resposta da API de validação
-- **Validações:**
-  - Resultado é True ✅
-  - API foi chamada uma vez ✅
-
-#### 3.4.2 Teste: `test_validacao_email_com_resposta_invalid`
-
-```python
-def test_validacao_email_com_resposta_invalid():
-    # ... setup de mock ...
-    mock_response.json.return_value = {"status": "invalid"}
-    
-    resultado = validacao_email("email_falso@provedor.com")
-    
-    assert resultado is False
-    assert mock_requests.post.call_count == 1
-```
-
-- **O que testa:** Se email inválido retorna False
-- **Resultado esperado:** ❌ False
-
-#### 3.4.3 Teste: `test_pydantic_rejeita_campos_obrigatorios_ausentes`
-
-```python
-def test_pydantic_rejeita_campos_obrigatorios_ausentes():
-    payload_incompleto = {
-        "nome_completo": "Pedro Lucas Leão"
-    }
-    
-    with pytest.raises(ValidationError):
-        cadastro_usuario.model_validate(payload_incompleto)
-```
-
-- **O que testa:** Se Pydantic rejeita dados incompletos
-- **Como funciona:** Espera que `ValidationError` seja lançado
-- **Resultado esperado:** Exceção é lançada ✅
-
-#### 3.4.4 Teste: `test_api_rejeita_payload_invalido_com_http_422`
-
-```python
-def test_api_rejeita_payload_invalido_com_http_422(client):
-    payload_com_erro = {
-        "nome_completo": "Pedro Lucas Leão",
-        "email": "email_invalido_sem_arroba",
-        "senha": "123"
-    }
-    
-    response = client.post("/cadastro_usuario", json=payload_com_erro)
-    
-    assert response.status_code == 422
-```
-
-- **O que testa:** Se a API retorna HTTP 422 para dados inválidos
-- **HTTP 422:** Unprocessable Entity (Pydantic rejeitou)
-- **Resultado esperado:** Status 422 ✅
+Consulte o arquivo para detalhes dos testes implementados.
 
 ---
+
 
 ### 3.5 `test_api.py` - Testes de Integração
 
@@ -359,85 +302,11 @@ def test_api_rejeita_payload_invalido_com_http_422(client):
 **Localização:** `tests/integracao/test_api.py`  
 **Objetivo:** Testar fluxos completos de API
 
-#### 3.5.1 Teste: `test_cadastro_usuario_com_sucesso`
+Contém testes para:
+- Cadastro de usuário com sucesso
+- Login com diferentes cenários (sucesso, senha errada, usuário inexistente)
 
-```python
-def test_cadastro_usuario_com_sucesso(client, override_get_session):
-    payload = {
-        "nome_completo": "Pedro Lucas Leão",
-        "email": "pedro.teste@ufpa.br",
-        "senha": "senha_secreta_123",
-        "numero_telefone": "91988888888",
-        "cep": "68450000",
-        "estado": "PA",
-        "cidade": "Baião",
-        "bairro": "Centro",
-        "logradouro": "Rua Principal, 123"
-    }
-    
-    response = client.post("/cadastro_usuario", json=payload)
-    
-    assert response.status_code in [200, 201]
-    
-    dados_resposta = response.json()
-    assert dados_resposta["nome_completo"] == "Pedro Lucas Leão"
-    assert dados_resposta.get("senha") != "senha_secreta_123"
-```
-
-**O que testa:**
-1. ✅ POST /cadastro_usuario retorna 200 ou 201
-2. ✅ Resposta contém nome_completo
-3. ✅ Resposta NÃO contém senha em texto puro (segurança!)
-
-**Fluxo testado:**
-- Frontend envia dados
-- API valida
-- API criptografa senha
-- API insere no banco
-- API retorna resposta
-
-#### 3.5.2 Teste: `test_fluxo_login_comportamento_real`
-
-```python
-def test_fluxo_login_comportamento_real(client, override_get_session):
-    # PASSO 1: Cadastra usuário
-    payload_cadastro = { ... }
-    client.post("/cadastro_usuario", json=payload_cadastro)
-
-    # CENÁRIO A: Login com credenciais corretas → 200
-    dados_login_correto = {
-        "email": "pedro.teste@ufpa.br",
-        "senha": "senha_secreta_123"
-    }
-    response_sucesso = client.post("/login", json=dados_login_correto)
-    assert response_sucesso.status_code == 200
-
-    # CENÁRIO B: Login com senha errada → 401
-    dados_senha_errada = {
-        "email": "pedro.teste@ufpa.br",
-        "senha": "senha_errada_qualquer"
-    }
-    response_401 = client.post("/login", json=dados_senha_errada)
-    assert response_401.status_code == 401
-
-    # CENÁRIO C: Login com usuário inexistente → 404
-    dados_usuario_fantasma = {
-        "email": "nao_existe_no_sistema@ufpa.br",
-        "senha": "qualquer_senha"
-    }
-    response_404 = client.post("/login", json=dados_usuario_fantasma)
-    assert response_404.status_code == 404
-```
-
-**O que testa:**
-1. ✅ Login bem-sucedido retorna 200
-2. ✅ Senha incorreta retorna 401
-3. ✅ Usuário inexistente retorna 404
-
-**Fluxos testados:**
-- **Happy Path:** Login com credenciais corretas
-- **Unhappy Path 1:** Senha incorreta
-- **Unhappy Path 2:** Usuário não existe
+Consulte o arquivo para detalhes dos testes implementados.
 
 ---
 
@@ -607,31 +476,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 ## 7. PRÓXIMAS ETAPAS
 
-### 7.1 Testes Planejados (v0.2)
 
-- [ ] Testes de listagem de receitas
-- [ ] Testes de deleção de lançamentos
-- [ ] Testes de edição de usuários
-- [ ] Testes de cálculo de multa/juros
-- [ ] Testes de relatórios
+## 7. PRÓXIMAS ETAPAS
 
-### 7.2 Melhorias Planejadas
-
-- [ ] Aumentar cobertura de código (meta: 70%+)
-- [ ] Adicionar testes de performance
-- [ ] Implementar testes de segurança 
-- [ ] Adicionar testes E2E com Playwright
-
-### 7.3 Métricas de Qualidade
-
-```
-Cobertura de Código:  42% (v0.1)
-Cobertura esperada:   70%+ (v1.0)
-
-Testes Smoke (Fumaça):   3 ✅ Concluídos (Saúde da API, Docs e Lifespan)
-Testes Unitários:        5 ✅ Concluídos (Criptografia, Regras Pydantic e Mocks de e-mail)
-Testes de Integração:    2 ... pendente
-```
+Testes e melhorias futuras serão documentados conforme forem implementados.
 
 ---
 
