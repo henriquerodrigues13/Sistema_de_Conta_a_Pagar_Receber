@@ -1,4 +1,4 @@
-
+Markdown
 # DOCUMENTAÇÃO OFICIAL DA SUÍTE DE TESTES
 
 ## SUMÁRIO
@@ -19,8 +19,7 @@
 - [Apêndice: Arquivos Relacionados](#apêndice-arquivos-relacionados)
 
 
-**Sistema de Contas a Pagar e Receber**  
-**Disciplina:** Teoria de Sistemas Aplicada a Informática  
+**Sistema de Contas a Pagar e Receber** **Disciplina:** Teoria de Sistemas Aplicada a Informática  
 **Curso:** Sistemas de Informação - UFPA  
 **Data:** Maio de 2026  
 **Status:** 📝 Em Construção
@@ -55,7 +54,6 @@ Os testes têm como objetivos:
 
 ### 2.1 Estrutura de Diretórios
 
-```
 Sistema_de_Conta_a_Pagar_Receber/
 ├── backend/
 │   ├── API/
@@ -70,26 +68,25 @@ Sistema_de_Conta_a_Pagar_Receber/
 ├── conftest.py
 ├── requirements.txt
 └── ...
-```
+
 
 ### 2.2 Fluxo de Execução dos Testes
 
-```
 pytest (comando)
-    ↓
+↓
 conftest.py (preparação)
-    ├─ Cria banco de dados em memória
-    ├─ Cria tabelas (usuario, fornecedores)
-    ├─ Configura mock de email
-    └─ Configura dependências
-    ↓
+├─ Cria banco de dados SQLite em memória RAM
+├─ Cria automaticamnete TODAS as tabelas do ecossistema (Base.metadata)
+├─ Configura mock de email (API externa isolada)
+└─ Substitui dependência get_session globalmente
+↓
 test_*.py (testes)
-    ├─ test_unitário (rápido, isolado)
-    ├─ test_integração (completo, com BD)
-    └─ test_smoke (saúde geral)
-    ↓
+├─ test_unitário (rápido, isolado)
+├─ test_integração (completo, focado em endpoints)
+└─ test_smoke (saúde geral da API)
+↓
 Resultado (✅ ou ❌)
-```
+
 
 ---
 
@@ -97,7 +94,7 @@ Resultado (✅ ou ❌)
 
 ### 3.1 `conftest.py` - Configuração Global
 
-**Propósito:** Definir fixtures compartilhadas entre todos os testes.
+**Propósito:** Definir fixtures compartilhadas entre todos os testes e isolar o ambiente real de desenvolvimento do ambiente de testes.
 
 **Principais Componentes:**
 
@@ -107,32 +104,29 @@ Resultado (✅ ou ❌)
 @pytest.fixture(scope="session")
 def app():
     return backend_main.app
-```
+O que faz: Retorna a instância da aplicação FastAPI.
 
-- **O que faz:** Retorna a instância da aplicação FastAPI
-- **Escopo:** `session` (criada uma vez por sessão de testes)
-- **Usada por:** Outras fixtures
+Escopo: session (criada uma única vez por sessão de testes).
 
-#### 3.1.2 Fixture `client`
+Usada por: Outras fixtures do sistema.
 
-```python
+3.1.2 Fixture client
+Python
 @pytest.fixture()
 def client(app, override_get_session):
     with TestClient(app) as c:
         yield c
-```
+O que faz: Cria um cliente síncrono HTTP nativo para disparar requisições aos endpoints da API.
 
-- **O que faz:** Cria um cliente HTTP para fazer requisições aos endpoints
-- **Escopo:** `function` (novo para cada teste)
-- **Como usar no teste:**
-  ```python
-  def test_algo(client):
-      response = client.post("/cadastro_usuario", json=dados)
-  ```
+Escopo: function (um cliente novo e zerado para cada função de teste).
 
-#### 3.1.3 Fixture `override_get_session`
+Como usar no teste:
 
-```python
+Python
+def test_algo(client):
+    response = client.post("/cadastro_usuario", json=dados)
+3.1.3 Fixture override_get_session
+Python
 @pytest.fixture()
 def override_get_session(app):
     engine = create_engine(
@@ -140,72 +134,74 @@ def override_get_session(app):
         connect_args={"check_same_thread": False},
         poolclass=StaticPool
     )
-    TestingSessionLocal = sessionmaker(...)
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     
+    # Cria a estrutura completa de tabelas mapeadas no ecossistema
     Base.metadata.create_all(bind=engine)
     
-    # ... código de override ...
-    
+    def _get_test_session():
+        db = TestingSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[database_module.get_session] = _get_test_session
     yield
     
-    Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
     engine.dispose()
-```
+O que faz:
 
-- **O que faz:**
-  1. Cria um banco de dados SQLite em memória
-  2. Cria todas as tabelas (usuario, fornecedores)
-  3. Substitui a dependência `get_session` do backend
-  4. Limpa tudo após cada teste
-  
-- **Por que é importante:**
-  - Cada teste tem seu próprio banco isolado
-  - Testes não interferem uns com outros
-  - Sem efeitos colaterais de dados
+Instancia um mecanismo de banco de dados SQLite volátil em memória RAM dedicado.
 
-- **StaticPool?**
-  - `StaticPool` força o SQLite em memória a manter a mesma conexão
-  - Sem isso, cada requisição criava um novo banco zerado
-  - Solução para o erro "no such table: usuario"
+Executa a criação de todas as tabelas do projeto (Usuários, Contas, Fornecedores, etc.) mapeadas sob a classe declarativa Base.
 
-#### 3.1.4 Fixture `mock_validacao_email`
+Substitui de forma transparente a dependência get_session injetada nas rotas do FastAPI pela sessão de testes.
 
-```python
+Limpa as sobreposições de dependência (clear()) e descarta a conexão do banco de dados ao final do ciclo de execução.
+
+Por que é importante:
+
+Isolamento Total: Evita o acoplamento de estados. Cada teste roda em um ambiente limpo, impedindo que dados cadastrados em um teste quebrem outro.
+
+Proteção contra Erros de Relacionamento: Ao gerar a árvore de tabelas unificada via Base.metadata.create_all, elimina falhas de restrições de chaves estrangeiras (Foreign Key) ou tabelas inexistentes ao testar fluxos integrados.
+
+StaticPool?
+
+Mantém a mesma conexão ativa em memória compartilhada pelas threads do teste. Sem isso, cada requisição HTTP disparada pelo TestClient destruiria e recriaria um banco zerado, estourando erros operacionais.
+
+3.1.4 Fixture mock_validacao_email
+Python
 @pytest.fixture(autouse=True)
 def mock_validacao_email():
     with patch("backend.API.routes.validacao_email") as mock:
         mock.return_value = True  
         yield mock
-```
+O que faz: Intercepta e simula com sucesso chamadas para serviços externos de e-mail ou microsserviços de validação.
 
-- **O que faz:** Simula a validação de email via API externa
-- **Por que é importante:** Não chama a API real do ZeroBounce durante testes
-- **`autouse=True`:** Aplicada automaticamente em todos os testes
+Por que é importante: Garante autonomia e velocidade na execução local dos testes, eliminando dependência de rede ou cota de requisições de APIs externas.
 
-#### 3.1.5 Fixture `set_env`
+autouse=True: Ativada silenciosamente em todos os contextos de testes.
 
-```python
+3.1.5 Fixture set_env
+Python
 @pytest.fixture(scope="session", autouse=True)
 def set_env():
     os.environ.setdefault("TESTING", "1")
     os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
     yield
-```
+O que faz: Força as configurações globais do ambiente operacional a reconhecerem o modo de teste.
 
-- **O que faz:** Define variáveis de ambiente para testes
-- **`autouse=True`:** Executada automaticamente uma vez por sessão
+3.2 test_criptografia.py - Testes Unitários
+Tipo: Teste Unitário
 
----
+Localização: tests/unit/test_criptografia.py
 
-### 3.2 `test_criptografia.py` - Testes Unitários
+Objetivo: Validar a criptografia de senhas com bcrypt
 
-**Tipo:** Teste Unitário  
-**Localização:** `tests/unit/test_criptografia.py`  
-**Objetivo:** Validar a criptografia de senhas com bcrypt
-
-#### 3.2.1 Teste: `test_criptografia_da_senha`
-
-```python
+3.2.1 Teste: test_criptografia_da_senha
+Python
 def test_criptografia_da_senha():
     senha_original = "123456"
     
@@ -219,119 +215,102 @@ def test_criptografia_da_senha():
     
     # VALIDAÇÃO 3: Senha errada retorna False
     assert verificar_senha("senha_errada", hash_gerado) is False
-```
+O que testa:
 
-**O que testa:**
-1. ✅ Hash é diferente da senha (não texto puro)
-2. ✅ Função `verificar_senha` funciona com senha correta
-3. ✅ Função `verificar_senha` rejeita senha incorreta
+✅ Hash é diferente da senha (não texto puro)
 
-**Resultado esperado:** ✅ PASSOU
+✅ Função verificar_senha funciona com senha correta
 
-**Por que é importante:** Garante segurança das senhas
+✅ Função verificar_senha rejeita senha incorreta
 
----
+Resultado esperado: ✅ PASSOU
 
-### 3.3 `test_smoke.py` - Testes de Saúde
+Por que é importante: Garante segurança das senhas
 
-**Tipo:** Teste de Saúde (Smoke Test)  
-**Localização:** `tests/unit/test_smoke.py`  
-**Objetivo:** Verificar se a aplicação está "viva"
+3.3 test_smoke.py - Testes de Saúde
+Tipo: Teste de Saúde (Smoke Test)
 
-#### 3.3.1 Teste: `test_docs_available`
+Localização: tests/unit/test_smoke.py
 
-```python
+Objetivo: Verificar se a aplicação está "viva"
+
+3.3.1 Teste: test_docs_available
+Python
 def test_docs_available(client):
     resp = client.get("/docs")
     assert resp.status_code == 200
-```
+O que testa: Se a documentação Swagger está disponível
 
-- **O que testa:** Se a documentação Swagger está disponível
-- **Por que importa:** Indica que a aplicação subiu corretamente
-- **Resultado esperado:** Status 200
+Por que importa: Indica que a aplicação subiu corretamente
 
-#### 3.3.2 Teste: `test_docs_with_db_fixture`
+Resultado esperado: Status 200
 
-```python
+3.3.2 Teste: test_docs_with_db_fixture
+Python
 def test_docs_with_db_fixture(client, override_get_session):
     resp = client.get("/docs")
     assert resp.status_code == 200
-```
+O que testa: Se a documentação funciona COM banco de testes
 
-- **O que testa:** Se a documentação funciona COM banco de testes
-- **Por que importa:** Valida que as fixtures não quebram a aplicação
+Por que importa: Valida que as fixtures não quebram a aplicação
 
----
-
-#### 3.3.3 Teste: `test_api_subida_e_chamada_init_db_no_lifespan`
-
-```python
+3.3.3 Teste: test_api_subida_e_chamada_init_db_no_lifespan
+Python
 def test_api_subida_e_chamada_init_db_no_lifespan():
     with patch("backend.main.database.init_db") as mock_init_db:
         with TestClient(main_modulo.app) as client:
             response = client.get("/docs")
             assert response.status_code == 200
             assert mock_init_db.called is True
-```
+O que testa: Verifica que a aplicação sobe e que database.init_db() é chamada durante o processo de startup/lifespan.
 
-- **O que testa:** Verifica que a aplicação sobe e que `database.init_db()` é chamada durante o processo de startup/lifespan.
-- **Como funciona:** o teste intercepta (`patch`) `backend.main.database.init_db` antes de instanciar o `TestClient` e então verifica se a chamada ocorreu quando o `TestClient` ativou o `lifespan` da aplicação.
-- **Por que é importante:** garante que a rotina de inicialização do banco (criação de tabelas, migrações ou checks) seja executada automaticamente no startup da aplicação. Útil para detectar regressões onde o `lifespan` não esteja disparando corretamente.
+Como funciona: o teste intercepta (patch) backend.main.database.init_db antes de instanciar o TestClient e então verifica se a chamada ocorreu quando o TestClient ativou o lifespan da aplicação.
 
+Por que é importante: garante que a rotina de inicialização do banco (criação de tabelas, migrações ou checks) seja executada automaticamente no startup da aplicação. Útil para detectar regressões onde o lifespan não esteja disparando corretamente.
 
+3.4 test_validacoes.py - Testes de Validação
+Tipo: Teste de Entrada de Dados
 
-### 3.4 `test_validacoes.py` - Testes de Validação
+Localização: tests/integracao/test_validacoes.py
 
-**Tipo:** Teste Unitário + Integração  
-**Localização:** `tests/integracao/test_validacoes.py`  
-**Objetivo:** Validar regras de entrada de dados
-
-Contém testes para:
-- Validação de email (mock de API externa)
-- Rejeição de campos obrigatórios ausentes (Pydantic)
-- Rejeição de payload inválido na API (HTTP 422)
-
-Consulte o arquivo para detalhes dos testes implementados.
-
----
-
-
-### 3.5 `test_api.py` - Testes de Integração
-
-**Tipo:** Teste de Integração  
-**Localização:** `tests/integracao/test_api.py`  
-**Objetivo:** Testar fluxos completos de API
+Objetivo: Validar regras de integridade e payloads na API
 
 Contém testes para:
-- Cadastro de usuário com sucesso
-- Login com diferentes cenários (sucesso, senha errada, usuário inexistente)
 
-Consulte o arquivo para detalhes dos testes implementados.
+Validação de formato de e-mail (mockado).
 
----
+Rejeição de propriedades obrigatórias nulas via esquemas do Pydantic.
 
-## 4. COMO EXECUTAR OS TESTES
+Tratamento e retorno do código padrão HTTP 422 Unprocessable Entity para payloads malformados estruturalmente.
 
-### 4.1 Pré-requisitos
+3.5 test_api.py - Testes de Integração
+Tipo: Teste de Integração
 
-```bash
+Localização: tests/integracao/test_api.py
+
+Objetivo: Testar ciclos completos de endpoints simulando o comportamento de clientes reais
+
+Contém testes para:
+
+Criação e persistência de novos registros de usuários no ecossistema isolado.
+
+Fluxo de autenticação e login (Verificação de credenciais corretas, senhas inválidas e restrição a contas inexistentes).
+
+4. COMO EXECUTAR OS TESTES
+4.1 Pré-requisitos
+Bash
 # Verificar Python
 python --version
 # Esperado: Python 3.8+
 
-# Instalar dependências
+# Instalar dependências em modo editável
 pip install -e .
 pip install pytest pytest-asyncio httpx
-```
-
-### 4.2 Executar Todos os Testes
-
-```bash
+4.2 Executar Todos os Testes
+Bash
 pytest
-```
+Output esperado:
 
-**Output esperado:**
-```
 tests/unit/test_criptografia.py::test_criptografia_da_senha PASSED
 tests/unit/test_smoke.py::test_docs_available PASSED
 tests/unit/test_smoke.py::test_docs_with_db_fixture PASSED
@@ -343,11 +322,8 @@ tests/integracao/test_api.py::test_cadastro_usuario_com_sucesso PASSED
 tests/integracao/test_api.py::test_fluxo_login_comportamento_real PASSED
 
 ================== 9 passed in 0.45s ==================
-```
-
-### 4.3 Executar Testes Específicos
-
-```bash
+4.3 Executar Testes Específicos
+Bash
 # Apenas testes unitários
 pytest tests/unit/
 
@@ -357,7 +333,7 @@ pytest tests/integracao/
 # Um teste específico
 pytest tests/unit/test_criptografia.py::test_criptografia_da_senha -v
 
-# Com mais verbosidade
+# Com mais verbosidade e prints expostos
 pytest -v -s
 
 # Com relatório HTML
@@ -365,168 +341,66 @@ pytest --html=report.html --self-contained-html
 
 # Ver coverage (cobertura de código)
 pytest --cov=backend --cov-report=html
-```
+5. ESTRUTURA E PADRÕES
+5.1 Padrão AAA (Arrange-Act-Assert)
+Todos os testes seguem rigorosamente este padrão:
 
-### 4.4 Opções Úteis
-
-```bash
-# -v: Verbose (mais detalhes)
-# -s: Show prints (mostrar print statements)
-# -x: Stop on first failure (parar no primeiro erro)
-# -k: Filtrar por nome (pytest -k "email")
-# --tb=short: Traceback curto
-# --durations=5: Testes mais lentos
-```
-
----
-
-## 5. ESTRUTURA E PADRÕES
-
-### 5.1 Padrão AAA (Arrange-Act-Assert)
-
-Todos os testes seguem este padrão:
-
-```python
+Python
 def test_exemplo(client):
-    # ARRANGE: Preparar dados
-    dados = {"nome": "Pedro", "email": "pedro@email.com"}
+    # ARRANGE: Preparar dados e payloads
+    dados = {"nome": "Pedro Lucas", "email": "pedro@email.com"}
     
-    # ACT: Executar ação
+    # ACT: Executar ação / Disparar chamada HTTP
     response = client.post("/cadastro_usuario", json=dados)
     
-    # ASSERT: Verificar resultado
+    # ASSERT: Verificar e validar resultados esperados
     assert response.status_code == 200
-```
+5.2 Nomeação de Testes
+Devem, obrigatoriamente, iniciar com o prefixo test_.
 
-### 5.2 Nomeação de Testes
+Nomes descritivos detalhados.
 
-- Começam com `test_`
-- Nome descritivo
-- Indicam o que está sendo testado
-
-```
 ✅ test_cadastro_usuario_com_sucesso
 ✅ test_validacao_email_rejeita_invalido
 ❌ test_1
 ❌ test_algo
-```
+6. PROBLEMAS COMUNS E SOLUÇÕES
+6.1 Erro: "no such table: usuario" (ou outra tabela do CPR)
+Causa: Estrutura relacional do SQLAlchemy não carregada na memória RAM.
 
-### 5.3 Asserções Claras
+Solução: Garantir que o conftest.py execute a criação mapeada do ecossistema inteiro:
 
-```python
-# ✅ BOM: Mensagem clara
-assert response.status_code == 200, \
-    f"Esperado 200, obtido {response.status_code}"
-
-# ✅ BOM: Múltiplas validações
-assert "nome_completo" in response.json()
-assert response.status_code == 200
-
-# ❌ EVITAR: Sem contexto
-assert response
-assert dados
-```
-
----
-
-## 6. PROBLEMAS COMUNS E SOLUÇÕES
-
-### 6.1 Erro: "no such table: usuario"
-
-**Causa:** Banco não foi criado ou tabelas não existem
-
-**Solução:**
-```python
-# Verificar conftest.py tem:
+Python
 Base.metadata.create_all(bind=engine)
+6.2 Erro: "ModuleNotFoundError: No module named 'backend'"
+Causa: O caminho do diretório de desenvolvimento local não foi mapeado no escopo do sys.path.
 
-# Usar StaticPool:
-poolclass=StaticPool
-```
+Solução: Rodar a instalação editável (pip install -e .) na pasta raiz ou incluir explicitamente no início dos scripts:
 
-### 6.2 Erro: "ModuleNotFoundError: No module named 'backend'"
-
-**Causa:** sys.path não está configurado
-
-**Solução:**
-```python
+Python
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-```
+7. PRÓXIMAS ETAPAS
+Testes e melhorias futuras de cobertura automatizada de código do fluxo de caixa e regras de validação financeira (CPR) serão documentados conforme forem implementados pela equipe de desenvolvimento.
 
-### 6.3 Erro: "Fixture 'client' not found"
+8. REFERÊNCIA RÁPIDA
+Executar Testes
+Bash
+pytest                              # Executa toda a suíte
+pytest -v                           # Detalhado com logs
+pytest tests/unit/                  # Executa apenas unitários
+pytest -k "email"                   # Filtra testes por palavra-chave
+pytest --cov=backend                # Relatório de cobertura de código
+APÊNDICE: Arquivos Relacionados
+conftest.py - Configurações de ambientes de injeção e fixtures globais.
 
-**Causa:** conftest.py não está no lugar certo
+pytest.ini - Parâmetros e marcas customizadas do framework.
 
-**Solução:**
-- Coloque `conftest.py` na raiz do projeto
-- Não coloque dentro de `tests/`
+requirements.txt - Gerenciamento de dependências.
 
-### 6.4 Testes Lentos
+RELATORIO_TESTES_UFPA.md - Compilação de relatórios acadêmicos.
 
-**Causa:** Criando banco real ou chamando APIs externas
+Documentação oficial atualizada v0.2 Última modificação: Maio de 2026
 
-**Solução:**
-- Usar fixtures de mock
-- Usar banco em memória
-- Usar `patch` para APIs externas
-
----
-
-## 7. PRÓXIMAS ETAPAS
-
-
-## 7. PRÓXIMAS ETAPAS
-
-Testes e melhorias futuras serão documentados conforme forem implementados.
-
----
-
-## 8. REFERÊNCIA RÁPIDA
-
-### Executar Testes
-```bash
-pytest                              # Todos
-pytest -v                           # Com detalhes
-pytest tests/unit/                  # Apenas unitários
-pytest -k "email"                   # Filtrar por nome
-pytest --cov=backend                # Com coverage
-```
-
-### Estrutura de um Teste
-```python
-def test_nome_descritivo(client, override_get_session):
-    # Arrange
-    dados = {...}
-    
-    # Act
-    response = client.post("/endpoint", json=dados)
-    
-    # Assert
-    assert response.status_code == 200
-```
-
-### Fixtures Disponíveis
-```python
-def test_algo(client, override_get_session, app, anyio_backend):
-    # client: Cliente HTTP para requisições
-    # override_get_session: Banco em memória isolado
-    # app: Instância da FastAPI
-    # anyio_backend: Para testes async
-```
-
----
-
-## APÊNDICE: Arquivos Relacionados
-
-- `conftest.py` - Configuração de testes
-- `pytest.ini` - Configuração do pytest
-- `requirements.txt` - Dependências
-- `RELATORIO_TESTES_UFPA.md` - Resultados dos testes
-
----
-
-**Documentação em construção v0.1**  
-**Última atualização:** Maio de 2026  
-**Próxima revisão:** Quando novos testes forem adicionados
+Revisão técnica: Sincronizado com arquitetura global de tabelas do banco em memória.

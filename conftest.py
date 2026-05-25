@@ -9,7 +9,8 @@ from sqlalchemy.pool import StaticPool
 
 import backend.main as backend_main
 import backend.models.database as database_module
-from backend.models.engine import Base, usuario
+# Importamos o Base para criar toda a estrutura do banco de dados
+from backend.models.engine import Base
 
 @pytest.fixture(scope="session")
 def app():
@@ -39,6 +40,7 @@ def mock_validacao_email():
 
 @pytest.fixture()
 def override_get_session(app):
+    # Cria o banco SQLite em memória RAM dedicado para cada teste
     engine = create_engine(
         "sqlite:///:memory:", 
         connect_args={"check_same_thread": False},
@@ -46,8 +48,8 @@ def override_get_session(app):
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-    # Cria apenas a tabela de usuário isolando seu teste dos erros do backend
-    usuario.metadata.create_all(bind=engine, tables=[usuario.__table__])
+    # CORREÇÃO: Cria TODAS as tabelas do projeto (Usuário, Contas, Fornecedores, etc)
+    Base.metadata.create_all(bind=engine)
 
     def _get_test_session():
         db = TestingSessionLocal()
@@ -56,7 +58,10 @@ def override_get_session(app):
         finally:
             db.close()
 
+    # Sobrescreve a dependência do banco real pela do banco de teste
     app.dependency_overrides[database_module.get_session] = _get_test_session
     yield
+    
+    # Limpa as modificações após o término do teste
     app.dependency_overrides.clear()
     engine.dispose()
