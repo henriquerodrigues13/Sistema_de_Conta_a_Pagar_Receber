@@ -10,11 +10,18 @@ async function carregarFornecedores(pagina = 1) {
             }
         });
 
-        const fornecedores = await response.json();
-        const total = fornecedores.length;
+        if(!response.ok){
+            const erro = await response.json();
+            alert(`Erro ${erro.status}: ${erro.detail}`);
+        }
 
-        const spanTotal = document.getElementById('total-fornecedores');
-        spanTotal.textContent += total;
+        const fornecedores = await response.json();
+        const total = response.headers.get('X-Total-Items') || 0;
+
+        const spanTotal = document.getElementById('span-total');
+        if(spanTotal) {
+            spanTotal.textContent = total;
+        }
         
 
         renderizarTabelaFornecedor(fornecedores);
@@ -44,7 +51,7 @@ function renderizarTabelaFornecedor(fornecedores){
         tr.innerHTML = `
             <td>${fornecedor.nome_oficial_empresa || '-'}</td>
             <td>${fornecedor.cnpj || '-'}</td>
-            <td>${fornecedor.email || '-'}</td>
+            <td>${fornecedor.cidade || '-'}</td>
             <td>✏️</td>
             <td>🗑️</td>
         `;
@@ -53,4 +60,17 @@ function renderizarTabelaFornecedor(fornecedores){
 
     console.log(fornecedores)
     console.log(fornecedores.length)
+}
+
+function renderizarPaginacao(paginaAtual, totalPaginas) {
+    const paginacao = document.getElementById('paginacao');
+    paginacao.innerHTML = '';
+    
+    for (let i = 1; i <= totalPaginas; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = i === paginaAtual ? 'ativo' : '';
+        btn.onclick = () => carregarFornecedores(i);
+        paginacao.appendChild(btn);
+    }
 }

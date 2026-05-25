@@ -18,13 +18,13 @@ function paginaFornecedor(){
             <!-- os dados dos fornecedores vão aparecer aqui pelo sistema -->
         </table>
 
-        <div id="carregando" style="display: none; text-align: center; padding: 20px;">
+        <div id="carregando" style="display: block; text-align: center; padding: 20px;">
             <p>⏳ Carregando fornecedores...</p>
         </div>
 
         <div id="baixo-sectionFornecedor">
             <button type="button" id="btn-adicionarFornecedor" onclick="renderizarPagina('cadastroFornecedor')">+ Adicionar fornecedor</button>
-            <p id="total-fornecedores">Total de fornecedores: </p>
+            <p id="total-fornecedores">Total de fornecedores: <span id="span-total">0</span></p>
         </div>
 
     </div>
