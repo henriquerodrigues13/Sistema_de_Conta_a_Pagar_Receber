@@ -9,7 +9,7 @@ function paginaLayoutUsuario(){
 
       <ul class="menu">
         <li>
-          <button type="button" class="active" id="btn-dashboard">
+          <button type="button" id="btn-sectionDashboard" onclick="renderizarSection('sectionDashboard', event)">
             <img src="./assets/imgs/icons/casa.png" class="menu-icon" />
             Dashboard
           </button>

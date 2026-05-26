@@ -99,10 +99,10 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
                 carregarFornecedores(paginaAtual + 1);
             }
         };
-        if(paginaAtual >= totalPaginas){
+        if (paginaAtual >= totalPaginas) {
             btnProximo.disabled = true;
             btnProximo.style.opacity = '0.1';
-        }else{
+        } else {
             btnProximo.disabled = false;
             btnProximo.style.opacity = '0.9';
         }
@@ -115,10 +115,10 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
                 carregarFornecedores(paginaAtual - 1);
             }
         };
-        if(paginaAtual === 1){
+        if (paginaAtual === 1) {
             btnAnterior.disabled = true;
             btnAnterior.style.opacity = '0.1';
-        }else{
+        } else {
             btnAnterior.disabled = false;
             btnAnterior.style.opacity = '0.9';
         }
