@@ -1,7 +1,11 @@
 function paginaDashboard(){
+    const nome = obterNomeUsuario();
+
     return`
-        <div class="content-dashboard">
-        <h1>Bem-vindo, nome!</h1>
+        <div id="content-dashboard">
+        <div class="titulo-dashboard">
+            <h1>Bem-vindo, ${nome}!</h1>
+        </div>
         <div class="cards">
 
             <div class="card">
@@ -33,7 +37,7 @@ function paginaDashboard(){
                     <img src="./assets/imgs/icons/caixas.png">
                 </div>
 
-                <h2>Total de produtos cadastrados</h2>
+                <h2>Total de produtos e serviços</h2>
 
                 <div class="value">
                     100
