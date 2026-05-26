@@ -23,9 +23,9 @@ class usuarios(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    produtos_do_usuario : Mapped[list['produtos']] = relationship(
+    '''produtos_do_usuario : Mapped[list['produtos']] = relationship(
         back_populates='usuario_produtos',
-        foreign_keys="[produtos.proprietatio_usuario]")
+        foreign_keys="[produtos.proprietatio_usuario]")'''
 
 class cadastro_usuario(BaseModel):
     nome_completo: str
@@ -66,10 +66,10 @@ class fornecedores(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    produtos_do_fornecedor: Mapped[list['produtos']] = relationship(
+    '''produtos_do_fornecedor: Mapped[list['produtos']] = relationship(
         back_populates='fornecedor_produtos',
         foreign_keys="[produtos.proprietario_fornecedor]"
-    )
+    )'''
 
 class cadastro_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -80,7 +80,7 @@ class reponse_fornecedor(BaseModel):
     cnpj: str
     nome_oficial_empresa: str
 
-class produtos(Base):
+'''class produtos(Base):
     __tablename__ = 'produtos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -119,7 +119,7 @@ class request_produtos(BaseModel):
     descricao_do_produto: str
 
 class servicos(Base):
-    __tablename__ = 'servico'
+    __tablename__ = 'servicos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
@@ -145,7 +145,7 @@ class vendas_REQUEST(BaseModel):
     porcentagem_desconto: float
 
 
-'''class despesas(Base):
+class despesas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
