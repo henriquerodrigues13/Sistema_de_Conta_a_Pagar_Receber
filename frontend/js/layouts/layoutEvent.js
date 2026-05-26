@@ -14,7 +14,7 @@ function renderizarSection(secao, evento) {
     switch (secao) {
         case 'sectionFornecedor':
             section.innerHTML = paginaFornecedor();
-            setTimeout(() => carregarFornecedores(1), 100);
+            setTimeout(() => carregarFornecedores(1), 1000);
             break;
         default:
             section.innerHTML = '<p>Página não encontrada</p>';

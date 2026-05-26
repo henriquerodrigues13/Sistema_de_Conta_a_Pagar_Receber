@@ -18,10 +18,10 @@ function paginaFornecedor(){
             </tbody>
         </table>
 
-        <div id="paginacao">
-            <button id="btn-anteriorPagina"><- voltar</button>
+        <div id="paginacao" style="display: none;">
+            <button id="btn-anteriorPagina"><img src="./assets/imgs/icons/anterior.png"></button>
             <span id="span-pagina"></span>
-            <button id="btn-proximaPagina">proximo -></button>
+            <button id="btn-proximaPagina"> <img src="./assets/imgs/icons/proximo.png"></button>
         </div>
 
         <div id="carregando" style="display: block; text-align: center; padding: 20px;">

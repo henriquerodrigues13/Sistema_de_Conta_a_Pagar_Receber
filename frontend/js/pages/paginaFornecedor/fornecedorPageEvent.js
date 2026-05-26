@@ -79,7 +79,7 @@ function renderizarTabelaVazia() {
     td.style.textAlign = 'center';
     td.style.padding = '20px';
     td.style.color = 'black';
-    td.style.border = '#333 solid 1px';
+    td.style.border = '#B8B8B8 solid 1px';
     tr.appendChild(td);
     tbody.appendChild(tr);
 }
@@ -89,6 +89,8 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
     const btnProximo = document.getElementById('btn-proximaPagina');
     const btnAnterior = document.getElementById('btn-anteriorPagina');
 
+    paginacao.style.display = 'flex';
+
 
     if (btnProximo) {
         btnProximo.onclick = null;
@@ -97,7 +99,13 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
                 carregarFornecedores(paginaAtual + 1);
             }
         };
-        btnProximo.disabled = paginaAtual >= totalPaginas;
+        if(paginaAtual >= totalPaginas){
+            btnProximo.disabled = true;
+            btnProximo.style.opacity = '0.1';
+        }else{
+            btnProximo.disabled = false;
+            btnProximo.style.opacity = '0.9';
+        }
     }
 
     if (btnAnterior) {
@@ -107,10 +115,15 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
                 carregarFornecedores(paginaAtual - 1);
             }
         };
-        btnAnterior.disabled = paginaAtual === 1;
+        if(paginaAtual === 1){
+            btnAnterior.disabled = true;
+            btnAnterior.style.opacity = '0.1';
+        }else{
+            btnAnterior.disabled = false;
+            btnAnterior.style.opacity = '0.9';
+        }
     }
 
-    // Atualizar informação de página
     const spanPagina = document.getElementById('span-pagina');
     if (spanPagina) {
         spanPagina.textContent = `Página ${paginaAtual} de ${totalPaginas}`;

@@ -44,6 +44,7 @@ function paginaLayoutUsuario(){
         </li>
         <li>
           <button type="button" onclick="logout()">
+            <img src="./assets/imgs/icons/saida.png" class="menu-icon" />
             Sair
           </button>
         </li>
