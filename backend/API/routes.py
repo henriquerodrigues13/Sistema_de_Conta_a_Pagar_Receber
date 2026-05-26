@@ -71,7 +71,7 @@ async def cadastro_fornecedor(cadastro_produto: request_produtos,
         unidade_de_medida = cadastro_produto.unidade_de_medida,
         quantidade_em_estoque = cadastro_produto.quantidade_em_estoque,
         categoria_do_produto = cadastro_produto.categoria_do_produto,
-        valor_do_produto = cadastro_produto.valor_do_produto,
+        valor_de_custo = cadastro_produto.valor_de_custo,
         valor_final = cadastro_produto.valor_final,
         descricao_do_produto = cadastro_produto.descricao_do_produto,
     )
@@ -81,6 +81,8 @@ async def cadastro_fornecedor(cadastro_produto: request_produtos,
     session.refresh(novo_produto)
 
     return JSONResponse(content={'mensagem' : 'cadastrado com sucesso'}, media_type= 'text/plain')
+
+
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(

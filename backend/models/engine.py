@@ -23,9 +23,10 @@ class usuarios(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    '''produtos_do_usuario : Mapped[list['produtos']] = relationship(
+    produtos_do_usuario : Mapped[list['produtos']] = relationship(
         back_populates='usuario_produtos',
-        foreign_keys="[produtos.proprietatio_usuario]")'''
+        foreign_keys="[produtos.proprietario_usuario]"
+    )
 
 class cadastro_usuario(BaseModel):
     nome_completo: str
@@ -86,13 +87,13 @@ class produtos(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid_produto: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     nome_do_produto: Mapped[str] = mapped_column(String(100), index=True)
-    proprietario_fornecedor: Mapped[str] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
-    proprietario_usuario: Mapped[str] = mapped_column(String(100), ForeignKey('usuario.email'), index= True)
+    proprietario_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
+    proprietario_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index= True)
     unidade_de_medida: Mapped[str | None] = mapped_column(String(50))
     quantidade_em_estoque: Mapped[str] = mapped_column(String(100))
     categoria_do_produto: Mapped[str] = mapped_column(String(100))
-    valor_de_custo: Mapped[str] = mapped_column(Float)
-    valor_final: Mapped[str] = mapped_column(Float)
+    valor_de_custo: Mapped[float] = mapped_column(Float)
+    valor_final: Mapped[float] = mapped_column(Float)
     descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
     status_do_produto: Mapped[str] = mapped_column(String(100), default= 'disponível')
     produto_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
@@ -109,11 +110,13 @@ class produtos(Base):
 
 class request_produtos(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    proprietario_usuario_email :EmailStr | None = None
+    nome_do_produto: str
+    proprietario_usuario_email :EmailStr
     unidade_de_medida : str
     quantidade_em_estoque : str
-    valor_de_custo : str
-    valor_final : str
+    categoria_do_produto: str
+    valor_de_custo : float
+    valor_final : float
     descricao_do_produto: str
 
 '''class servicos(Base):
