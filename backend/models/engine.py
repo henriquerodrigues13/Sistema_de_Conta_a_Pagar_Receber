@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy import Integer, String, Float, ForeignKey
+from sqlalchemy import Integer, String, Float, ForeignKey, Boolean
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 from uuid import uuid4, UUID
@@ -9,8 +9,8 @@ from uuid import uuid4, UUID
 class Base(DeclarativeBase):
     pass
 
-class usuario(Base):
-    __tablename__ = 'usuario'
+class usuarios(Base):
+    __tablename__ = 'usuarios'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nome_completo: Mapped[str] = mapped_column(String(150))
@@ -22,6 +22,10 @@ class usuario(Base):
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
+
+    produtos_do_usuario : Mapped[list['produtos']] = relationship(
+        back_populates='usuario_produtos',
+        foreign_keys="[produtos.proprietatio_usuario]")
 
 class cadastro_usuario(BaseModel):
     nome_completo: str
@@ -62,6 +66,11 @@ class fornecedores(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
+    produtos_do_fornecedor: Mapped[list['produtos']] = relationship(
+        back_populates='fornecedor_produtos',
+        foreign_keys="[produtos.proprietario_fornecedor]"
+    )
+
 class cadastro_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
@@ -71,79 +80,61 @@ class reponse_fornecedor(BaseModel):
     cnpj: str
     nome_oficial_empresa: str
 
-'''class produto_servico(Base):
-    __tablename__ = 'produto_servico_cliente'
+class produtos(Base):
+    __tablename__ = 'produtos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
->>>>>>> Stashed changes
-    produto_servico_uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
-    classificacao_produto_servico: Mapped[str] = mapped_column(String(50))
-    nome_produto_servico: Mapped[str] = mapped_column(String(150), index=True)
-    cpf_vendendor: Mapped[str | None] = mapped_column(String(100), ForeignKey('cliente.cpf'), index=True)
-    cnpj_vendendor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    detalhes: Mapped[str] = mapped_column(String(150), index=True)
-    data_do_cadastro: Mapped[str] = mapped_column(String(30))
-    valor_custo: Mapped[float] = mapped_column(Float)
-    ICMS: Mapped[str] = mapped_column(String(150))
-    valor_com_IMCS: Mapped[float] = mapped_column(Float)
-    valor_final_de_venda: Mapped[float] = mapped_column(Float)
-    margem_de_lucro: Mapped[float] = mapped_column(Float)
+    uuid_produto: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
+    nome_do_produto: Mapped[str] = mapped_column(String(100), index=True)
+    proprietario_fornecedor: Mapped[str] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
+    proprietario_usuario: Mapped[str] = mapped_column(String(100), ForeignKey('usuario.email'), index= True)
+    unidade_de_medida: Mapped[str | None] = mapped_column(String(50))
+    quantidade_em_estoque: Mapped[str] = mapped_column(String(100))
+    categoria_do_produto: Mapped[str] = mapped_column(String(100))
+    valor_de_custo: Mapped[str] = mapped_column(Float)
+    valor_final: Mapped[str] = mapped_column(Float)
+    descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
+    status_do_produto: Mapped[str] = mapped_column(String(100))
+    produto_deletado: Mapped[bool] = mapped_column(Boolean)
 
-    vendedor_cpf: Mapped['cliente | None'] = relationship(back_populates="produtos_cliente")
-    vendedor_cnpj: Mapped['fornecedor | None'] = relationship(back_populates="produtos_fornecedor")
+    usuario_produtos : Mapped['usuarios'] = relationship(
+        back_populates='produtos_do_usuario',
+        foreign_keys=[proprietario_usuario]
+    )
 
-class produto_servico_REQUEST(BaseModel):
+    fornecedor_produtos : Mapped['fornecedores'] = relationship(
+        back_populates= 'produtos_do_fornecedor',
+        foreign_keys=[proprietario_fornecedor]
+    )
+
+class request_produtos(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-<<<<<<< Updated upstream
-    cpf_cnpj : str
-    classificacao_produto_servico: str
-    identidicado_produto_servico: str
-    detalhes_produto_servico: str
-=======
-    cpf_vendendor : str | None = None
-    cnpj_vendendor : str | None = None
-    classificacao: str
-    nome: str
-    detalhes: str
->>>>>>> Stashed changes
-    valor_custo_de_venda: float
-    valor_final_de_venda: float
+    uuid_produto : str
+    proprietario_fornecedor : str | None = None
+    proprietario_usuario : str | None = None
+    unidade_de_medida : str
+    quantidade_em_estoque : str
+    valor_de_custo : str
+    valor_final : str
+    descricao_do_produto: str
 
-class produto_servico_Response(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    nome_produto_servico: str
-    classificacao_produto_servico: str
-    detalhes: str
-    data_do_cadastro: str
-    valor_custo: float
-    ICMS: str
-    valor_com_IMCS: float
-    valor_final_de_venda: float
-    margem_de_lucro: float
-
-
-class vendas(Base):
-<<<<<<< Updated upstream
-    __tablename__ = 'vendas'
-=======
-    __tablename__ = 'vendas_cliente'
->>>>>>> Stashed changes
+class servicos(Base):
+    __tablename__ = 'servico'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
-    cpf_vendendor: Mapped[str | None] = mapped_column(String(100), ForeignKey('cliente.cpf'), index=True)
-    cnpj_vendendor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    cpf_comprador: Mapped[str | None] = mapped_column(String(100), ForeignKey('cliente.cpf'), index=True)
-    cnpj_comprador: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    forma_pagamento: Mapped[str] = mapped_column(String(50))
-    valor_venda: Mapped[float] = mapped_column(Float)
-    porcentagem_desconto: Mapped[float] = mapped_column(Float, default=0.0)
-    valor_final_venda: Mapped[float] = mapped_column(Float)
+    nome_do_servic: Mapped[str] = mapped_column(String(100), index=True)
+    prestador_do_servico_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
+    prestador_do_servico_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'),index=True)
+    descricao_do_servico: Mapped[str | None] = mapped_column(String(500))
+    valor_do_servico: Mapped[float] = mapped_column(Float)
+    categoria_do_servico: Mapped[str] = mapped_column(String(100))
+    servico_deletado: Mapped[bool] = mapped_column(Boolean)
 
-    vendas_cpf: Mapped['cliente | None'] = relationship(back_populates='vendas_cliente', foreign_keys=[cpf_vendendor])
-    vendas_cnpj: Mapped['fornecedor | None'] = relationship(back_populates='vendas_fornecedor', foreign_keys=[cnpj_vendendor])
-    compras_cpf: Mapped['cliente | None'] = relationship(back_populates='compras_cliente', foreign_keys=[cpf_comprador])
-    compras_cnpj: Mapped['fornecedor | None'] = relationship(back_populates='compras_fornecedor', foreign_keys=[cnpj_comprador])
+    usuario_servico : Mapped['usuarios'] = relationship(
+        back_populates='servicos_do_usuario',
+        foreign_keys=[prestador_do_servico_usuario]
+    )
 
 class vendas_REQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -152,19 +143,9 @@ class vendas_REQUEST(BaseModel):
     forma_pagamento: str
     valor_venda: float
     porcentagem_desconto: float
-<<<<<<< Updated upstream
-=======
-    valor_final_venda: float
->>>>>>> Stashed changes
 
-class vendas_RESPONSE(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    forma_pagamento: str
-    valor_venda: float
-    porcentagem_desconto: float
-    valor_final_venda: float
 
-class despesas(Base):
+'''class despesas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
