@@ -240,3 +240,7 @@ comandosEspeciais.txt
 SECURITY_INCIDENT.md
 
 *.pfx
+
+Plaintext
+*.sqlite
+meu_projeto.egg-info/
