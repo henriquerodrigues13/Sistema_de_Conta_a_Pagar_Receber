@@ -66,10 +66,10 @@ class fornecedores(Base):
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
 
-    '''produtos_do_fornecedor: Mapped[list['produtos']] = relationship(
+    produtos_do_fornecedor: Mapped[list['produtos']] = relationship(
         back_populates='fornecedor_produtos',
         foreign_keys="[produtos.proprietario_fornecedor]"
-    )'''
+    )
 
 class cadastro_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -80,7 +80,7 @@ class reponse_fornecedor(BaseModel):
     cnpj: str
     nome_oficial_empresa: str
 
-'''class produtos(Base):
+class produtos(Base):
     __tablename__ = 'produtos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -94,8 +94,8 @@ class reponse_fornecedor(BaseModel):
     valor_de_custo: Mapped[str] = mapped_column(Float)
     valor_final: Mapped[str] = mapped_column(Float)
     descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
-    status_do_produto: Mapped[str] = mapped_column(String(100))
-    produto_deletado: Mapped[bool] = mapped_column(Boolean)
+    status_do_produto: Mapped[str] = mapped_column(String(100), default= 'disponível')
+    produto_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     usuario_produtos : Mapped['usuarios'] = relationship(
         back_populates='produtos_do_usuario',
@@ -109,16 +109,14 @@ class reponse_fornecedor(BaseModel):
 
 class request_produtos(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    uuid_produto : str
-    proprietario_fornecedor : str | None = None
-    proprietario_usuario : str | None = None
+    proprietario_usuario_email :EmailStr | None = None
     unidade_de_medida : str
     quantidade_em_estoque : str
     valor_de_custo : str
     valor_final : str
     descricao_do_produto: str
 
-class servicos(Base):
+'''class servicos(Base):
     __tablename__ = 'servicos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -136,7 +134,7 @@ class servicos(Base):
         foreign_keys=[prestador_do_servico_usuario]
     )
 
-class vendas_REQUEST(BaseModel):
+class (BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cpf_cnpj_vendendor: str
     cpf_cnpj_comprador: str

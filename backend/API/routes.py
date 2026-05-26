@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from starlette.responses import JSONResponse
+
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.API.validações import *
@@ -54,42 +56,31 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
 
     return reponsa_usuario.model_validate(novo_usuario)
 
-@router.post('/cadastro_produtos', response_model=reponse_fornecedor)
+@router.post('/cadastro_produtos', response_model=request_produtos)
 async def cadastro_fornecedor(cadastro_produto: request_produtos,
                                    session: SessionDep
-                              ) -> reponse_fornecedor | HTTPException:
-
-    if not (cnpj_valido := validacao_cnpj(cnpj=cnpj)):
-        raise HTTPException(status_code=400, detail='Cnpj não é valido')
-
-    if(forncedor_ja_existe := session.execute(
-            select(fornecedores).where(fornecedores.cnpj == cnpj))
+                              ) -> JSONResponse | HTTPException:
+    if not (email_nao_existe := session.execute(
+            select(usuarios).where(usuarios.email == cadastro_produto.proprietario_usuario_email))
             .scalar_one_or_none()):
-        raise HTTPException(status_code=409, detail='Usuario ja existe')
+        raise HTTPException(status_code=404, detail='Usuario nao existe')
 
-    novo_fornecedor = fornecedores(
-        cnpj = cnpj_valido['cnpj'],
-        nome_oficial_empresa = cnpj_valido['razao_social'],
-        nome_cormecial_empresa = cnpj_valido['nome_fantasia'],
-        situacao_cadastral = cnpj_valido['situacao_cadastral'],
-        data_abertura = cnpj_valido['data_inicio_atividade'],
-        natureza_juridica = cnpj_valido['natureza_juridica'],
-        cnae = cnpj_valido['cnae_fiscal'],
-        capital_social = cnpj_valido['capital_social'],
-        porte_empresa = cnpj_valido['porte'],
-        cep = cnpj_valido['cep'],
-        uf = cnpj_valido['uf'],
-        cidade = cnpj_valido['municipio'],
-        bairro = cnpj_valido['bairro'],
-        logradouro = cnpj_valido['logradouro'],
-
+    novo_produto = produtos(
+        nome_do_produto = cadastro_produto.nome_do_produto,
+        proprietario_usuario =  cadastro_produto.proprietario_usuario_email,
+        unidade_de_medida = cadastro_produto.unidade_de_medida,
+        quantidade_em_estoque = cadastro_produto.quantidade_em_estoque,
+        categoria_do_produto = cadastro_produto.categoria_do_produto,
+        valor_do_produto = cadastro_produto.valor_do_produto,
+        valor_final = cadastro_produto.valor_final,
+        descricao_do_produto = cadastro_produto.descricao_do_produto,
     )
 
-    session.add(novo_fornecedor)
+    session.add(novo_produto)
     session.commit()
-    session.refresh(novo_fornecedor)
+    session.refresh(novo_produto)
 
-    return Js
+    return JSONResponse(content={'mensagem' : 'cadastrado com sucesso'}, media_type= 'text/plain')
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(
