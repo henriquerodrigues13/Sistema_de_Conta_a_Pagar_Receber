@@ -20,3 +20,12 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["backend"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -v --strict-markers"
+testpaths = [
+    "tests",
+]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
