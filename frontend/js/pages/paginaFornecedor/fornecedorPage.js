@@ -11,9 +11,6 @@ function paginaFornecedor(){
                 <tr id="cabecalho-tabela-fornecedor">
                     <th>Nome</th>
                     <th>CNPJ</th>
-                    <th>E-mail</th>
-                    <th>Editar</th>
-                    <th>Remover</th>
                 </tr>
             </thead>    
             <tbody>
@@ -23,7 +20,7 @@ function paginaFornecedor(){
 
         <div id="paginacao">
             <button id="btn-anteriorPagina"><- voltar</button>
-            <div id="paginas"></div>
+            <span id="span-pagina"></span>
             <button id="btn-proximaPagina">proximo -></button>
         </div>
 

@@ -49,7 +49,7 @@ h2 {
 #baixo-sectionFornecedor {
     margin-top: 25px;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
 }
 
 #btn-adicionarFornecedor {
