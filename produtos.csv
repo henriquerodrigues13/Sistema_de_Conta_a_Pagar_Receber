@@ -1,0 +1,65 @@
+nome_do_produto,proprietario_fornecedor,unidade_de_medida,quantidade_em_estoque,categoria_do_produto,valor_de_custo,valor_final,descricao_do_produto
+Gasolina Aditivada,33000167000101,litro,50000,Combustíveis,3.8,5.99,Gasolina aditivada de alto desempenho
+Óleo Diesel S10,33000167000101,litro,80000,Combustíveis,3.5,5.49,Diesel S10 de baixo teor de enxofre
+Medidor Inteligente,03467321000199,unidade,2000,Equipamentos,180.0,350.0,Medidor de energia inteligente para monitoramento remoto
+Poste de Distribuição,02016440000162,unidade,300,Infraestrutura,800.0,1500.0,Poste de concreto para distribuição de energia
+Transformador 15kVA,02429144000193,unidade,150,Equipamentos,2500.0,4800.0,Transformador trifásico 15kVA para rede de distribuição
+Kit Instalação Solar,00864214000106,400,Energia Solar,3200.0,6500.0,Kit completo para instalação de painel solar residencial
+Cabo de Alta Tensão 50mm,17155730000164,metro,10000,Cabos e Fios,18.0,35.0,Cabo de alumínio 50mm para alta tensão
+Disjuntor Trifásico 100A,76483817000120,unidade,800,Equipamentos Elétricos,95.0,189.0,Disjuntor trifásico 100A para proteção de circuitos
+Etanol Hidratado,50746577000115,litro,60000,Combustíveis,2.1,3.89,Etanol hidratado de cana-de-açúcar
+Açúcar Cristal 50kg,08070508000178,saco,5000,Alimentos,95.0,142.0,Açúcar cristal padrão exportação saco 50kg
+GLP Residencial 13kg,33256439000139,botijão,15000,Gás,65.0,110.0,Botijão de gás GLP 13kg para uso residencial
+Minério de Ferro 65%,33592510000154,tonelada,100000,Mineração,280.0,420.0,Minério de ferro com 65% de pureza
+Pelotas de Minério,33592510000154,tonelada,50000,Mineração,320.0,490.0,Pelotas de minério de ferro para siderurgia
+Vergalhão CA-50 10mm,33611500000119,kg,200000,Aço e Metais,5.2,8.9,Vergalhão de aço CA-50 bitola 10mm para construção civil
+Chapa de Aço Galvanizado,33042730000104,kg,80000,Aço e Metais,6.8,11.5,Chapa de aço galvanizado para uso industrial
+Bobina de Aço Laminado,60894730000105,tonelada,3000,Aço e Metais,3800.0,6200.0,Bobina de aço laminado a frio para indústria automotiva
+Cimento CP-II 50kg,42150391000170,saco,25000,Construção Civil,22.0,38.0,Cimento Portland CP-II saco 50kg
+Celulose Branqueada,16404287000155,tonelada,40000,Papel e Celulose,1800.0,3200.0,Celulose de eucalipto branqueada para fabricação de papel
+Papel Offset A4 75g,16404287000155,resma,50000,Papel e Celulose,12.0,22.9,Papel offset A4 75g/m² 500 folhas
+Maquininha POS Pro,90400888000142,unidade,3000,Pagamentos,120.0,249.0,Terminal de pagamento POS com chip e NFC
+Cerveja Brahma Lata 350ml,07526557000100,caixa,20000,Bebidas,28.0,52.9,Caixa com 24 latas de cerveja Brahma 350ml
+Água Mineral Crystal 500ml,07526557000100,fardo,15000,Bebidas,8.0,15.9,Fardo com 12 garrafas de água mineral Crystal 500ml
+Frango Inteiro Congelado,02916265000160,kg,30000,Carnes,8.5,14.9,Frango inteiro congelado sem miúdos
+Picanha Bovina Premium,02916265000160,kg,5000,Carnes,45.0,89.9,Picanha bovina premium resfriada
+Salsicha Sadia 500g,01838723000127,pacote,18000,Embutidos,7.5,13.9,Salsicha de frango e peru Sadia 500g
+Presunto Perdigão Fatiado 200g,01838723000127,pacote,12000,Embutidos,5.8,10.9,Presunto cozido fatiado Perdigão 200g
+Hambúrguer Bovino 672g,03853896000140,pacote,10000,Carnes,14.0,26.9,Hambúrguer bovino congelado 8 unidades 672g
+Macarrão Espaguete Adria 500g,07206816000115,pacote,25000,Massas,3.2,5.9,Macarrão espaguete Adria 500g
+Biscoito Cream Cracker Piraquê 400g,07206816000115,pacote,20000,Biscoitos,4.5,8.9,Biscoito cream cracker Piraquê 400g
+Arroz Camil Tipo 1 5kg,64904295000103,saco,30000,Grãos,16.0,28.9,Arroz branco tipo 1 Camil 5kg
+Feijão Carioca Camil 1kg,64904295000103,pacote,25000,Grãos,6.5,11.9,Feijão carioca tipo 1 Camil 1kg
+Smartphone Samsung Galaxy A55,47960950000121,unidade,500,Eletrônicos,1200.0,1999.0,Smartphone Samsung Galaxy A55 128GB 5G
+Smart TV LG 50 4K,47960950000121,unidade,200,Eletrônicos,1600.0,2699.0,Smart TV LG 50 polegadas 4K com ThinQ AI
+Fone de Ouvido Bluetooth JBL,00776574000156,unidade,800,Eletrônicos,120.0,249.0,Fone de ouvido JBL Tune 520BT sem fio
+Cafeteira Elétrica Philips,00776574000156,unidade,400,Eletrodomésticos,90.0,179.0,Cafeteira elétrica Philips Walita 30 xícaras
+Azeite Extra Virgem Gallo 500ml,47508411000156,garrafa,8000,Óleos e Condimentos,22.0,39.9,Azeite de oliva extra virgem Gallo 500ml
+Detergente Líquido Ypê 500ml,45543915000181,unidade,15000,Limpeza,2.8,4.99,Detergente líquido neutro Ypê 500ml
+Sabão em Pó OMO 1kg,45543915000181,caixa,10000,Limpeza,9.5,17.9,Sabão em pó OMO multiação 1kg
+Dipirona Sódica 500mg 20cp,61585865000151,caixa,12000,Medicamentos,4.5,8.9,Dipirona sódica 500mg caixa com 20 comprimidos
+Protetor Solar FPS 50 200ml,61585865000151,unidade,6000,Higiene e Beleza,18.0,34.9,Protetor solar facial FPS 50 Episol 200ml
+Camiseta Básica Masculina,92754738000162,unidade,3000,Vestuário,18.0,49.9,Camiseta masculina básica 100% algodão
+Calça Jeans Skinny Feminina,92754738000162,unidade,2000,Vestuário,45.0,119.9,Calça jeans skinny feminina com elastano
+Scarpin Salto Alto Couro,16590234000176,par,800,Calçados,120.0,349.9,Scarpin feminino salto 8cm em couro legítimo
+Bolsa Couro Transversal,16590234000176,unidade,500,Bolsas e Acessórios,180.0,499.9,Bolsa transversal feminina em couro com alça ajustável
+Aeronave Executiva Phenom 300E,07689002000189,unidade,10,Aeronaves,8500000.0,14900000.0,Jato executivo leve Phenom 300E para 9 passageiros
+Simulador de Voo E175,07689002000189,unidade,5,Treinamento Aeronáutico,2000000.0,4500000.0,Simulador de voo full flight nível D para aeronave E175
+Motor Elétrico Trifásico 10cv,84429695000111,unidade,1500,Motores Elétricos,780.0,1490.0,Motor elétrico trifásico WEG 10cv 4 polos 60Hz
+Inversor de Frequência CFW500,84429695000111,unidade,800,Automação Industrial,950.0,1890.0,Inversor de frequência WEG CFW500 5cv trifásico
+Tablet Positivo Tab Q8 4G,81243735000148,unidade,400,Informática,480.0,899.0,Tablet 8 polegadas 4G 64GB Android 13
+Buscopan Composto 20cp,02932074000191,caixa,10000,Medicamentos,12.0,24.9,Buscopan composto 20 comprimidos para cólicas
+Neosaldina 16cp,02932074000191,caixa,8000,Medicamentos,9.0,19.9,Neosaldina 16 comprimidos para dor de cabeça
+Etanol Anidro a Granel,02846056000197,litro,200000,Combustíveis,2.8,4.2,Etanol anidro para mistura com gasolina
+Aluguel Carro Econômico Diária,21314559000166,diária,2000,Locação de Veículos,60.0,129.0,Aluguel de carro econômico por diária com seguro básico
+Aluguel SUV Semanal,16670085000155,semana,1000,Locação de Veículos,400.0,899.0,Aluguel de SUV por semana com seguro completo e GPS
+Apartamento 2 Quartos SP,73178600000118,unidade,50,Imóveis,320000.0,580000.0,Apartamento 2 quartos 65m² em São Paulo com lazer completo
+Apartamento MCMV 2 Quartos,08343492000120,unidade,200,Imóveis,140000.0,240000.0,Apartamento 2 quartos 48m² pelo programa Minha Casa Minha Vida
+Apartamento Studio Alto Padrão,08312229000173,unidade,30,Imóveis,280000.0,490000.0,Studio 35m² alto padrão em região central de São Paulo
+Casa Térrea 2 Quartos,71476527000135,unidade,100,Imóveis,110000.0,185000.0,Casa térrea 2 quartos 42m² em condomínio fechado
+Caixa de Papelão Ondulado 40x30x20,89637490000145,unidade,100000,Embalagens,2.8,5.5,Caixa de papelão ondulado simples 40x30x20cm
+Saco Kraft Multifolha 25kg,89637490000145,fardo,20000,Embalagens,1.5,3.2,Saco de papel kraft multifolha para 25kg
+Perfume Kaiak Masculino 100ml,71673990000177,unidade,3000,Perfumaria,55.0,119.9,Deo parfum Natura Kaiak masculino 100ml
+Hidratante Corporal Tododia 400ml,71673990000177,unidade,5000,Higiene e Beleza,18.0,39.9,Loção hidratante corporal Natura Tododia 400ml
+Ônibus Rodoviário Paradiso G8,88611835000129,unidade,20,Veículos,680000.0,980000.0,Ônibus rodoviário Marcopolo Paradiso G8 46 poltronas
+Micro-ônibus Volare W9,88611835000129,unidade,40,Veículos,220000.0,380000.0,Micro-ônibus Volare W9 29 passageiros para fretamento

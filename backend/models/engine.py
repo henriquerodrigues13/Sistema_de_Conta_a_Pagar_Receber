@@ -72,10 +72,6 @@ class fornecedores(Base):
         foreign_keys="[produtos.proprietario_fornecedor]"
     )
 
-class cadastro_fornecedor(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    cnpj: str
-
 class reponse_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
@@ -90,7 +86,7 @@ class produtos(Base):
     proprietario_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
     proprietario_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index= True)
     unidade_de_medida: Mapped[str | None] = mapped_column(String(50))
-    quantidade_em_estoque: Mapped[str] = mapped_column(String(100))
+    quantidade_em_estoque: Mapped[int] = mapped_column(Integer)
     categoria_do_produto: Mapped[str] = mapped_column(String(100))
     valor_de_custo: Mapped[float] = mapped_column(Float)
     valor_final: Mapped[float] = mapped_column(Float)
@@ -111,13 +107,29 @@ class produtos(Base):
 class request_produtos(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_produto: str
-    proprietario_usuario_email :EmailStr
-    unidade_de_medida : str
-    quantidade_em_estoque : str
+    proprietario_usuario :EmailStr
+    unidade_de_medida : str | None
+    quantidade_em_estoque : int
     categoria_do_produto: str
     valor_de_custo : float
     valor_final : float
-    descricao_do_produto: str
+    descricao_do_produto: str | None
+
+class reponse_produtos_usuario(request_produtos):
+    model_config = ConfigDict(from_attributes=True)
+    status_do_produto: str
+
+class reponse_produtos_fornecedor(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_produto: str
+    proprietario_fornecedor: str
+    unidade_de_medida: str | None
+    quantidade_em_estoque: int
+    categoria_do_produto: str
+    valor_de_custo: float
+    valor_final: float
+    descricao_do_produto: str | None
+    status_do_produto: str
 
 '''class servicos(Base):
     __tablename__ = 'servicos'

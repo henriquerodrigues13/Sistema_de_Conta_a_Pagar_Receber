@@ -1,4 +1,4 @@
-from backend.models.engine import Base, fornecedores
+from backend.models.engine import Base, fornecedores, produtos
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import sessionmaker
@@ -28,9 +28,9 @@ def get_session():
         db.close()
 
 def populate_db():
-    CSV_PATH = Path(__file__).parent.parent.parent / 'fornecedores.csv'
+    CSV_FORNECEDORES = Path(__file__).parent.parent.parent / 'fornecedores.csv'
 
-    with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
+    with open(CSV_FORNECEDORES, encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=";")
         linhas = list(reader)
 
@@ -60,5 +60,37 @@ def populate_db():
                 logradouro=linha.get("logradouro"),
             )
             session.add(novo)
+
+        session.commit()
+
+    CSV_PRODUTOS = Path(__file__).parent.parent.parent / 'produtos.csv'
+
+    with open(CSV_PRODUTOS, encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f, delimiter=",")
+        linhas = list(reader)
+
+    with Session(engine) as session:
+        for linha in linhas:
+            ja_existe = session.scalar(
+                select(produtos).where(
+                    produtos.nome_do_produto == linha["nome_do_produto"],
+                    produtos.proprietario_fornecedor == linha["proprietario_fornecedor"]
+                )
+            )
+
+            if ja_existe:
+                continue
+
+            novo_produto = produtos(
+                nome_do_produto= linha["nome_do_produto"],
+                proprietario_fornecedor= linha['proprietario_fornecedor'],
+                unidade_de_medida= linha["unidade_de_medida"],
+                quantidade_em_estoque= linha["quantidade_em_estoque"],
+                categoria_do_produto= linha["categoria_do_produto"],
+                valor_de_custo= linha["valor_de_custo"],
+                valor_final= linha['valor_final'],
+                descricao_do_produto= linha["descricao_do_produto"],
+            )
+            session.add(novo_produto)
 
         session.commit()

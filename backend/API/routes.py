@@ -57,13 +57,14 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     return reponsa_usuario.model_validate(novo_usuario)
 
 @router.post('/cadastro_produtos', response_model=request_produtos)
-async def cadastro_fornecedor(cadastro_produto: request_produtos,
+async def cadastro_produtos(cadastro_produto: request_produtos,
                                    session: SessionDep
                               ) -> JSONResponse | HTTPException:
     if not (email_nao_existe := session.execute(
             select(usuarios).where(usuarios.email == cadastro_produto.proprietario_usuario_email))
             .scalar_one_or_none()):
         raise HTTPException(status_code=404, detail='Usuario nao existe')
+
 
     novo_produto = produtos(
         nome_do_produto = cadastro_produto.nome_do_produto,
@@ -82,7 +83,73 @@ async def cadastro_fornecedor(cadastro_produto: request_produtos,
 
     return JSONResponse(content={'mensagem' : 'cadastrado com sucesso'}, media_type= 'text/plain')
 
+@router.get('/get_produtos_usuario/{usuario_email}', response_model=list[reponse_produtos_usuario])
+async def get_produtos_usuario(
+        usuario_email: EmailStr,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_produtos_usuario]:
 
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(produtos)
+        .where(produtos.proprietario_usuario == usuario_email))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    produtos_reponse = session.execute(
+        select(produtos)
+        .where(produtos.proprietario_usuario == usuario_email)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_produtos_usuario.model_validate(produto) for produto in produtos_reponse]
+
+@router.get('/get_produtos_fornecedor/{cnpj}', response_model=list[reponse_produtos_fornecedor])
+async def get_produtos_fornecedor(
+        fornecedor_cnpj: str,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_produtos_fornecedor]:
+
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(produtos)
+        .where(produtos.proprietario_fornecedor == fornecedor_cnpj))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    produtos_reponse = session.execute(
+        select(produtos)
+        .where(produtos.proprietario_fornecedor == fornecedor_cnpj)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_produtos_fornecedor.model_validate(produto) for produto in produtos_reponse]
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(
@@ -111,114 +178,3 @@ async def get_fornecedor(
 
     return [reponse_fornecedor.model_validate(forncedor) for forncedor in fornecedores_reponse]
 
-'''@router.post('/vendas', response_model=vendas_RESPONSE)
-async def cadastro_vendas(vendas_cadastro: vendas_REQUEST,
-                                   session: SessionDep) ->vendas_RESPONSE | HTTPException:
-    cpf_cnpj_vendendor = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_vendendor)
-    cpf_cnpj_comprador = normalizadacao_cpf_cnpj(cpf_cnpj=vendas_cadastro.cpf_cnpj_comprador)
-    if len(cpf_cnpj_vendendor) == 11:
-        cpf_vendendor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_vendendor)
-        cnpj_vendendor = None
-    else:
-        cpf_vendendor = None
-        cnpj_vendendor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_vendendor)
-
-    if len(cpf_cnpj_comprador) == 11:
-        cpf_comprador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_comprador)
-        cnpj_comprador = None
-    else:
-        cpf_comprador = None
-        cnpj_comprador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_comprador)
-
-    valor_final = vendas_cadastro.valor_venda * ((100 - vendas_cadastro.porcentagem_desconto)/100)
-
-    vendas_nova = vendas(
-        cpf_vendendor = cpf_vendendor,
-        cnpj_vendendor = cnpj_vendendor,
-        cpf_comprador = cpf_comprador,
-        cnpj_comprador = cnpj_comprador,
-        forma_pagamento = vendas_cadastro.forma_pagamento,
-        valor_venda= vendas_cadastro.valor_venda,
-        porcentagem_desconto = vendas_cadastro.porcentagem_desconto,
-        valor_final_venda = valor_final,
-    )
-
-    session.add(vendas_nova)
-    session.commit()
-    session.refresh(vendas_nova)
-
-    return vendas_RESPONSE.model_validate(vendas_nova)
-
-@router.post('/despesas', response_model=despesasResponse)
-async def cadastro_despeasas(despesas_cadastro: despesasRESQUEST,
-                                   session: SessionDep) -> despesasResponse | HTTPException:
-    cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_pagador)
-    cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=despesas_cadastro.cpf_cnpj_recebedor)
-    if len(cpf_cnpj_pagador) == 11:
-        cpf_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
-        cnpj_pagador = None
-    else:
-        cpf_pagador = None
-        cnpj_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
-
-    if len(cpf_cnpj_recebedor) == 11:
-        cpf_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
-        cnpj_recebedor = None
-    else:
-        cpf_recebedor = None
-        cnpj_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
-
-    despesas_nova = despesas(
-        cpf_pagado =cpf_pagador,
-        cnpj_pagado= cnpj_pagador,
-        cpf_recebedor =cpf_recebedor,
-        cnpj_recebedor = cnpj_recebedor,
-        valor_despesas = despesas_cadastro.valor_despesas,
-        data_evento = despesas_cadastro.data_evento,
-        tipo_de_despesa = despesas_cadastro.tipo_de_despesa,
-    )
-
-    session.add(despesas_nova)
-    session.commit()
-    session.refresh(despesas_nova)
-
-    return despesasResponse.model_validate(despesas_nova)
-
-@router.post('/receita', response_model=receitas_RESPONSE)
-async def cadastro_receitas(receita_cadastro: receitas_REQUEST,
-                                   session: SessionDep) -> receitas_RESPONSE | HTTPException:
-    cpf_cnpj_recebedor = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_recebedor)
-    cpf_cnpj_pagador = normalizadacao_cpf_cnpj(cpf_cnpj=receita_cadastro.cpf_cnpj_pagado)
-    if len(cpf_cnpj_recebedor) == 11:
-        cpf_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
-        cnpj_recebedor = None
-    else:
-        cpf_recebedor = None
-        cnpj_recebedor = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_recebedor)
-
-    if len(cpf_cnpj_pagador) == 11:
-        cpf_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
-        cnpj_pagador = None
-    else:
-        cpf_pagador = None
-        cnpj_pagador = cpf_cnpj_hash(cpf_cnpj=cpf_cnpj_pagador)
-
-    receita_nova = receita(
-        cpf_recebedor =cpf_recebedor,
-        cnpj_recebedor= cnpj_recebedor,
-        cpf_pagador =cpf_pagador,
-        cnpj_pagador = cnpj_pagador,
-        valor_receita = receita_cadastro.valor_receita,
-        data_evento_receita = receita_cadastro.data_evento_receita,
-        origem_receita = receita_cadastro.origem_receita,
-    )
-
-    session.add(receita_nova)
-    session.commit()
-    session.refresh(receita_nova)
-
-    return receitas_RESPONSE.model_validate(receita_nova)
-
-@router.post('gedador_de_relatorio')
-async def exportar_pdf(dados_gerador:dados_gerador_relatorio):
-    pass'''
