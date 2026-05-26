@@ -54,10 +54,10 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
 
     return reponsa_usuario.model_validate(novo_usuario)
 
-@router.post('/cadastro_fornecedor', response_model=reponse_fornecedor)
-async def cadastro_fornecedor(fornecedor_cadastro: cadastro_fornecedor,
-                                   session: SessionDep) -> reponse_fornecedor | HTTPException:
-    cnpj = normalizada_cnpj(cnpj=fornecedor_cadastro.cnpj)
+@router.post('/cadastro_produtos', response_model=reponse_fornecedor)
+async def cadastro_fornecedor(cadastro_produto: request_produtos,
+                                   session: SessionDep
+                              ) -> reponse_fornecedor | HTTPException:
 
     if not (cnpj_valido := validacao_cnpj(cnpj=cnpj)):
         raise HTTPException(status_code=400, detail='Cnpj não é valido')
@@ -89,7 +89,7 @@ async def cadastro_fornecedor(fornecedor_cadastro: cadastro_fornecedor,
     session.commit()
     session.refresh(novo_fornecedor)
 
-    return reponse_fornecedor.model_validate(novo_fornecedor)
+    return Js
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(
