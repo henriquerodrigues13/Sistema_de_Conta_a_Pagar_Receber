@@ -9,7 +9,7 @@ function paginaLayoutUsuario(){
 
       <ul class="menu">
         <li>
-          <button type="button" class="active" id="btn-dashboard">
+          <button type="button" id="btn-sectionDashboard" onclick="renderizarSection('sectionDashboard', event)">
             <img src="./assets/imgs/icons/casa.png" class="menu-icon" />
             Dashboard
           </button>
@@ -30,13 +30,6 @@ function paginaLayoutUsuario(){
         </li>
 
         <li>
-          <button type="button">
-            <img src="./assets/imgs/icons/cliente.png" class="menu-icon" />
-            Clientes
-          </button>
-        </li>
-
-        <li>
           <button type="button" onclick="renderizarSection('sectionFornecedor', event)" id="btn-sectionFornecedor">
             <img src="./assets/imgs/icons/fornecedor.png" class="menu-icon" />
             Fornecedores
@@ -51,6 +44,7 @@ function paginaLayoutUsuario(){
         </li>
         <li>
           <button type="button" onclick="logout()">
+            <img src="./assets/imgs/icons/saida.png" class="menu-icon" />
             Sair
           </button>
         </li>
