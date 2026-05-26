@@ -18,7 +18,7 @@ SessionDep = Annotated[Session, Depends(get_session)]
 async def login(usuario_login: login_usuario, session: SessionDep) -> reponsa_usuario:
 
     if (usuario_existe := session.execute(
-        select(usuario).where(usuario.email == usuario_login.email)
+        select(usuarios).where(usuarios.email == usuario_login.email)
     ).scalar_one_or_none()):
         if verificar_senha(senha=usuario_login.senha, hash_salvo=usuario_existe.senha):
             return reponsa_usuario.model_validate(usuario_existe)
@@ -31,12 +31,12 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
         raise HTTPException(status_code=401, detail='Email invalido')
 
     if (usario_ja_existe := session.execute(
-            select(usuario).where(usuario.email == cadastro_do_usuario.email))
+            select(usuarios).where(usuarios.email == cadastro_do_usuario.email))
             .scalar_one_or_none()):
         raise HTTPException(status_code=409, detail='Usuario ja existe')
     senha_HASH = senha_hash(senha=cadastro_do_usuario.senha)
 
-    novo_usuario = usuario(
+    novo_usuario = usuarios(
         nome_completo = cadastro_do_usuario.nome_completo,
         senha = senha_HASH,
         email = cadastro_do_usuario.email,

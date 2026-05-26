@@ -9,45 +9,45 @@ function paginaLayoutUsuario(){
 
       <ul class="menu">
         <li>
-          <a href="#" class="active">
+          <button type="button" class="active" id="btn-dashboard">
             <img src="./assets/imgs/icons/casa.png" class="menu-icon" />
             Dashboard
-          </a>
+          </button>
         </li>
 
         <li>
-          <a href="#">
+          <button type="button">
             <img src="./assets/imgs/icons/pagamento.png" class="menu-icon" />
             Contas a Pagar
-          </a>
+          </button>
         </li>
 
         <li>
-          <a href="#">
+          <button type="button">
             <img src="./assets/imgs/icons/dinheiro.png" class="menu-icon" />
             Contas a Receber
-          </a>
+          </button>
         </li>
 
         <li>
-          <a href="#">
+          <button type="button">
             <img src="./assets/imgs/icons/cliente.png" class="menu-icon" />
             Clientes
-          </a>
+          </button>
         </li>
 
         <li>
-          <a href="#">
+          <button type="button" onclick="renderizarSection('sectionFornecedor', event)" id="btn-sectionFornecedor">
             <img src="./assets/imgs/icons/fornecedor.png" class="menu-icon" />
             Fornecedores
-          </a>
+          </button>
         </li>
 
         <li>
-          <a href="#">
+          <button type="button">
             <img src="./assets/imgs/icons/relatorio.png" class="menu-icon" />
             Relatórios
-          </a>
+          </button>
         </li>
         <li>
           <button type="button" onclick="logout()">

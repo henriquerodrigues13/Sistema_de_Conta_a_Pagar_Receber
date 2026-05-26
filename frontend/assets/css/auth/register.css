@@ -27,11 +27,11 @@
 
 }
 
-.right {
+#right {
     flex: 1;
     padding: 10px 50px;
 
-    & .top {
+    & #top {
         text-align: center;
         margin-bottom: 30px;
 
@@ -64,25 +64,25 @@
         }
     }
 
-    & .form-grid {
+    & .form-grid-cadastroUsuario{
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px 40px;
     }
 
-    & .input-group {
+    & .input-group-cadastroUsuario {
         display: flex;
         flex-direction: column;
     }
 
-    & .input-group label {
+    & .input-group-cadastroUsuario label {
         font-size: 18px;
         margin-bottom: 2px;
         color: #343A40;
         font-weight: bold;
     }
 
-    & .input-group input {
+    & .input-group-cadastroUsuario input {
         background-color: #d9d9d9d2;
         height: 30px;
         border: 1px solid #000000;
@@ -93,7 +93,7 @@
         transition: 0.3s;
     }
 
-    & .security-box {
+    & #security-box {
         margin-top: 20px;
         background: #D9D9D9;
         padding: 10px 20px;
@@ -111,12 +111,12 @@
         }
     }
 
-    & .btn-area {
+    & #btn-area-cadastroUsuario  {
         display: flex;
         justify-content: center;
         margin-top: 15px;
 
-        & button {
+        & #btn-cadastrarUsuario {
             width: 60%;
             height: 50px;
             border: none;
@@ -128,7 +128,7 @@
             transition: 0.3s;
         }
 
-        & button:hover {
+        & #btn-cadastrarUsuario:hover {
             background: #e5bb3d;
         }
     }
@@ -139,7 +139,7 @@
         justify-content: center;
         margin-top: 15px;
 
-        & button{
+        & #btn-voltar{
             border: none;
             background-color: #FFFFFF;
         }
