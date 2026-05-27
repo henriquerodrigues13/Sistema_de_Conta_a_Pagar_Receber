@@ -131,6 +131,11 @@ class reponse_produtos_fornecedor(BaseModel):
     descricao_do_produto: str | None
     status_do_produto: str
 
+class delete_produto(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_produto: str
+    proprietario_fornecedor: EmailStr
+
 '''class servicos(Base):
     __tablename__ = 'servicos'
 
