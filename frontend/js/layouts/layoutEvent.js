@@ -20,6 +20,9 @@ function renderizarSection(secao, evento) {
         case 'sectionDashboard':
             section.innerHTML = paginaDashboard();
             break;
+        case 'sectionProdutosServicos':
+            section.innerHTML = paginaProdutosServicos();
+            break;
         default:
             section.innerHTML = '<p>Página não encontrada</p>';
     }

@@ -1,24 +1,65 @@
-function paginaCadastroReceita(){
-    return`
-        
-    <div class="container-cadastroReceita">
+function paginaCadastroReceita() {
+    return `
+        <div id="container-cadastroReceita">
 
-        <h1>Cadastro de Fornecedor</h1>
+        <div class="logo">
+            <img src="./assets/imgs/logo/logo.png" alt="Logo">
+        </div>
 
-        <form id="form-cadastroFornecedor">
-            <div class="form-group-cadastroFornecedor">
-                <label>CNPJ:</label>
-                <input type="text" placeholder="Digite o cnpj do fornecedor">
+        <h1>Cadastro de Receitas</h1>
+
+        <form id="form-cadastroReceita">
+            <div class="form-group">
+                <label>Tipo ou nome da receita</label>
+                <input type="text">
+            </div>
+
+            <div class="form-group">
+                <label>Email do pagador</label>
+                <input type="email">
+            </div>
+
+            <div class="form-group">
+                <label>Data de cadastro</label>
+                <input type="date">
+            </div>
+
+            <div class="form-group">
+                <label>Valor</label>
+                <input type="text">
+            </div>
+
+
+            <div class="form-group">
+                <label>Forma de Pagamento</label>
+                <select name="" id="opcoes-pagamentos">
+                    <option value="">Escolha a forma de pagamento</option>
+                    <option value="ct-credito">Cartão de credito</option>
+                    <option value="ct-debito">Cartão de debito</option>
+                    <option value="pix">Pix</option>
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="outros">outros</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Anexar documento</label>
+                <input type="file" id="files" accept=".pdf, .doc, .docx, .txt">
+            </div>
+
+            <div class="form-group-footer">
+                <label>Observação</label>
+                <input type="text">
             </div>
 
         </form>
 
-        <div class="btn-area-cadastroFornecedor">
-            <button type="button" id="btn-cadastroFornecedor">Cadastrar</button>
-        </div>
+        <button type="button">
+            Cadastrar
+        </button>
 
         <p class="voltar">
-            <button type="button" id="voltar-telaFornecedor">Voltar</button>
+            Voltar
         </p>
 
     </div>

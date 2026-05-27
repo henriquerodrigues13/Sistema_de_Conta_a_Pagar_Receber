@@ -1,0 +1,175 @@
+#container-produtoServico {
+    background-color: white;
+    width: 90%;
+    margin: 40px auto;
+    padding: 20px;
+
+    & h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    & #input-pesquisarProdutosServicos {
+        width: 98%;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    & #tabela-produtos {
+        width: 100%;
+        border-collapse: collapse;
+
+        & td,
+        tr {
+            border: #B8B8B8 solid 1px;
+        }
+
+        & td {
+            padding: 10px;
+        }
+
+        & td .opcoes-btns {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        & button {
+            border: none;
+            width: 20px;
+            height: 20px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        & img {
+            width: 100%;
+            height: 100%;
+        }
+
+        & #cabecalho-tabela-produtos {
+            background-color: #333;
+            color: white;
+
+            & th {
+                padding: 10px;
+                text-align: left;
+                border: #B8B8B8 solid 1px;
+            }
+
+            & td {
+                padding: 10px;
+                border: 1px solid #B8B8B8;
+            }
+
+        }
+    }
+
+
+
+    & #tabela-servicos {
+        width: 100%;
+        border-collapse: collapse;
+
+        & td,
+        tr {
+            border: #B8B8B8 solid 1px;
+        }
+
+        & td {
+            padding: 10px;
+        }
+
+        & td .opcoes-btns {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        & button {
+            border: none;
+            width: 20px;
+            height: 20px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        & img {
+            width: 100%;
+            height: 100%;
+        }
+
+        & #cabecalho-tabela-servicos {
+            background-color: #333;
+            color: white;
+
+            & th {
+                padding: 10px;
+                text-align: left;
+                border: #B8B8B8 solid 1px;
+            }
+
+            & td {
+                padding: 10px;
+                border: 1px solid #B8B8B8;
+            }
+
+        }
+    }
+
+    & #baixo-sectionProdutosServicos {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+
+        & p {
+            background-color: #ffc107;
+            padding: 10px;
+            margin: 0;
+            font-weight: bold;
+        }
+    }
+
+    & #btn-adicionarProduto {
+        background-color: #ffc107;
+        border: none;
+        padding: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    & #btn-adicionarServico {
+        background-color: #ffc107;
+        border: none;
+        padding: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+#paginacao-produtosServicos {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+
+    & .paginas {
+        border: #333 solid 1px;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+    }
+
+    & button {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+
+        & img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}

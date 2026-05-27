@@ -76,7 +76,6 @@ function renderizarTabelaReceita(receitas) {
         const divOpcoes = document.createElement('div');
         divOpcoes.className = 'opcoes-btns';
 
-        // BOTÃO EDITAR COM IMAGEM
         const btnEditar = document.createElement('button');
         const imgEditar = document.createElement('img');
         imgEditar.src = './assets/imgs/icons/lapis.png';
@@ -86,7 +85,6 @@ function renderizarTabelaReceita(receitas) {
         btnEditar.title = 'Editar receita';
         btnEditar.onclick = () => editarReceita(receita.id);
  
-        // BOTÃO REMOVER COM IMAGEM
         const btnRemover = document.createElement('button');
         const imgRemover = document.createElement('img');
         imgRemover.src = './assets/imgs/icons/lixeira.png';
@@ -95,8 +93,7 @@ function renderizarTabelaReceita(receitas) {
         btnRemover.className = 'btn-remover';
         btnRemover.title = 'Remover receita';
         btnRemover.onclick = () => removerReceita(receita.id);
- 
-        // BOTÃO VER NF COM IMAGEM
+
         const btnVerNf = document.createElement('button');
         const imgVerNf = document.createElement('img');
         imgVerNf.src = './assets/imgs/icons/taxa.png';

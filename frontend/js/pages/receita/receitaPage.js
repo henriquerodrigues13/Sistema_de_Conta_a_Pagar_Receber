@@ -34,7 +34,7 @@ function paginaReceita(){
         </div>
 
         <div id="baixo-sectionReceita">
-            <button type="button" id="btn-adicionarReceita">+ Cadastrar Receita</button>
+            <button type="button" id="btn-adicionarReceita" onclick="renderizarPagina('cadastroReceita')">+ Cadastrar Receita</button>
             <p id="total-receitas">Total de Receitas: <span id="span-total">0</span></p>
         </div>
 
