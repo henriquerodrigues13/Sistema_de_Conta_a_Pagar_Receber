@@ -54,13 +54,13 @@ function paginaCadastroReceita() {
 
         </form>
 
-        <button type="button">
+        <button type="button" id="cadastrarReceita">
             Cadastrar
         </button>
 
-        <p class="voltar">
+        <button id="voltar-layout" onclick="renderizarPagina('usuarioLayout')">
             Voltar
-        </p>
+        </button>
 
     </div>
     `
