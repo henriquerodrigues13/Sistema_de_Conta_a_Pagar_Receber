@@ -1,4 +1,4 @@
-async function carregarFornecedores(pagina = 1) {
+async function carregarReceitas(pagina = 1) {
     try {
         const carregando = document.getElementById('carregando');
         if (carregando) carregando.style.display = 'block';
@@ -16,7 +16,7 @@ async function carregarFornecedores(pagina = 1) {
             return;
         }
 
-        const fornecedores = await response.json();
+        const receitas = await response.json();
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
 
@@ -25,7 +25,7 @@ async function carregarFornecedores(pagina = 1) {
             spanTotal.textContent = total;
         }
 
-        renderizarTabelaFornecedor(fornecedores);
+        renderizarTabelaReceita(receitas);
         renderizarPaginacao(pagina, totalPages);
     } catch (error) {
         console.log(error.message)
@@ -36,46 +36,104 @@ async function carregarFornecedores(pagina = 1) {
     }
 }
 
-function renderizarTabelaFornecedor(fornecedores) {
-    const tabela = document.getElementById('tabela-fornecedor');
+function renderizarTabelaReceita(receitas) {
+    const tabela = document.getElementById('tabela-receita');
 
 
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhasExistentes = tbody.querySelectorAll('tr');
     linhasExistentes.forEach(linha => linha.remove());
 
-    if (fornecedores.length === 0) {
+    if (receitas.length === 0) {
         renderizarTabelaVazia();
         return;
     }
 
-    fornecedores.forEach(fornecedor => {
+    receitas.forEach(receita => {
         const tr = document.createElement('tr');
-        const tabela = document.getElementById('tabela-fornecedor');
 
         const td1 = document.createElement('td');
-        td1.textContent = fornecedor.nome_oficial_empresa || '-';
+        td1.textContent = receita.id || '-';
 
         const td2 = document.createElement('td');
-        td2.textContent = fornecedor.cnpj || '-';
+        td2.textContent = receita.tipo || '-';
+
+         const td3 = document.createElement('td');
+        td3.textContent = receita.email || '-';
+ 
+        const td4 = document.createElement('td');
+        td4.textContent = receita.valor || '-';
+ 
+        const td5 = document.createElement('td');
+        td5.textContent = receita.forma_de_pagamento || '-';
+ 
+        const td6 = document.createElement('td');
+        td6.textContent = receita.data || '-';
+
+        const td7 = document.createElement('td');
+
+
+        const divOpcoes = document.createElement('div');
+        divOpcoes.className = 'opcoes-btns';
+
+        // BOTÃO EDITAR COM IMAGEM
+        const btnEditar = document.createElement('button');
+        const imgEditar = document.createElement('img');
+        imgEditar.src = './assets/imgs/icons/lapis.png';
+        imgEditar.alt = 'Editar';
+        btnEditar.appendChild(imgEditar);
+        btnEditar.className = 'btn-editar';
+        btnEditar.title = 'Editar receita';
+        btnEditar.onclick = () => editarReceita(receita.id);
+ 
+        // BOTÃO REMOVER COM IMAGEM
+        const btnRemover = document.createElement('button');
+        const imgRemover = document.createElement('img');
+        imgRemover.src = './assets/imgs/icons/lixeira.png';
+        imgRemover.alt = 'Remover';
+        btnRemover.appendChild(imgRemover);
+        btnRemover.className = 'btn-remover';
+        btnRemover.title = 'Remover receita';
+        btnRemover.onclick = () => removerReceita(receita.id);
+ 
+        // BOTÃO VER NF COM IMAGEM
+        const btnVerNf = document.createElement('button');
+        const imgVerNf = document.createElement('img');
+        imgVerNf.src = './assets/imgs/icons/taxa.png';
+        imgVerNf.alt = 'Ver NF';
+        btnVerNf.appendChild(imgVerNf);
+        btnVerNf.className = 'btn-ver-nf';
+        btnVerNf.title = 'Ver Nota Fiscal';
+        btnVerNf.onclick = () => verNota(receita.id);
+
+        divOpcoes.appendChild(btnEditar);
+        divOpcoes.appendChild(btnRemover);
+        divOpcoes.appendChild(btnVerNf);
+
+        td7.appendChild(divOpcoes);
 
         tr.appendChild(td1);
         tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(td6);
+        tr.appendChild(td7);
 
         tbody.appendChild(tr);
     });
 }
 
 function renderizarTabelaVazia() {
-    const tabela = document.getElementById('tabela-fornecedor');
+    const tabela = document.getElementById('tabela-receita');
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhas = tbody.querySelectorAll('tr');
     linhas.forEach(linha => linha.remove());
 
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 2;
-    td.textContent = 'Nenhum fornecedor encontrado';
+    td.colSpan = 7;
+    td.textContent = 'Nenhuma receita encontrada';
     td.style.textAlign = 'center';
     td.style.padding = '20px';
     td.style.color = 'black';
@@ -85,7 +143,7 @@ function renderizarTabelaVazia() {
 }
 
 function renderizarPaginacao(paginaAtual, totalPaginas) {
-    const paginacao = document.getElementById('paginacao');
+    const paginacao = document.getElementById('paginacao-receita');
     const btnProximo = document.getElementById('btn-proximaPagina');
     const btnAnterior = document.getElementById('btn-anteriorPagina');
 
@@ -96,7 +154,7 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
         btnProximo.onclick = null;
         btnProximo.onclick = () => {
             if (paginaAtual < totalPaginas) {
-                carregarFornecedores(paginaAtual + 1);
+                carregarReceitas(paginaAtual + 1);
             }
         };
         if (paginaAtual >= totalPaginas) {
@@ -112,7 +170,7 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
         btnAnterior.onclick = null;
         btnAnterior.onclick = () => {
             if (paginaAtual > 1) {
-                carregarFornecedores(paginaAtual - 1);
+                carregarReceitas(paginaAtual - 1);
             }
         };
         if (paginaAtual === 1) {
@@ -130,3 +188,17 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
     }
 }
 
+// function editarReceita(id) {
+//     console.log('Editar receita:', id);
+//     // Implementar lógica de edição
+// }
+ 
+// function removerReceita(id) {
+//     console.log('Remover receita:', id);
+//     // Implementar lógica de remoção
+// }
+ 
+// function verNota(id) {
+//     console.log('Ver nota fiscal:', id);
+//     // Implementar lógica para visualizar nota
+// }

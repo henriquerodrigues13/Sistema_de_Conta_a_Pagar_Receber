@@ -13,9 +13,9 @@ function renderizarSection(secao, evento) {
     }
 
     switch (secao) {
-        case 'sectionFornecedor':
-            section.innerHTML = paginaFornecedor();
-            setTimeout(() => carregarFornecedores(1), 1000);
+        case 'sectionReceita':
+            section.innerHTML = paginaReceita();
+            setTimeout(() => carregarReceitas(1), 1000);
             break;
         case 'sectionDashboard':
             section.innerHTML = paginaDashboard();

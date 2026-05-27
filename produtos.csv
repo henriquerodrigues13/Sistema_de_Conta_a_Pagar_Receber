@@ -4,7 +4,7 @@ Gasolina Aditivada,33000167000101,litro,50000,Combustíveis,3.8,5.99,Gasolina ad
 Medidor Inteligente,03467321000199,unidade,2000,Equipamentos,180.0,350.0,Medidor de energia inteligente para monitoramento remoto
 Poste de Distribuição,02016440000162,unidade,300,Infraestrutura,800.0,1500.0,Poste de concreto para distribuição de energia
 Transformador 15kVA,02429144000193,unidade,150,Equipamentos,2500.0,4800.0,Transformador trifásico 15kVA para rede de distribuição
-Kit Instalação Solar,00864214000106,400,Energia Solar,3200.0,6500.0,Kit completo para instalação de painel solar residencial
+Kit Instalação Solar,00864214000106,unidade,400,Energia Solar,3200.0,6500.0,Kit completo para instalação de painel solar residencial
 Cabo de Alta Tensão 50mm,17155730000164,metro,10000,Cabos e Fios,18.0,35.0,Cabo de alumínio 50mm para alta tensão
 Disjuntor Trifásico 100A,76483817000120,unidade,800,Equipamentos Elétricos,95.0,189.0,Disjuntor trifásico 100A para proteção de circuitos
 Etanol Hidratado,50746577000115,litro,60000,Combustíveis,2.1,3.89,Etanol hidratado de cana-de-açúcar

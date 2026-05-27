@@ -1,5 +1,5 @@
-function paginaLayoutUsuario(){
-    return`
+function paginaLayoutUsuario() {
+  return `
         <div id="usuarioLayout">
     <aside class="sidebar">
       <div class="marcaagua"></div>
@@ -23,16 +23,16 @@ function paginaLayoutUsuario(){
         </li>
 
         <li>
-          <button type="button">
+          <button type="button" onclick="renderizarSection('sectionReceita', event)">
             <img src="./assets/imgs/icons/dinheiro.png" class="menu-icon" />
             Contas a Receber
           </button>
         </li>
 
         <li>
-          <button type="button" onclick="renderizarSection('sectionFornecedor', event)" id="btn-sectionFornecedor">
+          <button type="button" id="btn-sectionEstoque">
             <img src="./assets/imgs/icons/fornecedor.png" class="menu-icon" />
-            Fornecedores
+            Estoque
           </button>
         </li>
 

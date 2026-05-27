@@ -1,4 +1,4 @@
-#container-fornecedor {
+#container-receita {
     background-color: white;
     width: 90%;
     margin: 40px auto;
@@ -10,13 +10,13 @@ h2 {
     margin-bottom: 10px;
 }
 
-#input-pesquisarFornecedor {
+#input-pesquisarReceita {
     width: 98%;
     padding: 10px;
     margin-bottom: 15px;
 }
 
-#tabela-fornecedor {
+#tabela-receita {
     width: 100%;
     border-collapse: collapse;
 
@@ -27,9 +27,27 @@ h2 {
     & td{
         padding: 10px;
     }
+
+    & td .opcoes-btns{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    & button{
+        border: none;
+        width: 20px;
+        height: 20px;
+        background-color: #FFFFFF;
+        cursor: pointer;
+    }
+
+    & img{
+        width: 100%;
+        height: 100%;
+    }
 }
 
-#cabecalho-tabela-fornecedor {
+#cabecalho-tabela-receita {
     background-color: #333;
     color: white;
 
@@ -46,27 +64,28 @@ h2 {
 
 }
 
-#baixo-sectionFornecedor {
+#baixo-sectionReceita {
     margin-top: 25px;
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
 }
 
-#btn-adicionarFornecedor {
+#btn-adicionarReceita {
     background-color: #ffc107;
     border: none;
     padding: 10px;
     font-weight: bold;
+    cursor: pointer;
 }
 
-#baixo-sectionFornecedor p {
+#baixo-sectionReceita p {
     background-color: #ffc107;
     padding: 10px;
     margin: 0;
     font-weight: bold;
 }
 
-#paginacao{
+#paginacao-receita{
     width: 100%;
     display: flex;
     align-items: center;
