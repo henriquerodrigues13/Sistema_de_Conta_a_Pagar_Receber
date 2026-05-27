@@ -64,6 +64,7 @@ async function fazerLogin() {
             if (response.ok) {
                 const usuario = await response.json();
                 localStorage.setItem('usuario', usuario.nome_completo);
+                localStorage.setItem('email', email);
                 renderizarPagina('usuarioLayout');
             } else if (response.status == 404) {
                 const erro = await response.json();
