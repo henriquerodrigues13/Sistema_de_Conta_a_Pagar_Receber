@@ -10,6 +10,18 @@
 
 [ ] Rotas de lançamentos (receita, despesas, vendas) ainda comentadas: marcar como "não implementadas" até ativadas (Manual/Integração)
 
+[x] POST /cadastro_produtos: sucesso vinculado a usuário existente; erro 404 se usuário não existe (Integração)
+
+[x] GET /get_produtos_usuario: retorna lista paginada de produtos do usuário (Integração)
+
+[ ] GET /get_produtos_fornecedor: rota existe mas depende de fornecedor; testes só quando fluxo de fornecedor estiver ativo (Integração futura)
+
+[x] DELETE /delete_produto: marca produto como indisponível (Integração)
+
+[x] PATCH /update_produto: atualiza dados do produto; erro 400 se payload vazio (Integração)
+
+[ ] GET /get_fornecedor: rota existe mas depende de dados de fornecedor; testes só quando fluxo estiver ativo (Integração futura)
+
 ## 2. Regras de Negócio e Validações
 [x] Criptografia: senha_hash e verificar_senha em backend/API/criptografia.py (Unitário)
 
@@ -27,30 +39,22 @@
 [ ] DB de teste isolado: usar sqlite:///./test_cpr.sqlite ou in-memory; garantir limpeza após testes (Fixture)
 
 ## 4. Frontend → Backend (E2E / Interface)
-[x] Fluxo cadastro + login (Happy Path): validar status 200 e campos retornados (E2E)
+[ ] Fluxo cadastro + login (Happy Path): via frontend estático (frontend/index.html) com Playwright (E2E futura)
 
-[x] Unhappy Path login: senha incorreta retorna 401 e frontend exibe mensagem (E2E)
-
-[ ] Testes E2E com frontend estático (frontend/index.html) via Playwright/Cypress (E2E)
+[ ] Unhappy Path login: senha incorreta retorna 401 e frontend exibe mensagem (E2E futura)
 
 [ ] Fluxo de lançamento de receita/despesa com CNPJ inexistente → abertura de ticket (E2E futura)
 
-5. Notas de Segurança e Práticas de Teste
+## 5. Notas de Segurança e Práticas de Teste
 [x] API key não usada em testes — sempre mockar requests.get e mover chave para .env em produção
 
 [ ] Testes de isolamento de ambiente (venv + DB temporário)
 
 [ ] Limpeza de backups criados por testes que tocam filesystem
 
-6. Novos Testes Recomendados
-[x] Cadastro de produto vinculado a usuário existente (Integração)
-
-[x] Cadastro de produto com usuário inexistente (404) (Integração)
-
+## 6. Novos Testes Recomendados
 [ ] Testes de carga (stress test básico) para API de login/cadastro
 
 [ ] Testes de concorrência: múltiplos cadastros simultâneos
 
 [ ] Testes de fluxo de ticket quando CNPJ não encontrado em receitas/despesas (Integração futura)
-
-[ ] Cobertura de CI/CD: rodar testes automáticos em pipeline
