@@ -30,8 +30,8 @@ function paginaLayoutUsuario() {
         </li>
 
         <li>
-          <button type="button" id="btn-sectionEstoque">
-            <img src="./assets/imgs/icons/fornecedor.png" class="menu-icon" />
+          <button type="button" onclick="renderizarSection('sectionProdutosServicos', event)">
+            <img src="./assets/imgs/icons/armazem.png" class="menu-icon" />
             Produtos e Serviços
           </button>
         </li>
