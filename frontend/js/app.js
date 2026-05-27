@@ -16,6 +16,9 @@ function renderizarPagina(pagina) {
             app.innerHTML = paginaLayoutUsuario();
             renderizarSection('sectionDashboard');
             break;
+        case 'cadastroReceita':
+            app.innerHTML = paginaCadastroReceita();
+            break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }

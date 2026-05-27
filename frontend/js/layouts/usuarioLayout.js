@@ -32,7 +32,7 @@ function paginaLayoutUsuario() {
         <li>
           <button type="button" id="btn-sectionEstoque">
             <img src="./assets/imgs/icons/fornecedor.png" class="menu-icon" />
-            Estoque
+            Produtos e Serviços
           </button>
         </li>
 
