@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from starlette.responses import JSONResponse
-
 from backend.models.database import get_session
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update
 from typing import Annotated
 
 from backend.models.engine import reponse_fornecedor
@@ -58,17 +57,17 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
 
 @router.post('/cadastro_produtos', response_model=request_produtos)
 async def cadastro_produtos(cadastro_produto: request_produtos,
-                                   session: SessionDep
-                              ) -> JSONResponse | HTTPException:
+                            session: SessionDep
+                            ) -> JSONResponse | HTTPException:
     if not (email_nao_existe := session.execute(
-            select(usuarios).where(usuarios.email == cadastro_produto.proprietario_usuario_email))
+            select(usuarios).where(usuarios.email == cadastro_produto.proprietario_usuario))
             .scalar_one_or_none()):
         raise HTTPException(status_code=404, detail='Usuario nao existe')
 
 
     novo_produto = produtos(
         nome_do_produto = cadastro_produto.nome_do_produto,
-        proprietario_usuario =  cadastro_produto.proprietario_usuario_email,
+        proprietario_usuario =  cadastro_produto.proprietario_usuario,
         unidade_de_medida = cadastro_produto.unidade_de_medida,
         quantidade_em_estoque = cadastro_produto.quantidade_em_estoque,
         categoria_do_produto = cadastro_produto.categoria_do_produto,
@@ -150,6 +149,21 @@ async def get_produtos_fornecedor(
     ).scalars().all()
 
     return [reponse_produtos_fornecedor.model_validate(produto) for produto in produtos_reponse]
+
+@router.delete("/delete_produto/{usuario_email}/{nome_do_produto}", response_model=delete_produto,
+               responses={404: {"description": "Produto não encontrado."}})
+async def deletar_produto(usuario_email: str,
+                          nome_do_produto: str,
+                          session: SessionDep) -> JSONResponse | HTTPException:
+    if produto := (session.execute(update(produtos).where(produtos.proprietario_usuario == usuario_email,
+                                                          produtos.nome_do_produto == nome_do_produto)
+                                                          .values(status_do_produto='indisponivel', produto_deletado=True))):
+
+        session.commit()
+
+        return JSONResponse(content={'mensagem' : f'o produto {nome_do_produto} foi deletado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="Produto não encontrado.")
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(
