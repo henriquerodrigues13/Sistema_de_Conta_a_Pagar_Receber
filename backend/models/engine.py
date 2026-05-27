@@ -119,10 +119,11 @@ class reponse_produtos_usuario(request_produtos):
     model_config = ConfigDict(from_attributes=True)
     status_do_produto: str
 
+
 class reponse_produtos_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_produto: str
-    proprietario_fornecedor: str
+    proprietario_fornecedor: EmailStr
     unidade_de_medida: str | None
     quantidade_em_estoque: int
     categoria_do_produto: str
@@ -130,6 +131,17 @@ class reponse_produtos_fornecedor(BaseModel):
     valor_final: float
     descricao_do_produto: str | None
     status_do_produto: str
+
+class patch_produto(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_produto: str | None = None
+    unidade_de_medida: str | None = None
+    quantidade_em_estoque: int | None = None
+    categoria_do_produto: str | None = None
+    valor_de_custo: float | None = None
+    valor_final: float | None = None
+    descricao_do_produto: str | None = None
+    status_do_produto: str | None = None
 
 class delete_produto(BaseModel):
     model_config = ConfigDict(from_attributes=True)

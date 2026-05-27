@@ -152,7 +152,7 @@ async def get_produtos_fornecedor(
 
 @router.delete("/delete_produto/{usuario_email}/{nome_do_produto}", response_model=delete_produto,
                responses={404: {"description": "Produto não encontrado."}})
-async def deletar_produto(usuario_email: str,
+async def deletar_produto(usuario_email: EmailStr,
                           nome_do_produto: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
     if produto := (session.execute(update(produtos).where(produtos.proprietario_usuario == usuario_email,
@@ -164,6 +164,29 @@ async def deletar_produto(usuario_email: str,
         return JSONResponse(content={'mensagem' : f'o produto {nome_do_produto} foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Produto não encontrado.")
+
+
+@router.patch("/update_produto/{usuario_email}/{nome_do_produto}", response_model=patch_produto,
+              responses={404: {"description": "produto não encontrado."},
+                         400: {"description": "Nenhum dado válido enviado para atualização."}})
+async def atualizar_produto(usuario_email: EmailStr, nome_do_produto: str,
+                            produto_update: patch_produto, session: SessionDep) -> JSONResponse:
+    update_data = produto_update.model_dump(exclude_unset=True, exclude_none=True)
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
+
+    if livro := session.scalar(select(produtos).where(produtos.proprietario_usuario == usuario_email,
+                                                    produtos.nome_do_produto == nome_do_produto)):
+        for key, value in update_data.items():
+            setattr(livro, key, value)
+
+        session.commit()
+        session.refresh(livro)
+
+        return JSONResponse(content={'mensagem' : f'o produto foi atualizado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="Livro não encontrado.")
 
 @router.get('/get_fornecedor', response_model=list[reponse_fornecedor])
 async def get_fornecedor(
