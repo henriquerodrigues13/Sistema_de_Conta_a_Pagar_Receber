@@ -33,3 +33,8 @@ function obterNomeUsuario() {
     const usuario = localStorage.getItem('usuario');
     return usuario ? usuario : 'Usuário';
 }
+
+function obterEmailUsuario() {
+    const emailUsuario = localStorage.getItem('email');
+    return emailUsuario ? emailUsuario : 'Null';
+}
