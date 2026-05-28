@@ -233,19 +233,19 @@ async def cadastro_servico(cadastro_do_servico: request_servico,
                             session: SessionDep
                             ) -> JSONResponse | HTTPException:
     if not (email_nao_existe := session.execute(
-            select(usuarios).where(usuarios.email == cadastro_do_servico.prestador_servico_usuario))
+            select(usuarios).where(usuarios.email == cadastro_do_servico.prestador_do_servico_usuario))
             .scalar_one_or_none()):
         raise HTTPException(status_code=404, detail='Usuario nao existe')
 
     if (produto_ja_existe := session.execute(
-            select(servicos).where(servicos.prestador_do_servico_usuario == cadastro_do_servico.prestador_servico_usuario,
+            select(servicos).where(servicos.prestador_do_servico_usuario == cadastro_do_servico.prestador_do_servico_usuario,
                                    servicos.nome_do_servico == cadastro_do_servico.nome_do_servico))
             .scalar_one_or_none()):
         raise HTTPException(status_code=409, detail='produto ja existe')
 
     novo_servico = servicos(
         nome_do_servico = cadastro_do_servico.nome_do_servico,
-        prestador_do_servico_usuario = cadastro_do_servico.prestador_servico_usuario,
+        prestador_do_servico_usuario = cadastro_do_servico.prestador_do_servico_usuario,
         descricao_do_servico = cadastro_do_servico.descricao_do_servico,
         valor_do_servico = cadastro_do_servico.valor_do_servico,
         categoria_do_servico = cadastro_do_servico.categoria_do_servico
@@ -294,7 +294,7 @@ async def get_servico_usuario(
     return [reponse_servicos.model_validate(servico) for servico in servico_reponse]
 
 @router.patch("/update_servico/{usuario_email}/{nome_do_servico}", response_model=patch_servico,
-              responses={404: {"description": "produto não encontrado."},
+              responses={404: {"description": "serviço não encontrado."},
                          400: {"description": "Nenhum dado válido enviado para atualização."}})
 async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
                             servico_update: patch_servico, session: SessionDep) -> JSONResponse:
@@ -303,13 +303,13 @@ async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
     if not update_data:
         raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
 
-    if servico := session.scalar(select(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
-                                                    servicos.nome_do_servico == nome_do_servico)):
+    if servico := session.execute(select(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
+                                                    servicos.nome_do_servico == nome_do_servico)).scalar_one_or_none():
         for key, value in update_data.items():
             setattr(servico, key, value)
 
         session.commit()
-
+        session.refresh(servico)
         return JSONResponse(content={'mensagem' : f'o servico : {nome_do_servico} foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")

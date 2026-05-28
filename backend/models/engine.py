@@ -209,7 +209,7 @@ class patch_servico(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_servico: str | None = None
     descricao_do_servico: str | None = None
-    valor_de_servico: float | None = None
+    valor_do_servico: float | None = None
     categoria_do_servico: str | None = None
 
 class delete_servico(BaseModel):
