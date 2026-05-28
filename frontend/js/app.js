@@ -19,6 +19,9 @@ function renderizarPagina(pagina) {
         case 'cadastroReceita':
             app.innerHTML = paginaCadastroReceita();
             break;
+        case 'cadastroProduto':
+            app.innerHTML = paginaCadastroProduto();
+            break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }
