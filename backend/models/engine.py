@@ -101,7 +101,7 @@ class produtos(Base):
     valor_de_custo: Mapped[float] = mapped_column(Float)
     valor_final: Mapped[float] = mapped_column(Float)
     descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
-    status_do_produto: Mapped[str] = mapped_column(String(100), default= 'disponível')
+    status_do_produto: Mapped[str] = mapped_column(String(100), default= 'ativo')
     produto_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     usuario_produtos : Mapped['usuarios'] = relationship(

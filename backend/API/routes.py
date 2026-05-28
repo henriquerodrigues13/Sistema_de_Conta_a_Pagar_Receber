@@ -121,7 +121,8 @@ async def get_produtos_usuario(
     produtos_reponse = session.execute(
         select(produtos)
         .where(produtos.proprietario_usuario == usuario_email,
-               produtos.status_do_produto == 'ativo')
+               produtos.status_do_produto == 'ativo',
+               produtos.produto_deletado == False)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -285,7 +286,7 @@ async def get_servico_usuario(
     servico_reponse = session.execute(
         select(servicos)
         .where(servicos.prestador_do_servico_usuario == usuario_email,
-               servicos.servico_deletado == 'ativo')
+               servicos.servico_deletado == False)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
