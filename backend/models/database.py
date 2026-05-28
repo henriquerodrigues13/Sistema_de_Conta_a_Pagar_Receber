@@ -1,4 +1,4 @@
-from backend.models.engine import Base, fornecedores, produtos
+from backend.models.engine import Base, fornecedores, produtos, servicos
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import sessionmaker
@@ -28,7 +28,7 @@ def get_session():
         db.close()
 
 def populate_db():
-    CSV_FORNECEDORES = Path(__file__).parent.parent.parent / 'fornecedores.csv'
+    CSV_FORNECEDORES = Path(__file__).parent.parent.parent / 'dados' /'fornecedores.csv'
 
     with open(CSV_FORNECEDORES, encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f, delimiter=";")
@@ -63,7 +63,7 @@ def populate_db():
 
         session.commit()
 
-    CSV_PRODUTOS = Path(__file__).parent.parent.parent / 'produtos.csv'
+    CSV_PRODUTOS = Path(__file__).parent.parent.parent / 'dados'/ 'produtos.csv'
 
     with open(CSV_PRODUTOS, encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f, delimiter=",")
@@ -94,3 +94,32 @@ def populate_db():
             session.add(novo_produto)
 
         session.commit()
+
+        CSV_SERVICOS = Path(__file__).parent.parent.parent / 'dados' / 'servicos.csv'
+
+        with open(CSV_SERVICOS, encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f, delimiter=",")
+            linhas = list(reader)
+
+        with Session(engine) as session:
+            for linha in linhas:
+                ja_existe = session.scalar(
+                    select(servicos).where(
+                        servicos.nome_do_servico == linha["nome_do_servico"],
+                        servicos.prestador_do_servico_fornecedor == linha["prestador_do_servico_fornecedor"]
+                    )
+                )
+
+                if ja_existe:
+                    continue
+
+                novo_servico = servicos(
+                    nome_do_servico= linha["nome_do_servico"],
+                    prestador_do_servico_fornecedor= linha['prestador_do_servico_fornecedor'],
+                    descricao_do_servico= linha["descricao_do_servico"],
+                    valor_do_servico= linha["valor_do_servico"],
+                    categoria_do_servico= linha["categoria_do_servico"]
+                )
+                session.add(novo_servico)
+
+            session.commit()

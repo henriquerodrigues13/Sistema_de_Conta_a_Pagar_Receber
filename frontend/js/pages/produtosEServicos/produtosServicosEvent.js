@@ -1,4 +1,3 @@
-// ✅ FUNÇÃO AUXILIAR: Obter elemento com segurança
 function obterElemento(id) {
     const elemento = document.getElementById(id);
     if (!elemento) {
@@ -39,9 +38,18 @@ async function carregarProdutos(pagina = 1) {
 
         renderizarTabelaProdutos(produtosUsuario);
         renderizarPaginacao(pagina, totalPages, 'produtos');
+
+        const tabelaProdutos = obterElemento('tabela-produtos');
+        if (tabelaProdutos) tabelaProdutos.style.display = 'table';
+
+        const paginacao = obterElemento('paginacao-produtosServicos');
+        if (paginacao) paginacao.style.display = 'flex';
+
     } catch (error) {
         console.log(error.message)
         renderizarTabelaVaziaProdutos();
+        const tabelaProdutos = obterElemento('tabela-produtos');
+        if (tabelaProdutos) tabelaProdutos.style.display = 'table';
     } finally {
         const carregando = obterElemento('carregando-produtos');
         if (carregando) carregando.style.display = 'none';
@@ -80,9 +88,18 @@ async function carregarServicos(pagina = 1) {
  
         renderizarTabelaServicos(servicosUsuario);
         renderizarPaginacao(pagina, totalPages, 'servicos');
+
+        const tabelaServicos = obterElemento('tabela-servicos');
+        if (tabelaServicos) tabelaServicos.style.display = 'table';
+
+        const paginacao = obterElemento('paginacao-produtosServicos');
+        if (paginacao) paginacao.style.display = 'flex';
+
     } catch (error) {
         console.log(error.message)
         renderizarTabelaVaziaServicos();
+        const tabelaServicos = obterElemento('tabela-servicos');
+        if (tabelaServicos) tabelaServicos.style.display = 'table';
     } finally {
         const carregando = obterElemento('carregando-servicos');
         if (carregando) carregando.style.display = 'none';
@@ -90,132 +107,55 @@ async function carregarServicos(pagina = 1) {
 }
 
 function alternaTabela(nomeTabela) {
-
     const tabelaProdutos = obterElemento('tabela-produtos');
     const tabelaServicos = obterElemento('tabela-servicos');
-
     const carregandoProdutos = obterElemento('carregando-produtos');
     const carregandoServicos = obterElemento('carregando-servicos');
-
     const totalProdutos = obterElemento('total-produtos');
     const totalServicos = obterElemento('total-servicos');
-
     const btnAdicionarProduto = obterElemento('btn-adicionarProduto');
     const btnAdicionarServico = obterElemento('btn-adicionarServico');
-
     const inputPesquisa = obterElemento('input-pesquisarProdutosServicos');
-
     const paginacao = obterElemento('paginacao-produtosServicos');
-
     const opcoesTabelas = obterElemento('opcoes-tabelas');
+    const botoes = opcoesTabelas ? opcoesTabelas.querySelectorAll('button') : [];
 
-    const botoes = opcoesTabelas
-        ? opcoesTabelas.querySelectorAll('button')
-        : [];
-
-    // ✅ Remove classe ativo
     botoes.forEach(botao => {
         botao.classList.remove('ativo');
     });
 
-    // ✅ Sempre esconder paginação ao trocar tabela
-    if (paginacao) {
-        paginacao.style.display = 'none';
-    }
+    if (tabelaProdutos) tabelaProdutos.style.display = 'none';
+    if (tabelaServicos) tabelaServicos.style.display = 'none';
+    if (paginacao) paginacao.style.display = 'none';
 
-    // =========================
-    // PRODUTOS
-    // =========================
     if (nomeTabela === 'tabelaProdutos') {
-
-        tabelaProdutos.style.display = 'table';
-        tabelaServicos.style.display = 'none';
-
-        if (carregandoProdutos) {
-            carregandoProdutos.style.display = 'block';
-        }
-
-        if (carregandoServicos) {
-            carregandoServicos.style.display = 'none';
-        }
-
-        if (totalProdutos) {
-            totalProdutos.style.display = 'block';
-        }
-
-        if (totalServicos) {
-            totalServicos.style.display = 'none';
-        }
-
-        if (btnAdicionarProduto) {
-            btnAdicionarProduto.style.display = 'inline-block';
-        }
-
-        if (btnAdicionarServico) {
-            btnAdicionarServico.style.display = 'none';
-        }
-
-        // ✅ Placeholder produtos
+        if (carregandoProdutos) carregandoProdutos.style.display = 'block';
+        if (carregandoServicos) carregandoServicos.style.display = 'none';
+        if (totalProdutos) totalProdutos.style.display = 'block';
+        if (totalServicos) totalServicos.style.display = 'none';
+        if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'inline-block';
+        if (btnAdicionarServico) btnAdicionarServico.style.display = 'none';
         if (inputPesquisa) {
             inputPesquisa.placeholder = 'Pesquisar produtos';
             inputPesquisa.value = '';
         }
-
-        // ✅ Ativa botão
-        if (botoes[0]) {
-            botoes[0].classList.add('ativo');
-        }
-
-        // ✅ Carrega produtos
+        if (botoes[0]) botoes[0].classList.add('ativo');
         setTimeout(() => {
             carregarProdutos(1);
         }, 500);
     }
-
-    // =========================
-    // SERVIÇOS
-    // =========================
     else if (nomeTabela === 'tabelaServicos') {
-
-        tabelaProdutos.style.display = 'none';
-        tabelaServicos.style.display = 'table';
-
-        if (carregandoProdutos) {
-            carregandoProdutos.style.display = 'none';
-        }
-
-        if (carregandoServicos) {
-            carregandoServicos.style.display = 'block';
-        }
-
-        if (totalProdutos) {
-            totalProdutos.style.display = 'none';
-        }
-
-        if (totalServicos) {
-            totalServicos.style.display = 'block';
-        }
-
-        if (btnAdicionarProduto) {
-            btnAdicionarProduto.style.display = 'none';
-        }
-
-        if (btnAdicionarServico) {
-            btnAdicionarServico.style.display = 'inline-block';
-        }
-
-        // ✅ Placeholder serviços
+        if (carregandoProdutos) carregandoProdutos.style.display = 'none';
+        if (carregandoServicos) carregandoServicos.style.display = 'block';
+        if (totalProdutos) totalProdutos.style.display = 'none';
+        if (totalServicos) totalServicos.style.display = 'block';
+        if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'none';
+        if (btnAdicionarServico) btnAdicionarServico.style.display = 'inline-block';
         if (inputPesquisa) {
             inputPesquisa.placeholder = 'Pesquisar serviços';
             inputPesquisa.value = '';
         }
-
-        // ✅ Ativa botão
-        if (botoes[1]) {
-            botoes[1].classList.add('ativo');
-        }
-
-        // ✅ Carrega serviços
+        if (botoes[1]) botoes[1].classList.add('ativo');
         setTimeout(() => {
             carregarServicos(1);
         }, 500);
@@ -402,7 +342,6 @@ function renderizarTabelaVaziaServicos() {
     tbody.appendChild(tr);
 }
 
-// ✅ FUNÇÃO MELHORADA: Renderizar paginação com suporte a produtos e serviços
 function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     const paginacao = obterElemento('paginacao-produtosServicos');
     
@@ -416,7 +355,6 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
 
     paginacao.style.display = 'flex';
 
-    // ✅ Função auxiliar para determinar qual carregar
     function carregarProximaPagina() {
         if (paginaAtual < totalPaginas) {
             if (tipo === 'servicos') {
@@ -437,7 +375,6 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
         }
     }
 
-    // ✅ Botão próxima página
     if (btnProximo) {
         btnProximo.onclick = null;
         btnProximo.onclick = carregarProximaPagina;
@@ -451,7 +388,6 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
         }
     }
 
-    // ✅ Botão página anterior
     if (btnAnterior) {
         btnAnterior.onclick = null;
         btnAnterior.onclick = carregarPaginaAnterior;
@@ -465,9 +401,102 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
         }
     }
 
-    // ✅ Atualizar texto da página
     const spanPagina = obterElemento('span-pagina');
     if (spanPagina) {
         spanPagina.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
+    }
+}
+
+async function removerProduto(nomeProduto) {
+    const confirmar = confirm(
+        `Deseja realmente remover o produto "${nomeProduto}"?`
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    const emailUsuario = obterEmailUsuario();
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/delete_produto/${emailUsuario}/${encodeURIComponent(nomeProduto)}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            const erro = await response.json();
+
+            if (response.status === 404) {
+                alert('❌ Produto não encontrado');
+            } else {
+                alert(
+                    `❌ Erro ${response.status}: ${
+                        erro.detail || 'Erro desconhecido'
+                    }`
+                );
+            }
+
+            return;
+        }
+
+        alert(`✅ Produto "${nomeProduto}" removido com sucesso`);
+        carregarProdutos(1);
+
+    } catch (error) {
+        console.error('Erro ao remover produto:', error);
+        alert(`❌ Erro ao remover produto: ${error.message}`);
+    }
+}
+
+async function removerServico(nomeServico) {
+    const confirmar = confirm(
+        `Deseja realmente remover o serviço "${nomeServico}"?`
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    const emailUsuario = obterEmailUsuario();
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/delete_servico/${emailUsuario}/${encodeURIComponent(nomeServico)}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            const erro = await response.json();
+
+            if (response.status === 404) {
+                alert('❌ Serviço não encontrado');
+            } else {
+                alert(
+                    `❌ Erro ${response.status}: ${
+                        erro.detail || 'Erro desconhecido'
+                    }`
+                );
+            }
+
+            return;
+        }
+
+        alert(`✅ Serviço "${nomeServico}" removido com sucesso`);
+        carregarServicos(1);
+
+    } catch (error) {
+        console.error('Erro ao remover serviço:', error);
+        alert(`❌ Erro ao remover serviço: ${error.message}`);
     }
 }
