@@ -1,4 +1,5 @@
 import pytest
+import requests
 from unittest.mock import patch, MagicMock
 from pydantic import ValidationError
 
@@ -46,3 +47,17 @@ def test_api_rejeita_payload_invalido_com_http_422(client):
     }
     response = client.post("/cadastro_usuario", json=payload_com_erro)
     assert response.status_code == 422
+
+def test_validacao_email_erro_http():
+    """
+    Testa que quando há erro de conexão, a função retorna False
+    em vez de deixar a exceção explodir (graceful degradation).
+    """
+    patch.stopall()
+    with patch.object(validacoes_modulo, "requests") as mock_requests:
+        mock_requests.post.side_effect = Exception("Timeout na conexão")
+
+        resultado = validacao_email("pedro.teste@ufpa.br")
+        
+        # O código trata a exceção e retorna False
+        assert resultado is False
