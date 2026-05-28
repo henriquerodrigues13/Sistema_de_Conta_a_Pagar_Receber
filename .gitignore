@@ -191,7 +191,6 @@ local/
 *.local
 
 # Data files (se houver dados sensíveis)
-data/
 *.xlsx
 *.xls
 *.db

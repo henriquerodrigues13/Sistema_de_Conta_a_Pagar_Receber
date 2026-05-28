@@ -22,7 +22,11 @@ function renderizarSection(secao, evento) {
             break;
         case 'sectionProdutosServicos':
             section.innerHTML = paginaProdutosServicos();
+<<<<<<< HEAD
             setTimeout(() => carregarProdutos(1), 1000);
+=======
+            alternaTabela('tabelaProdutos');
+>>>>>>> f40f0a205b27cef1b93735be253a9cb94bdc65bf
             break;
         default:
             section.innerHTML = '<p>Página não encontrada</p>';

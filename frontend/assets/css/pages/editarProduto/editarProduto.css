@@ -1,0 +1,110 @@
+#container-editarProdutos {
+  width: 60%;
+  height: 100%;
+  background: #f4f4f4;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin: auto;
+
+  & .logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  & h1 {
+    text-align: center;
+    margin-bottom: 35px;
+    color: #333;
+    font-size: 38px;
+  }
+
+  & #form-editarProduto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+    & .campo {
+      display: flex;
+      flex-direction: column;
+
+      & label {
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #444;
+      }
+
+      & input,
+      textarea {
+        padding: 12px;
+        border: 1px solid #888;
+        border-radius: 8px;
+        background: #ddd;
+        outline: none;
+        font-size: 15px;
+      }
+
+      & select {
+        padding: 12px;
+        border: 1px solid #888;
+        border-radius: 8px;
+        background: #ddd;
+        outline: none;
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      & textarea {
+        resize: none;
+        height: 80px;
+      }
+
+      & .full {
+        grid-column: 1 / 3;
+      }
+
+      & .categorias {
+        height: 140px;
+      }
+    }
+
+    & .botoes {
+      grid-column: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+      gap: 15px;
+
+      & #btn-editarProduto {
+        width: 250px;
+        height: 50px;
+        border: none;
+        border-radius: 14px;
+        background: #ffc400;
+        font-size: 26px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      & #btn-cadastrarProduto:hover {
+        background: #e6b000;
+      }
+
+      & #voltar-telaProdutoServico {
+        border: #333 solid 1px;
+        padding: 2px;
+        cursor: pointer;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
+}

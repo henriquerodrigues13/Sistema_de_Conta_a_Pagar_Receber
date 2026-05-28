@@ -26,7 +26,7 @@ async function carregarReceitas(pagina = 1) {
         }
 
         renderizarTabelaReceita(receitas);
-        renderizarPaginacao(pagina, totalPages);
+        renderizarPaginacaoReceita(pagina, totalPages);
     } catch (error) {
         console.log(error.message)
         renderizarTabelaVazia();
@@ -139,7 +139,7 @@ function renderizarTabelaVazia() {
     tbody.appendChild(tr);
 }
 
-function renderizarPaginacao(paginaAtual, totalPaginas) {
+function renderizarPaginacaoReceita(paginaAtual, totalPaginas) {
     const paginacao = document.getElementById('paginacao-receita');
     const btnProximo = document.getElementById('btn-proximaPagina');
     const btnAnterior = document.getElementById('btn-anteriorPagina');
