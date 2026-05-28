@@ -184,7 +184,7 @@ class servicos(Base):
 class request_servico(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_servico: str
-    prestador_servico_usuario: EmailStr
+    prestador_do_servico_usuario: EmailStr
     descricao_do_servico: str
     valor_do_servico: float
     categoria_do_servico: str
@@ -200,7 +200,7 @@ class reponse_servicos(BaseModel):
 class reponse_servicos_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_servico: str
-    prestador_servico_usuario: EmailStr
+    prestador_do_servico_fornecedor: str
     descricao_do_servico: str
     valor_do_servico: float
     categoria_do_servico: str

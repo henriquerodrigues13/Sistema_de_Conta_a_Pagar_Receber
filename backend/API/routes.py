@@ -328,3 +328,37 @@ async def deletar_servico(usuario_email: EmailStr,
         return JSONResponse(content={'mensagem' : f'o servico: {nome_do_servico} foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
+
+@router.get('/get_servicos_fornecedor/{cnpj}', response_model=list[reponse_servicos_fornecedor])
+async def get_servicos_fornecedor(
+        fornecedor_cnpj: str,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_servicos_fornecedor]:
+
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(servicos)
+        .where(servicos.prestador_do_servico_fornecedor == fornecedor_cnpj))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    servicos_reponse = session.execute(
+        select(servicos)
+        .where(servicos.prestador_do_servico_fornecedor == fornecedor_cnpj)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_servicos_fornecedor.model_validate(servico) for servico in servicos_reponse]

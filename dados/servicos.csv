@@ -1,0 +1,97 @@
+nome_do_servico,prestador_do_servico_fornecedor,descricao_do_servico,valor_do_servico,categoria_do_servico
+Conta Corrente Empresarial,00000000000191,Conta corrente para PJ com gestão de fluxo de caixa e internet banking,89.9,Serviços Bancários
+Fornecimento de GNL Industrial,33000167000101,Fornecimento de gás natural liquefeito para indústrias com contrato de longo prazo,12500.0,Energia
+Lubrificantes Industriais Petrobras,33000167000101,Fornecimento de lubrificantes especializados para máquinas e equipamentos industriais,3800.0,Energia
+Energia Elétrica em Alta Tensão,00001180000126,Fornecimento de energia em alta tensão para grandes consumidores industriais,45000.0,Energia Elétrica
+Consultoria em Eficiência Energética,00001180000126,"Análise, diagnóstico e otimização do consumo energético empresarial",8500.0,Consultoria
+Distribuição de Energia Elétrica MT,03467321000199,Serviço de distribuição de energia elétrica no Mato Grosso para consumidores rurais e urbanos,2300.0,Energia Elétrica
+Distribuição de Energia Elétrica RS,02016440000162,Fornecimento e distribuição de energia elétrica no Rio Grande do Sul,1950.0,Energia Elétrica
+Geração de Energia Solar CPFL,02429144000193,"Projeto, instalação e operação de usina fotovoltaica para empresas e indústrias",120000.0,Energia Solar
+Manutenção de Infraestrutura Elétrica,02429144000193,Manutenção preventiva e corretiva de redes de distribuição e infraestrutura elétrica,7500.0,Manutenção
+Conexão de Unidade Consumidora,00864214000106,Serviço de ligação e conexão de nova unidade à rede de distribuição de energia,3200.0,Energia Elétrica
+Mercado Livre de Energia CEMIG,17155730000164,Fornecimento de energia elétrica no mercado livre para grandes consumidores em MG,38000.0,Energia Elétrica
+Vistoria de Instalações Elétricas,17155730000164,Inspeção técnica e laudo de instalações elétricas prediais e industriais,1200.0,Inspeção
+Fornecimento de Energia Elétrica PR,76483817000120,Distribuição de energia elétrica no Paraná para consumidores residenciais e industriais,2700.0,Energia Elétrica
+Fornecimento de Água Industrial,43776517000180,Fornecimento de água tratada para uso industrial no estado de São Paulo,5600.0,Saneamento
+Coleta e Tratamento de Esgoto,43776517000180,"Serviço de coleta, transporte e tratamento de esgoto sanitário para empresas",3200.0,Saneamento
+Comercialização de Energia Hidrelétrica,04128563000110,Comercialização de energia de origem hidrelétrica no mercado livre para empresas,28000.0,Energia Elétrica
+Distribuição de Combustíveis a Granel,50746577000115,Fornecimento e logística de combustíveis para frotas empresariais e postos revendedores,95000.0,Combustíveis
+Biocombustível Corporativo Raízen,08070508000178,Fornecimento de etanol e biocombustíveis para empresas com gestão de frota,42000.0,Combustíveis
+Bioeletricidade para Indústrias,08070508000178,Geração e fornecimento de bioeletricidade a partir do bagaço de cana-de-açúcar,18500.0,Energia
+Distribuição de GLP Industrial,33256439000139,"Fornecimento e distribuição de GLP para uso industrial, comercial e residencial",15000.0,Combustíveis
+Logística Ferroviária de Cargas Vale,33592510000154,Transporte de cargas pesadas por modal ferroviário nas malhas da Vale,75000.0,Logística Ferroviária
+Fornecimento de Minério de Ferro,33592510000154,"Extração, beneficiamento e entrega de minério de ferro com 65% de pureza",320000.0,Mineração
+Processamento de Sucata Metálica,33611500000119,"Coleta, triagem e reciclagem de sucata metálica industrial",28000.0,Reciclagem
+Corte e Dobra de Aço Estrutural,33611500000119,Serviço de corte e dobra de barras de aço para construção civil sob medida,12500.0,Aço e Metais
+Fornecimento de Aço Plano CSN,33042730000104,Laminação e entrega de aço plano para indústria automotiva e de eletrodomésticos,145000.0,Aço e Metais
+Serviço de Galvanização Usiminas,60894730000105,Galvanização de chapas e estruturas metálicas para proteção contra corrosão,35000.0,Aço e Metais
+Consultoria Metalúrgica,60894730000105,Análise e especificação técnica de materiais metálicos para projetos industriais,9800.0,Consultoria
+Fornecimento de Resinas Termoplásticas,42150391000170,Fornecimento de polipropileno e polietileno para indústria plástica e embalagens,85000.0,Petroquímica
+Fornecimento de Celulose Suzano,16404287000155,"Celulose branqueada de eucalipto para produção de papel, tecido e embalagens sustentáveis",95000.0,Papel e Celulose
+Consultoria em Gestão Florestal,16404287000155,Planejamento e manejo sustentável de áreas de reflorestamento de eucalipto,22000.0,Consultoria Ambiental
+Gestão de Folha de Pagamento Itaú,60701190000104,Processamento e pagamento automatizado de folha salarial empresarial,450.0,Serviços Bancários
+Câmbio Corporativo Itaú,60701190000104,Operações de câmbio para importação e exportação corporativa com hedge cambial,1200.0,Câmbio
+Seguros Empresariais Bradesco,60746948000112,Pacote de seguros para empresas com cobertura de patrimônio e responsabilidade civil,3500.0,Seguros
+Gestão do FGTS Empresarial,00360305000104,Processamento e gestão de recolhimento do FGTS dos funcionários da empresa,120.0,Serviços Bancários
+Maquininha POS Santander,90400888000142,Terminal de pagamento com chip e NFC para estabelecimentos comerciais com tarifas competitivas,89.0,Pagamentos
+Gestão de Patrimônio BTG,30306294000145,Gestão de investimentos e patrimônio para empresas e pessoas físicas de alta renda,5000.0,Gestão de Patrimônio
+Previdência Privada XP,02332886000104,PGBL e VGBL com gestão ativa e passiva para planejamento de aposentadoria,500.0,Previdência
+Cartão Corporativo Nubank,18236120000158,Cartão de crédito corporativo com gestão de despesas em tempo real pelo app,49.0,Pagamentos
+Custódia de Valores Mobiliários,09346601000125,Guarda e administração centralizada de títulos e valores mobiliários,1500.0,Mercado de Capitais
+Seguro Auto Porto Seguro,61198164000160,"Seguro completo para veículos com cobertura de colisão, roubo e assistência 24h",2800.0,Seguros
+Seguro Residencial Porto Seguro,61198164000160,"Proteção residencial completa contra incêndio, roubo e danos elétricos",890.0,Seguros
+Plano de Saúde Empresarial SulAmérica,29978814000187,Plano de saúde coletivo empresarial com rede credenciada nacional e cobertura odontológica,650.0,Saúde
+Fornecimento de Bebidas para Eventos,07526557000100,Fornecimento de bebidas em larga escala para eventos corporativos e festivais,18500.0,Bebidas
+Locação de Chopeiras Ambev,07526557000100,"Locação, instalação e manutenção de chopeiras para bares e restaurantes parceiros",350.0,Equipamentos
+Exportação de Cortes Bovinos Marfrig,03853896000140,Processamento e exportação de cortes bovinos para mercados internacionais com rastreabilidade,380000.0,Alimentos
+Massas e Biscoitos para Varejo,07206816000115,"Fornecimento de massas, biscoitos e farinha para distribuidoras e redes de supermercados",32000.0,Alimentos
+Grãos Embalados para Supermercados,64904295000103,"Distribuição de arroz, feijão e outros grãos embalados para redes varejistas",25000.0,Alimentos
+Magalu Ads,47960950000121,Serviço de publicidade e mídia paga dentro da plataforma Magazine Luiza para fornecedores,1500.0,Publicidade
+Fulfillment Americanas,00776574000156,Serviço de armazenagem e fulfillment para vendedores do marketplace Americanas,2200.0,Logística
+Espaço Promocional GPA,47508411000156,Aluguel de espaço em gôndolas e pontos extras nas lojas do Grupo Pão de Açúcar,4500.0,Varejo
+Publicidade In-Store Carrefour,45543915000181,"Mídia dentro das lojas Carrefour: totens, TVs, displays e materiais de PDV",8900.0,Publicidade
+Mercado Envios Full,03007331000141,Fulfillment do Mercado Livre com armazenagem nos CDs e envio automático ao comprador,30.0,Logística
+Mercado Pago Para Empresas,03007331000141,"Solução de pagamentos com maquininha, link de pagamento e checkout para e-commerce",99.0,Pagamentos
+Farmácia Corporativa RD,61585865000151,Programa de benefício farmacêutico para funcionários com desconto na rede Raia e Drogasil,250.0,Saúde
+Franquia Arezzo,16590234000176,Modelo de franquia para abertura de loja da marca Arezzo com treinamento e suporte completo,120000.0,Franquia
+MRO de Aeronaves Embraer,07689002000189,"Manutenção, reparo e revisão (MRO) de aeronaves comerciais e executivas Embraer",480000.0,Aviação
+Treinamento de Pilotos Embraer,07689002000189,Capacitação e habilitação de pilotos em simuladores full-flight de aeronaves Embraer,35000.0,Treinamento
+Manutenção de Motores Elétricos WEG,84429695000111,"Reparo, rebobinagem e manutenção preventiva de motores elétricos industriais WEG",8500.0,Manutenção Industrial
+Automação Industrial WEG,84429695000111,Projeto e implantação de sistemas de automação com inversores de frequência e CLPs WEG,45000.0,Automação
+ERP TOTVS Protheus,53113791000122,Licença e implantação do sistema ERP Protheus para gestão empresarial integrada,15000.0,Software
+Suporte Técnico TOTVS,53113791000122,Atendimento técnico mensal para sistemas TOTVS com SLA de resposta garantido,3200.0,Suporte TI
+Internet Fibra Empresarial Vivo,02558157000162,Conexão de internet por fibra óptica dedicada com SLA de uptime e IP fixo,1800.0,Telecomunicações
+PABX em Nuvem Vivo,02558157000162,"Telefonia empresarial em nuvem com ramais virtuais, URA e gravação de chamadas",950.0,Telecomunicações
+Plano Corporativo TIM,02421421000111,Plano de telefonia móvel corporativo com dados ilimitados para frotas de funcionários,30.0,Telecomunicações
+IoT Corporativo Claro,40432544000147,"Conectividade IoT para rastreamento de ativos, telemetria e monitoramento remoto de frota",2500.0,Telecomunicações
+Cloud Empresarial Claro,40432544000147,"Computação em nuvem, backup automático e hospedagem gerenciada para empresas",4200.0,Cloud
+Banda Larga Empresarial Oi,76535764000143,Internet banda larga para pequenas empresas com suporte técnico incluso e roteador gerenciado,350.0,Telecomunicações
+Computadores Corporativos Positivo,81243735000148,Fornecimento de notebooks e desktops para empresas com garantia on-site estendida,3200.0,Tecnologia
+Suporte de TI Positivo,81243735000148,Manutenção preventiva e corretiva de equipamentos de informática com contrato anual,1500.0,Suporte TI
+Plano de Saúde Coletivo Hapvida,63554067000198,Plano empresarial com hospitais e clínicas próprias no Nordeste e interior do Brasil,420.0,Saúde
+Telemedicina Hapvida,63554067000198,Consultas médicas online para beneficiários com acesso 24h pelo aplicativo Hapvida,80.0,Saúde Digital
+Medicamentos para Hospitais Hypera,02932074000191,"Distribuição de medicamentos de referência para hospitais, clínicas e farmácias",75000.0,Farmacêutico
+Exames Laboratoriais Corporativos,60840055000131,Programa de exames periódicos para funcionários com coleta on-site e resultado digital,280.0,Diagnóstico
+Medicina Ocupacional Fleury,60840055000131,"Exames admissionais, periódicos e demissionais com emissão de ASO e relatórios PCMSO",190.0,Saúde Ocupacional
+Plano Odontológico Empresarial,58119199000151,"Benefício odontológico com cobertura de consultas, limpeza, restaurações e emergências",89.0,Saúde
+Educação Corporativa Cogna,02800026000140,Capacitação e treinamento corporativo com cursos presenciais e EAD para equipes,1200.0,Educação
+Plataforma EAD Cogna,02800026000140,Licença de LMS educacional para universidades corporativas e instituições de ensino,8500.0,EdTech
+Graduação EAD Estácio,08807432000110,Graduação a distância em diversas áreas com tutoria online e material didático digital,650.0,Educação
+Transporte Ferroviário de Grãos,02387241000160,Transporte de grãos do Centro-Oeste ao porto de Santos por malha ferroviária Rumo,120000.0,Logística Ferroviária
+Pedágio Eletrônico EcoRodovias,04149454000180,Sistema de pedágio automático para frotas com fatura mensal consolidada por CNPJ,450.0,Infraestrutura
+Transporte de Cargas Especiais,04149454000180,Coordenação logística para transporte de cargas indivisíveis e perigosas em rodovias,18000.0,Logística
+Transporte Rodoviário de Cargas JSL,52548435000179,Transporte de cargas fracionadas e lotação em todo o território nacional,35000.0,Logística
+Aluguel de Frota Movida,21314559000166,"Locação de frota para empresas com gestão integrada, telemetria e manutenção inclusa",1800.0,Locação de Veículos
+Gestão de Frotas Localiza,16670085000155,Terceirização completa de frota corporativa com rastreamento GPS e relatórios gerenciais,2500.0,Locação de Veículos
+Aluguel Avulso de Veículos Localiza,16670085000155,Locação diária ou semanal de veículos para viagens corporativas em todo o Brasil,220.0,Locação de Veículos
+Embalagens de Papelão Klabin,89637490000145,Embalagens personalizadas de papelão ondulado e caixas para indústrias e e-commerce,42000.0,Embalagens
+Papel Kraft Industrial Klabin,89637490000145,Fornecimento de papel kraft em bobinas para uso industrial e confecção de embalagens,28000.0,Papel e Celulose
+Amenidades Natura para Hospedagem,71673990000177,Linha de amenidades Natura para hotéis e pousadas com produtos 100% sustentáveis,8500.0,Cosméticos
+Bem-Estar Corporativo Natura,71673990000177,Programa de bem-estar para empresas com kits de produtos de cuidado pessoal Natura,3200.0,Bem-Estar
+Passagens Corporativas GOL,06164253000187,Programa de tarifas corporativas GOL com gestão centralizada de viagens aéreas,980.0,Aviação
+GOL Cargo,06164253000187,Serviço de carga aérea expressa em todo o Brasil via malha de voos da GOL,4500.0,Logística Aérea
+Azul Empresas,09305994000129,Tarifas especiais para empresas com acesso a destinos regionais exclusivos da malha Azul,850.0,Aviação
+Azul Cargo Express,09305994000129,Entrega expressa de encomendas por modal aéreo com rastreamento online em tempo real,3800.0,Logística Aérea
+Locação Comercial Iguatemi,51218147000193,Aluguel de lojas e quiosques em shopping centers premium da rede Iguatemi,25000.0,Imóveis Comerciais
+Manutenção de Ônibus Marcopolo,88611835000129,"Revisão, reparo e fornecimento de peças originais para carrocerias de ônibus Marcopolo",22000.0,Transporte
+Ônibus Especiais Sob Encomenda,88611835000129,Fabricação de ônibus rodoviários e urbanos com especificações customizadas pelo cliente,580000.0,Transporte
