@@ -19,10 +19,10 @@ async function carregarProdutos(pagina = 1) {
         }
 
         const produtosUsuario = await response.json();
+        console.log(produtosUsuario);
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
 
-        // ✅ CORRIGIDO: usar ID único
         const spanTotal = document.getElementById('span-total-produtos');
         if (spanTotal) {
             spanTotal.textContent = total;
@@ -46,7 +46,7 @@ async function carregarServicos(pagina = 1) {
         const carregando = document.getElementById('carregando-servicos');
         if (carregando) carregando.style.display = 'block';
  
-        const response = await fetch(`${API_BASE_URL}/get_servicos_usuario/${emailUsuario}?page=${pagina}`, {
+        const response = await fetch(`${API_BASE_URL}/get_servico_usuario/${emailUsuario}?page=${pagina}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -60,10 +60,10 @@ async function carregarServicos(pagina = 1) {
         }
  
         const servicosUsuario = await response.json();
+        console.log(servicosUsuario);
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
  
-        // ✅ Atualizar o total de serviços
         const spanTotal = document.getElementById('span-total-servicos');
         if (spanTotal) {
             spanTotal.textContent = total;
@@ -81,27 +81,40 @@ async function carregarServicos(pagina = 1) {
 }
 
 function alternaTabela(nomeTabela) {
-    // Obtém as tabelas
     const tabelaProdutos = document.getElementById('tabela-produtos');
     const tabelaServicos = document.getElementById('tabela-servicos');
     
-    // Obtém os botões das abas
     const botoes = document.querySelectorAll('#opcoes-tabelas button');
     
-    // ✅ Verifica se os elementos existem
     if (!tabelaProdutos || !tabelaServicos) {
         console.error('Elementos das tabelas não encontrados');
         return;
     }
     
-    // Limpa o estado ativo de todos os botões
     botoes.forEach(botao => botao.classList.remove('ativo'));
+    
+    function limparMensagensVazias(tabela) {
+        if (!tabela) return;
+        const tbody = tabela.querySelector('tbody') || tabela;
+        const linhas = tbody.querySelectorAll('tr');
+        
+        linhas.forEach(linha => {
+            const td = linha.querySelector('td');
+            if (td && td.colSpan === 7 && 
+                (td.textContent.includes('Nenhum produto') || 
+                 td.textContent.includes('Nenhum serviço'))) {
+                linha.remove();
+            }
+        });
+    }
     
     // Mostra/esconde as tabelas e seus carregadores
     if (nomeTabela === 'tabelaProdutos') {
-        // ✅ Mostra tabela de Produtos
         tabelaProdutos.style.display = 'table';
         tabelaServicos.style.display = 'none';
+        
+        limparMensagensVazias(tabelaProdutos);
+        limparMensagensVazias(tabelaServicos);
         
         const carregandoProdutos = document.getElementById('carregando-produtos');
         const carregandoServicos = document.getElementById('carregando-servicos');
@@ -121,16 +134,16 @@ function alternaTabela(nomeTabela) {
         if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'inline-block';
         if (btnAdicionarServico) btnAdicionarServico.style.display = 'none';
         
-        // ✅ Marca o botão de Produtos como ativo
         botoes[0].classList.add('ativo');
         
-        // ✅ Carrega os produtos
-        carregarProdutos(1);
+        setTimeout(() => carregarProdutos(1), 1000);
         
     } else if (nomeTabela === 'tabelaServicos') {
-        // ✅ Mostra tabela de Serviços
         tabelaProdutos.style.display = 'none';
         tabelaServicos.style.display = 'table';
+        
+        limparMensagensVazias(tabelaProdutos);
+        limparMensagensVazias(tabelaServicos);
         
         const carregandoProdutos = document.getElementById('carregando-produtos');
         const carregandoServicos = document.getElementById('carregando-servicos');
@@ -150,18 +163,15 @@ function alternaTabela(nomeTabela) {
         if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'none';
         if (btnAdicionarServico) btnAdicionarServico.style.display = 'inline-block';
         
-        // ✅ Marca o botão de Serviços como ativo
         botoes[1].classList.add('ativo');
         
-        // ✅ Carrega os serviços
-        carregarServicos(1);
+        setTimeout(() => carregarServicos(1), 1000);
     }
 }
 
 function renderizarTabelaProdutos(produtosUsuario) {
     const tabela = document.getElementById('tabela-produtos');
     
-    // ✅ Verifica se existe
     if (!tabela) {
         console.error('Elemento #tabela-produtos não encontrado');
         return;
