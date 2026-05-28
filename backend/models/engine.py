@@ -28,6 +28,11 @@ class usuarios(Base):
         foreign_keys="[produtos.proprietario_usuario]"
     )
 
+    servicos_do_usuario : Mapped[list['servicos']] = relationship(
+        back_populates='usuario_servicos',
+        foreign_keys="[servicos.prestador_do_servico_usuario]"
+    )
+
 class cadastro_usuario(BaseModel):
     nome_completo: str
     senha: str
@@ -72,6 +77,11 @@ class fornecedores(Base):
         foreign_keys="[produtos.proprietario_fornecedor]"
     )
 
+    servicos_do_fornecedor: Mapped[list['servicos']] = relationship(
+        back_populates='fornecedor_servicos',
+        foreign_keys='[servicos.prestador_do_servico_fornecedor]'
+    )
+
 class reponse_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cnpj: str
@@ -91,7 +101,7 @@ class produtos(Base):
     valor_de_custo: Mapped[float] = mapped_column(Float)
     valor_final: Mapped[float] = mapped_column(Float)
     descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
-    status_do_produto: Mapped[str] = mapped_column(String(100), default= 'disponível')
+    status_do_produto: Mapped[str] = mapped_column(String(100), default= 'ativo')
     produto_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     usuario_produtos : Mapped['usuarios'] = relationship(
@@ -123,13 +133,13 @@ class reponse_produtos_usuario(request_produtos):
 class reponse_produtos_fornecedor(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_produto: str
-    proprietario_fornecedor: EmailStr
-    unidade_de_medida: str | None
+    proprietario_fornecedor: str
+    unidade_de_medida: str
     quantidade_em_estoque: int
     categoria_do_produto: str
     valor_de_custo: float
     valor_final: float
-    descricao_do_produto: str | None
+    descricao_do_produto: str
     status_do_produto: str
 
 class patch_produto(BaseModel):
@@ -148,34 +158,66 @@ class delete_produto(BaseModel):
     nome_do_produto: str
     proprietario_fornecedor: EmailStr
 
-'''class servicos(Base):
+class servicos(Base):
     __tablename__ = 'servicos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
-    nome_do_servic: Mapped[str] = mapped_column(String(100), index=True)
-    prestador_do_servico_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    prestador_do_servico_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'),index=True)
+    nome_do_servico: Mapped[str] = mapped_column(String(100), index=True)
+    prestador_do_servico_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'),index=True)
+    prestador_do_servico_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'),index=True)
     descricao_do_servico: Mapped[str | None] = mapped_column(String(500))
     valor_do_servico: Mapped[float] = mapped_column(Float)
     categoria_do_servico: Mapped[str] = mapped_column(String(100))
-    servico_deletado: Mapped[bool] = mapped_column(Boolean)
+    servico_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
-    usuario_servico : Mapped['usuarios'] = relationship(
+    usuario_servicos : Mapped['usuarios'] = relationship(
         back_populates='servicos_do_usuario',
         foreign_keys=[prestador_do_servico_usuario]
     )
 
-class (BaseModel):
+    fornecedor_servicos : Mapped['fornecedores'] = relationship(
+        back_populates='servicos_do_fornecedor',
+        foreign_keys=[prestador_do_servico_fornecedor]
+    )
+
+class request_servico(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    cpf_cnpj_vendendor: str
-    cpf_cnpj_comprador: str
-    forma_pagamento: str
-    valor_venda: float
-    porcentagem_desconto: float
+    nome_do_servico: str
+    prestador_servico_usuario: EmailStr
+    descricao_do_servico: str
+    valor_do_servico: float
+    categoria_do_servico: str
 
+class reponse_servicos(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_servico: str
+    prestador_do_servico_usuario: EmailStr
+    descricao_do_servico: str
+    valor_do_servico: float
+    categoria_do_servico: str
 
-class despesas(Base):
+class reponse_servicos_fornecedor(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_servico: str
+    prestador_servico_usuario: EmailStr
+    descricao_do_servico: str
+    valor_do_servico: float
+    categoria_do_servico: str
+
+class patch_servico(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_servico: str | None = None
+    descricao_do_servico: str | None = None
+    valor_de_servico: float | None = None
+    categoria_do_servico: str | None = None
+
+class delete_servico(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    nome_do_servico : str
+    prestador_do_servico_usuario : EmailStr
+
+'''class despesas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)

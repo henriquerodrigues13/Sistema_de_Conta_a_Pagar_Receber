@@ -1,8 +1,17 @@
+// ✅ FUNÇÃO AUXILIAR: Obter elemento com segurança
+function obterElemento(id) {
+    const elemento = document.getElementById(id);
+    if (!elemento) {
+        console.warn(`⚠️ Elemento com ID "${id}" não encontrado`);
+    }
+    return elemento;
+}
+
 async function carregarProdutos(pagina = 1) {
     const emailUsuario = obterEmailUsuario();
 
     try {
-        const carregando = document.getElementById('carregando-produtos');
+        const carregando = obterElemento('carregando-produtos');
         if (carregando) carregando.style.display = 'block';
 
         const response = await fetch(`${API_BASE_URL}/get_produtos_usuario/${emailUsuario}?page=${pagina}`, {
@@ -19,22 +28,22 @@ async function carregarProdutos(pagina = 1) {
         }
 
         const produtosUsuario = await response.json();
+        console.log(produtosUsuario);
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
 
-        // ✅ CORRIGIDO: usar ID único
-        const spanTotal = document.getElementById('span-total-produtos');
+        const spanTotal = obterElemento('span-total-produtos');
         if (spanTotal) {
             spanTotal.textContent = total;
         }
 
         renderizarTabelaProdutos(produtosUsuario);
-        renderizarPaginacao(pagina, totalPages);
+        renderizarPaginacao(pagina, totalPages, 'produtos');
     } catch (error) {
         console.log(error.message)
         renderizarTabelaVaziaProdutos();
     } finally {
-        const carregando = document.getElementById('carregando-produtos');
+        const carregando = obterElemento('carregando-produtos');
         if (carregando) carregando.style.display = 'none';
     }
 }
@@ -43,10 +52,10 @@ async function carregarServicos(pagina = 1) {
     const emailUsuario = obterEmailUsuario();
  
     try {
-        const carregando = document.getElementById('carregando-servicos');
+        const carregando = obterElemento('carregando-servicos');
         if (carregando) carregando.style.display = 'block';
  
-        const response = await fetch(`${API_BASE_URL}/get_servicos_usuario/${emailUsuario}?page=${pagina}`, {
+        const response = await fetch(`${API_BASE_URL}/get_servico_usuario/${emailUsuario}?page=${pagina}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -60,112 +69,163 @@ async function carregarServicos(pagina = 1) {
         }
  
         const servicosUsuario = await response.json();
+        console.log(servicosUsuario);
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
  
-        // ✅ Atualizar o total de serviços
-        const spanTotal = document.getElementById('span-total-servicos');
+        const spanTotal = obterElemento('span-total-servicos');
         if (spanTotal) {
             spanTotal.textContent = total;
         }
  
         renderizarTabelaServicos(servicosUsuario);
-        renderizarPaginacao(pagina, totalPages);
+        renderizarPaginacao(pagina, totalPages, 'servicos');
     } catch (error) {
         console.log(error.message)
         renderizarTabelaVaziaServicos();
     } finally {
-        const carregando = document.getElementById('carregando-servicos');
+        const carregando = obterElemento('carregando-servicos');
         if (carregando) carregando.style.display = 'none';
     }
 }
 
 function alternaTabela(nomeTabela) {
-    // Obtém as tabelas
-    const tabelaProdutos = document.getElementById('tabela-produtos');
-    const tabelaServicos = document.getElementById('tabela-servicos');
-    
-    // Obtém os botões das abas
-    const botoes = document.querySelectorAll('#opcoes-tabelas button');
-    
-    // ✅ Verifica se os elementos existem
-    if (!tabelaProdutos || !tabelaServicos) {
-        console.error('Elementos das tabelas não encontrados');
-        return;
+
+    const tabelaProdutos = obterElemento('tabela-produtos');
+    const tabelaServicos = obterElemento('tabela-servicos');
+
+    const carregandoProdutos = obterElemento('carregando-produtos');
+    const carregandoServicos = obterElemento('carregando-servicos');
+
+    const totalProdutos = obterElemento('total-produtos');
+    const totalServicos = obterElemento('total-servicos');
+
+    const btnAdicionarProduto = obterElemento('btn-adicionarProduto');
+    const btnAdicionarServico = obterElemento('btn-adicionarServico');
+
+    const inputPesquisa = obterElemento('input-pesquisarProdutosServicos');
+
+    const paginacao = obterElemento('paginacao-produtosServicos');
+
+    const opcoesTabelas = obterElemento('opcoes-tabelas');
+
+    const botoes = opcoesTabelas
+        ? opcoesTabelas.querySelectorAll('button')
+        : [];
+
+    // ✅ Remove classe ativo
+    botoes.forEach(botao => {
+        botao.classList.remove('ativo');
+    });
+
+    // ✅ Sempre esconder paginação ao trocar tabela
+    if (paginacao) {
+        paginacao.style.display = 'none';
     }
-    
-    // Limpa o estado ativo de todos os botões
-    botoes.forEach(botao => botao.classList.remove('ativo'));
-    
-    // Mostra/esconde as tabelas e seus carregadores
+
+    // =========================
+    // PRODUTOS
+    // =========================
     if (nomeTabela === 'tabelaProdutos') {
-        // ✅ Mostra tabela de Produtos
+
         tabelaProdutos.style.display = 'table';
         tabelaServicos.style.display = 'none';
-        
-        const carregandoProdutos = document.getElementById('carregando-produtos');
-        const carregandoServicos = document.getElementById('carregando-servicos');
-        
-        if (carregandoProdutos) carregandoProdutos.style.display = 'block';
-        if (carregandoServicos) carregandoServicos.style.display = 'none';
-        
-        const totalProdutos = document.getElementById('total-produtos');
-        const totalServicos = document.getElementById('total-servicos');
-        
-        if (totalProdutos) totalProdutos.style.display = 'block';
-        if (totalServicos) totalServicos.style.display = 'none';
-        
-        const btnAdicionarProduto = document.getElementById('btn-adicionarProduto');
-        const btnAdicionarServico = document.getElementById('btn-adicionarServico');
-        
-        if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'inline-block';
-        if (btnAdicionarServico) btnAdicionarServico.style.display = 'none';
-        
-        // ✅ Marca o botão de Produtos como ativo
-        botoes[0].classList.add('ativo');
-        
-        // ✅ Carrega os produtos
-        carregarProdutos(1);
-        
-    } else if (nomeTabela === 'tabelaServicos') {
-        // ✅ Mostra tabela de Serviços
+
+        if (carregandoProdutos) {
+            carregandoProdutos.style.display = 'block';
+        }
+
+        if (carregandoServicos) {
+            carregandoServicos.style.display = 'none';
+        }
+
+        if (totalProdutos) {
+            totalProdutos.style.display = 'block';
+        }
+
+        if (totalServicos) {
+            totalServicos.style.display = 'none';
+        }
+
+        if (btnAdicionarProduto) {
+            btnAdicionarProduto.style.display = 'inline-block';
+        }
+
+        if (btnAdicionarServico) {
+            btnAdicionarServico.style.display = 'none';
+        }
+
+        // ✅ Placeholder produtos
+        if (inputPesquisa) {
+            inputPesquisa.placeholder = 'Pesquisar produtos';
+            inputPesquisa.value = '';
+        }
+
+        // ✅ Ativa botão
+        if (botoes[0]) {
+            botoes[0].classList.add('ativo');
+        }
+
+        // ✅ Carrega produtos
+        setTimeout(() => {
+            carregarProdutos(1);
+        }, 500);
+    }
+
+    // =========================
+    // SERVIÇOS
+    // =========================
+    else if (nomeTabela === 'tabelaServicos') {
+
         tabelaProdutos.style.display = 'none';
         tabelaServicos.style.display = 'table';
-        
-        const carregandoProdutos = document.getElementById('carregando-produtos');
-        const carregandoServicos = document.getElementById('carregando-servicos');
-        
-        if (carregandoProdutos) carregandoProdutos.style.display = 'none';
-        if (carregandoServicos) carregandoServicos.style.display = 'block';
-        
-        const totalProdutos = document.getElementById('total-produtos');
-        const totalServicos = document.getElementById('total-servicos');
-        
-        if (totalProdutos) totalProdutos.style.display = 'none';
-        if (totalServicos) totalServicos.style.display = 'block';
-        
-        const btnAdicionarProduto = document.getElementById('btn-adicionarProduto');
-        const btnAdicionarServico = document.getElementById('btn-adicionarServico');
-        
-        if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'none';
-        if (btnAdicionarServico) btnAdicionarServico.style.display = 'inline-block';
-        
-        // ✅ Marca o botão de Serviços como ativo
-        botoes[1].classList.add('ativo');
-        
-        // ✅ Carrega os serviços
-        carregarServicos(1);
+
+        if (carregandoProdutos) {
+            carregandoProdutos.style.display = 'none';
+        }
+
+        if (carregandoServicos) {
+            carregandoServicos.style.display = 'block';
+        }
+
+        if (totalProdutos) {
+            totalProdutos.style.display = 'none';
+        }
+
+        if (totalServicos) {
+            totalServicos.style.display = 'block';
+        }
+
+        if (btnAdicionarProduto) {
+            btnAdicionarProduto.style.display = 'none';
+        }
+
+        if (btnAdicionarServico) {
+            btnAdicionarServico.style.display = 'inline-block';
+        }
+
+        // ✅ Placeholder serviços
+        if (inputPesquisa) {
+            inputPesquisa.placeholder = 'Pesquisar serviços';
+            inputPesquisa.value = '';
+        }
+
+        // ✅ Ativa botão
+        if (botoes[1]) {
+            botoes[1].classList.add('ativo');
+        }
+
+        // ✅ Carrega serviços
+        setTimeout(() => {
+            carregarServicos(1);
+        }, 500);
     }
 }
 
 function renderizarTabelaProdutos(produtosUsuario) {
-    const tabela = document.getElementById('tabela-produtos');
+    const tabela = obterElemento('tabela-produtos');
     
-    // ✅ Verifica se existe
-    if (!tabela) {
-        console.error('Elemento #tabela-produtos não encontrado');
-        return;
-    }
+    if (!tabela) return;
 
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhasExistentes = tbody.querySelectorAll('tr');
@@ -180,22 +240,22 @@ function renderizarTabelaProdutos(produtosUsuario) {
         const tr = document.createElement('tr');
 
         const td1 = document.createElement('td');
-        td1.textContent = produto.id || '-';
+        td1.textContent = produto.categoria_do_produto || '-';
 
         const td2 = document.createElement('td');
-        td2.textContent = produto.tipo || '-';
+        td2.textContent = produto.nome_do_produto || '-';
 
         const td3 = document.createElement('td');
-        td3.textContent = produto.email || '-';
+        td3.textContent = produto.quantidade_em_estoque || '-';
 
         const td4 = document.createElement('td');
-        td4.textContent = produto.valor || '-';
+        td4.textContent = produto.unidade_de_medida || '-';
 
         const td5 = document.createElement('td');
-        td5.textContent = produto.forma_de_pagamento || '-';
+        td5.textContent = produto.valor_final || '-';
 
         const td6 = document.createElement('td');
-        td6.textContent = produto.data || '-';
+        td6.textContent = produto.status_do_produto || '-';
 
         const td7 = document.createElement('td');
 
@@ -209,7 +269,7 @@ function renderizarTabelaProdutos(produtosUsuario) {
         btnEditar.appendChild(imgEditar);
         btnEditar.className = 'btn-editar';
         btnEditar.title = 'Editar produto';
-        btnEditar.onclick = () => editarProduto(produto.id);  // ✅ CORRIGIDO
+        btnEditar.onclick = () => editarProduto(produto.nome_do_produto);  
  
         const btnRemover = document.createElement('button');
         const imgRemover = document.createElement('img');
@@ -218,20 +278,10 @@ function renderizarTabelaProdutos(produtosUsuario) {
         btnRemover.appendChild(imgRemover);
         btnRemover.className = 'btn-remover';
         btnRemover.title = 'Remover produto';
-        btnRemover.onclick = () => removerProduto(produto.id);  // ✅ CORRIGIDO
-
-        const btnVerNf = document.createElement('button');
-        const imgVerNf = document.createElement('img');
-        imgVerNf.src = './assets/imgs/icons/taxa.png';
-        imgVerNf.alt = 'Ver NF';
-        btnVerNf.appendChild(imgVerNf);
-        btnVerNf.className = 'btn-ver-nf';
-        btnVerNf.title = 'Ver Nota Fiscal';
-        btnVerNf.onclick = () => verNota(produto.id);  // ✅ CORRIGIDO
+        btnRemover.onclick = () => removerProduto(produto.nome_do_produto);
 
         divOpcoes.appendChild(btnEditar);
         divOpcoes.appendChild(btnRemover);
-        divOpcoes.appendChild(btnVerNf);
 
         td7.appendChild(divOpcoes);
 
@@ -248,13 +298,9 @@ function renderizarTabelaProdutos(produtosUsuario) {
 }
 
 function renderizarTabelaServicos(servicosUsuario) {
-    const tabela = document.getElementById('tabela-servicos');
+    const tabela = obterElemento('tabela-servicos');
     
-    // ✅ Verifica se existe
-    if (!tabela) {
-        console.error('Elemento #tabela-servicos não encontrado');
-        return;
-    }
+    if (!tabela) return;
  
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhasExistentes = tbody.querySelectorAll('tr');
@@ -269,29 +315,19 @@ function renderizarTabelaServicos(servicosUsuario) {
         const tr = document.createElement('tr');
  
         const td1 = document.createElement('td');
-        td1.textContent = servico.id || '-';
+        td1.textContent = servico.categoria_do_servico || '-';
  
         const td2 = document.createElement('td');
-        td2.textContent = servico.tipo || '-';
+        td2.textContent = servico.nome_do_servico || '-';
  
         const td3 = document.createElement('td');
-        td3.textContent = servico.email || '-';
+        td3.textContent = servico.valor_do_servico || '-';
  
         const td4 = document.createElement('td');
-        td4.textContent = servico.valor || '-';
- 
-        const td5 = document.createElement('td');
-        td5.textContent = servico.forma_de_pagamento || '-';
- 
-        const td6 = document.createElement('td');
-        td6.textContent = servico.data || '-';
- 
-        const td7 = document.createElement('td');
  
         const divOpcoes = document.createElement('div');
         divOpcoes.className = 'opcoes-btns';
  
-        // ✅ Botão Editar
         const btnEditar = document.createElement('button');
         const imgEditar = document.createElement('img');
         imgEditar.src = './assets/imgs/icons/lapis.png';
@@ -299,9 +335,8 @@ function renderizarTabelaServicos(servicosUsuario) {
         btnEditar.appendChild(imgEditar);
         btnEditar.className = 'btn-editar';
         btnEditar.title = 'Editar serviço';
-        btnEditar.onclick = () => editarServico(servico.id);
+        btnEditar.onclick = () => editarServico(servico.nome_do_servico);
  
-        // ✅ Botão Remover
         const btnRemover = document.createElement('button');
         const imgRemover = document.createElement('img');
         imgRemover.src = './assets/imgs/icons/lixeira.png';
@@ -309,43 +344,26 @@ function renderizarTabelaServicos(servicosUsuario) {
         btnRemover.appendChild(imgRemover);
         btnRemover.className = 'btn-remover';
         btnRemover.title = 'Remover serviço';
-        btnRemover.onclick = () => removerServico(servico.id);
- 
-        // ✅ Botão Ver Nota Fiscal
-        const btnVerNf = document.createElement('button');
-        const imgVerNf = document.createElement('img');
-        imgVerNf.src = './assets/imgs/icons/taxa.png';
-        imgVerNf.alt = 'Ver NF';
-        btnVerNf.appendChild(imgVerNf);
-        btnVerNf.className = 'btn-ver-nf';
-        btnVerNf.title = 'Ver Nota Fiscal';
-        btnVerNf.onclick = () => verNota(servico.id);
+        btnRemover.onclick = () => removerServico(servico.nome_do_servico);
  
         divOpcoes.appendChild(btnEditar);
         divOpcoes.appendChild(btnRemover);
-        divOpcoes.appendChild(btnVerNf);
  
-        td7.appendChild(divOpcoes);
+        td4.appendChild(divOpcoes);
  
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td3);
         tr.appendChild(td4);
-        tr.appendChild(td5);
-        tr.appendChild(td6);
-        tr.appendChild(td7);
  
         tbody.appendChild(tr);
     });
 }
 
 function renderizarTabelaVaziaProdutos() {
-    const tabela = document.getElementById('tabela-produtos');
+    const tabela = obterElemento('tabela-produtos');
 
-    if (!tabela) {
-        console.error('Elemento #tabela-produtos não encontrado');
-        return;
-    }
+    if (!tabela) return;
     
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhas = tbody.querySelectorAll('tr');
@@ -364,12 +382,9 @@ function renderizarTabelaVaziaProdutos() {
 }
 
 function renderizarTabelaVaziaServicos() {
-    const tabela = document.getElementById('tabela-servicos');
+    const tabela = obterElemento('tabela-servicos');
  
-    if (!tabela) {
-        console.error('Elemento #tabela-servicos não encontrado');
-        return;
-    }
+    if (!tabela) return;
     
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhas = tbody.querySelectorAll('tr');
@@ -377,7 +392,7 @@ function renderizarTabelaVaziaServicos() {
  
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 7;
+    td.colSpan = 4;
     td.textContent = 'Nenhum serviço encontrado';
     td.style.textAlign = 'center';
     td.style.padding = '20px';
@@ -387,27 +402,46 @@ function renderizarTabelaVaziaServicos() {
     tbody.appendChild(tr);
 }
 
-function renderizarPaginacao(paginaAtual, totalPaginas) {
-    const paginacao = document.getElementById('paginacao-produtosServicos');
+// ✅ FUNÇÃO MELHORADA: Renderizar paginação com suporte a produtos e serviços
+function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
+    const paginacao = obterElemento('paginacao-produtosServicos');
     
-    // ✅ Verifica se existe
     if (!paginacao) {
-        console.error('Elemento #paginacao-produtosServicos não encontrado');
+        console.error('❌ Elemento #paginacao-produtosServicos não encontrado');
         return;
     }
     
-    const btnProximo = document.getElementById('btn-proximaPagina');
-    const btnAnterior = document.getElementById('btn-anteriorPagina');
+    const btnProximo = obterElemento('btn-proximaPagina');
+    const btnAnterior = obterElemento('btn-anteriorPagina');
 
     paginacao.style.display = 'flex';
 
+    // ✅ Função auxiliar para determinar qual carregar
+    function carregarProximaPagina() {
+        if (paginaAtual < totalPaginas) {
+            if (tipo === 'servicos') {
+                carregarServicos(paginaAtual + 1);
+            } else {
+                carregarProdutos(paginaAtual + 1);
+            }
+        }
+    }
+
+    function carregarPaginaAnterior() {
+        if (paginaAtual > 1) {
+            if (tipo === 'servicos') {
+                carregarServicos(paginaAtual - 1);
+            } else {
+                carregarProdutos(paginaAtual - 1);
+            }
+        }
+    }
+
+    // ✅ Botão próxima página
     if (btnProximo) {
         btnProximo.onclick = null;
-        btnProximo.onclick = () => {
-            if (paginaAtual < totalPaginas) {
-                carregarProdutos(paginaAtual + 1);  // ✅ CORRIGIDO
-            }
-        };
+        btnProximo.onclick = carregarProximaPagina;
+        
         if (paginaAtual >= totalPaginas) {
             btnProximo.disabled = true;
             btnProximo.style.opacity = '0.1';
@@ -417,13 +451,11 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
         }
     }
 
+    // ✅ Botão página anterior
     if (btnAnterior) {
         btnAnterior.onclick = null;
-        btnAnterior.onclick = () => {
-            if (paginaAtual > 1) {
-                carregarProdutos(paginaAtual - 1);  // ✅ CORRIGIDO
-            }
-        };
+        btnAnterior.onclick = carregarPaginaAnterior;
+        
         if (paginaAtual === 1) {
             btnAnterior.disabled = true;
             btnAnterior.style.opacity = '0.1';
@@ -433,7 +465,8 @@ function renderizarPaginacao(paginaAtual, totalPaginas) {
         }
     }
 
-    const spanPagina = document.getElementById('span-pagina');
+    // ✅ Atualizar texto da página
+    const spanPagina = obterElemento('span-pagina');
     if (spanPagina) {
         spanPagina.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
     }

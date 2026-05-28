@@ -1,0 +1,91 @@
+#container-cadastroServicos {
+  width: 40%;
+  height: 100%;
+  background: #f3f3f3;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  & .logo {
+    text-align: center;
+    margin-bottom: 10px;
+
+    & img {
+      width: 70px;
+    }
+  }
+
+  & h1 {
+    text-align: center;
+    margin-bottom: 50px;
+    color: #333;
+    font-size: 42px;
+  }
+
+  & #form-cadastroServicos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+
+    & .campo {
+      display: flex;
+      flex-direction: column;
+
+      & label {
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #444;
+      }
+
+      & input,
+      textarea,
+      select {
+        padding: 12px;
+        border: 1px solid #777;
+        border-radius: 8px;
+        background: #d9d9d9;
+        outline: none;
+        font-size: 15px;
+      }
+
+      & textarea {
+        resize: none;
+        height: 45px;
+      }
+
+    }
+
+    & .botoes {
+      grid-column: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 220px;
+      gap: 15px;
+
+      & #btn-cadastrarServicos {
+        width: 230px;
+        padding: 15px;
+        border: none;
+        border-radius: 14px;
+        background: #ffc400;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      & #btn-cadastrarServicos:hover {
+        background: #e4b000;
+      }
+
+      & .voltar {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        font-weight: bold;
+      }
+    }
+  }
+
+}
