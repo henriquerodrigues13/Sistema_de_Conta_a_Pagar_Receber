@@ -60,7 +60,7 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
 
 @router.post('/cadastro_produtos', response_model=request_produtos,
              responses={404: {'description': 'Usuario nao existe'},
-                        409: {'description': 'Email invalido'}})
+                        409: {'description': 'produto ja existe'}})
 async def cadastro_produtos(cadastro_produto: request_produtos,
                             session: SessionDep
                             ) -> JSONResponse | HTTPException:
@@ -228,7 +228,7 @@ async def get_produtos_fornecedor(
 
 @router.post('/cadastro_servico', response_model=request_servico,
              responses={404: {'description': 'Usuario nao existe'},
-                        409: {'description': 'Email invalido'}})
+                        409: {'description': 'serviço ja existe'}})
 async def cadastro_servico(cadastro_do_servico: request_servico,
                             session: SessionDep
                             ) -> JSONResponse | HTTPException:
@@ -241,7 +241,7 @@ async def cadastro_servico(cadastro_do_servico: request_servico,
             select(servicos).where(servicos.prestador_do_servico_usuario == cadastro_do_servico.prestador_do_servico_usuario,
                                    servicos.nome_do_servico == cadastro_do_servico.nome_do_servico))
             .scalar_one_or_none()):
-        raise HTTPException(status_code=409, detail='produto ja existe')
+        raise HTTPException(status_code=409, detail='serviço ja existe')
 
     novo_servico = servicos(
         nome_do_servico = cadastro_do_servico.nome_do_servico,
@@ -362,3 +362,109 @@ async def get_servicos_fornecedor(
     ).scalars().all()
 
     return [reponse_servicos_fornecedor.model_validate(servico) for servico in servicos_reponse]
+
+@router.post('/cadastro_venda_servico', response_model=request_venda_servico,
+             responses={404: {'description': 'Vendedor nao encontrado'}})
+async def cadastro_venda_servico(cadastro_da_venda: request_venda_servico,
+                            session: SessionDep) -> JSONResponse | HTTPException:
+    comprador_email = None
+    cpf = None
+    if not (vendedor_existe := session.execute(
+            select(usuarios).where(usuarios.email == cadastro_da_venda.vendedor_email))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='Vendedor nao encontrado')
+
+    if not (servico := session.execute(
+            select(servicos).where(servicos.prestador_do_servico_usuario == cadastro_da_venda.vendedor_email,
+                                   servicos.nome_do_servico == cadastro_da_venda.nome_do_servico))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='serviço nao encontrado')
+
+    data_request = cadastro_da_venda.model_dump(exclude_unset=True)
+
+    if 'comprador_email' in data_request:
+        if not (comprador_existe := session.execute(
+                select(usuarios).where(usuarios.email == cadastro_da_venda.comprador_email))
+                .scalar_one_or_none()):
+            raise HTTPException(status_code=404, detail='Comprador nao encontrado')
+        comprador_email = data_request['comprador_email']
+
+    if 'comprador_cpf' in data_request:
+        cpf = validacao_cpf(normalizada(dado= data_request['comprador_cpf']))
+        if not cpf:
+            raise HTTPException(status_code=401, detail='Cpf invalido')
+        cpf = data_request['comprador_cpf']
+
+    nova_venda = vendas(
+        nome_do_servico = cadastro_da_venda.nome_do_servico,
+        vendedor_email = cadastro_da_venda.vendedor_email,
+        comprador_email = comprador_email,
+        comprador_cpf = cpf,
+        descricao_da_venda = cadastro_da_venda.descricao_da_venda,
+        valor_da_venda = cadastro_da_venda.valor_da_venda,
+        forma_de_pagamento = cadastro_da_venda.forma_de_pagamento,
+        porcentagem_do_desconto = cadastro_da_venda.porcentagem_do_desconto,
+        valor_final = cadastro_da_venda.valor_final
+    )
+
+    session.add(nova_venda)
+    session.commit()
+    session.refresh(nova_venda)
+
+    return JSONResponse(content={'mensagem' : f'A venda do serviço: {cadastro_da_venda.nome_do_servico} foi cadastrada com sucesso'},
+                        media_type= 'text/plain')
+
+@router.post('/cadastro_venda_produto', response_model=request_venda_produto,
+             responses={404: {'description': 'Usuario nao existe'},
+                        409: {'description': 'Email invalido'}})
+async def cadastro_venda_produto(cadastro_da_venda: request_venda_produto,
+                            session: SessionDep
+                            ) -> JSONResponse | HTTPException:
+    comprador_email = None
+    cpf = None
+    if not (vendedor_existe := session.execute(
+            select(usuarios).where(usuarios.email == cadastro_da_venda.vendedor_email))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='Vendedor nao encontrado')
+
+    if not (produto := session.execute(
+            select(produtos).where(produtos.proprietario_usuario == cadastro_da_venda.vendedor_email,
+                                   produtos.nome_do_produto == cadastro_da_venda.nome_do_produto))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='produto nao encontrado')
+
+    data_request = cadastro_da_venda.model_dump(exclude_unset=True)
+
+    if 'comprador_email' in data_request:
+        if not (comprador_existe := session.execute(
+                select(usuarios).where(usuarios.email == cadastro_da_venda.comprador_email))
+                .scalar_one_or_none()):
+            raise HTTPException(status_code=404, detail='Comprador nao encontrado')
+        comprador_email = data_request['comprador_email']
+
+    if 'comprador_cpf' in data_request:
+        cpf = validacao_cpf(normalizada(dado=data_request['comprador_cpf']))
+        if not cpf:
+            raise HTTPException(status_code=401, detail='Cpf invalido')
+        cpf = data_request['comprador_cpf']
+
+    nova_venda = vendas(
+        nome_do_produto=cadastro_da_venda.nome_do_produto,
+        vendedor_email=cadastro_da_venda.vendedor_email,
+        comprador_email=comprador_email,
+        comprador_cpf=cpf,
+        descricao_da_venda=cadastro_da_venda.descricao_da_venda,
+        quantidade= cadastro_da_venda.quantidade,
+        valor_da_venda=cadastro_da_venda.valor_da_venda,
+        forma_de_pagamento=cadastro_da_venda.forma_de_pagamento,
+        porcentagem_do_desconto=cadastro_da_venda.porcentagem_do_desconto,
+        valor_final=cadastro_da_venda.valor_final
+    )
+
+    session.add(nova_venda)
+    session.commit()
+    session.refresh(nova_venda)
+
+    return JSONResponse(
+        content={'mensagem': f'A venda do produto: {cadastro_da_venda.nome_do_produto} foi cadastrada com sucesso'},
+        media_type='text/plain')

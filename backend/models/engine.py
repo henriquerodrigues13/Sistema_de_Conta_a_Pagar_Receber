@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy import Integer, String, Float, ForeignKey, Boolean
+from sqlalchemy import Integer, String, Float, ForeignKey, Boolean, DateTime
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from uuid import uuid4, UUID
+
+BRASILIA = ZoneInfo("America/Sao_Paulo")
 
 
 class Base(DeclarativeBase):
@@ -31,6 +34,16 @@ class usuarios(Base):
     servicos_do_usuario : Mapped[list['servicos']] = relationship(
         back_populates='usuario_servicos',
         foreign_keys="[servicos.prestador_do_servico_usuario]"
+    )
+
+    vendas_do_usuario : Mapped[list['vendas']] = relationship(
+        back_populates='usuario_vendedor',
+        foreign_keys="[vendas.vendedor_email]"
+    )
+
+    compras_do_usuario : Mapped[list['vendas']] = relationship(
+        back_populates='usuario_comprador',
+        foreign_keys="[vendas.comprador_email]"
     )
 
 class cadastro_usuario(BaseModel):
@@ -114,6 +127,11 @@ class produtos(Base):
         foreign_keys=[proprietario_fornecedor]
     )
 
+    produtos_vendidos: Mapped[list['vendas']] = relationship(
+        back_populates= 'venda_produto',
+        foreign_keys='[vendas.nome_do_produto]'
+    )
+
 class request_produtos(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_produto: str
@@ -181,6 +199,11 @@ class servicos(Base):
         foreign_keys=[prestador_do_servico_fornecedor]
     )
 
+    servicos_vendidos: Mapped[list['vendas']] = relationship(
+        back_populates='venda_servico',
+        foreign_keys='[vendas.nome_do_servico]'
+    )
+
 class request_servico(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     nome_do_servico: str
@@ -217,50 +240,77 @@ class delete_servico(BaseModel):
     nome_do_servico : str
     prestador_do_servico_usuario : EmailStr
 
-'''class despesas(Base):
-    __tablename__ = 'despesas'
+class vendas(Base):
+    __tablename__ = 'vendas'
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
-    cpf_pagado: Mapped[str | None] = mapped_column(String(100),ForeignKey('cliente.cpf'), index=True)
-    cnpj_pagado: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    cpf_recebedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('cliente.cpf'), index=True)
-    cnpj_recebedor: Mapped[str | None ] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-    valor_despesas: Mapped[float] = mapped_column(Float)
-    data_evento: Mapped[str]= mapped_column(String(30))
-    tipo_de_despesa: Mapped[str] = mapped_column(String)
+    nome_do_servico: Mapped[str | None] = mapped_column(String(100), ForeignKey('servicos.nome_do_servico'),index=True)
+    nome_do_produto: Mapped[str | None] = mapped_column(String(100), ForeignKey('produtos.nome_do_produto'), index=True)
+    vendedor_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
+    comprador_email: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
+    comprador_cpf: Mapped[str | None] = mapped_column(String(100), index=True)
+    descricao_da_venda: Mapped[str] = mapped_column(String(500))
+    quantidade: Mapped[int | None] = mapped_column(Integer)
+    valor_da_venda: Mapped[float] = mapped_column(Float)
+    forma_de_pagamento: Mapped[str] = mapped_column(String(100))
+    porcentagem_do_desconto: Mapped[float] = mapped_column(Float)
+    valor_final: Mapped[float] = mapped_column(Float)
+    data_do_registro_venda: Mapped[datetime] = mapped_column(DateTime(timezone=True),default=lambda: datetime.now(BRASILIA))
+    venda_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
-    pagado_cliente: Mapped['cliente | None'] = relationship(back_populates='pagamento_de_despesas_cliente', foreign_keys=[cpf_pagado])
-    pagado_fornecedor: Mapped['fornecedor | None'] = relationship(back_populates='pagamento_de_despesas_fornecedor', foreign_keys=[cnpj_pagado])
-    recebedo_cliente: Mapped['cliente | None'] = relationship(back_populates='recebemento_de_despesas_cliente', foreign_keys=[cpf_recebedor])
-    recebedo_fornecedor: Mapped['fornecedor | None'] = relationship(back_populates='recebemento_de_despesas_fornecedor', foreign_keys=[cnpj_recebedor])
+    venda_produto: Mapped['produtos'] = relationship(
+        back_populates='produtos_vendidos',
+        foreign_keys= [nome_do_produto],
+    )
 
-    pagado_cliente: Mapped['cliente'] = relationship(back_populates='pagamento_cliente', foreign_keys=[cpf_pagado])
-    pagado_fornecedor: Mapped['fornecedor'] = relationship(back_populates='pagamento_fornecedor', foreign_keys=[cnpj_pagado])
-    recebedor_cliente: Mapped['cliente'] = relationship(back_populates='recebedor_cliente', foreign_keys=[cpf_recebedor])
-    recebedor_fornecedor: Mapped['fornecedor'] = relationship(back_populates='recebedor_fornecedor', foreign_keys=[cnpj_pagado])
+    venda_servico: Mapped['servicos'] = relationship(
+        back_populates='servicos_vendidos',
+        foreign_keys= [nome_do_servico],
+    )
 
-class despesasRESQUEST(BaseModel):
+    usuario_vendedor: Mapped['usuarios'] = relationship(
+        back_populates= 'vendas_do_usuario',
+        foreign_keys= [vendedor_email],
+    )
+
+    usuario_comprador: Mapped['usuarios'] = relationship(
+        back_populates= 'compras_do_usuario',
+        foreign_keys= [comprador_email],
+    )
+
+class request_venda_produto(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    cpf_cnpj_pagador: str
-    cpf_cnpj_recebedor: str
-    tipo_de_despesa: str
-    valor_despesas: float
-    data_evento: str
+    nome_do_produto: str
+    vendedor_email: EmailStr
+    comprador_email: EmailStr | None = None
+    comprador_cpf: EmailStr | None = None
+    descricao_da_venda: str
+    quantidade: int
+    valor_da_venda: float
+    forma_de_pagamento: str
+    porcentagem_do_desconto: float
+    valor_final: float
 
-<<<<<<< Updated upstream
-class despesasResponse(BaseModel):
+class request_venda_servico(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    tipo_de_despesa: str
-    valor_despesas: float
-    data_evento: str
+    nome_do_servico: str
+    vendedor_email: EmailStr
+    comprador_email: EmailStr | None = None
+    comprador_cpf: str | None = None
+    descricao_da_venda: str
+    valor_da_venda: float
+    forma_de_pagamento: str
+    porcentagem_do_desconto: float
+    valor_final: float
 
-class receita(Base):
+'''class receita(Base):
     __tablename__ = 'receitas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     cpf_recebedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('cliente.cpf'), index=True)
     cnpj_recebedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedor.cnpj'), index=True)
-=======
+    
 class despesasRESQUEST(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     cpf_cnpj_pagador: str
