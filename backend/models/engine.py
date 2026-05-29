@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from uuid import uuid4, UUID
 from nanoid import generate
 
 
