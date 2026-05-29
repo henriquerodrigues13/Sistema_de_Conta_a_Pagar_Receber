@@ -58,34 +58,34 @@ async function carregarProdutos(pagina = 1) {
 
 async function carregarServicos(pagina = 1) {
     const emailUsuario = obterEmailUsuario();
- 
+
     try {
         const carregando = obterElemento('carregando-servicos');
         if (carregando) carregando.style.display = 'block';
- 
+
         const response = await fetch(`${API_BASE_URL}/get_servico_usuario/${emailUsuario}?page=${pagina}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
- 
+
         if (!response.ok) {
             const erro = await response.json();
             alert(`Erro ${erro.status}: ${erro.detail}`);
             return;
         }
- 
+
         const servicosUsuario = await response.json();
         console.log(servicosUsuario);
         const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
- 
+
         const spanTotal = obterElemento('span-total-servicos');
         if (spanTotal) {
             spanTotal.textContent = total;
         }
- 
+
         renderizarTabelaServicos(servicosUsuario);
         renderizarPaginacao(pagina, totalPages, 'servicos');
 
@@ -164,7 +164,7 @@ function alternaTabela(nomeTabela) {
 
 function renderizarTabelaProdutos(produtosUsuario) {
     const tabela = obterElemento('tabela-produtos');
-    
+
     if (!tabela) return;
 
     const tbody = tabela.querySelector('tbody') || tabela;
@@ -209,8 +209,8 @@ function renderizarTabelaProdutos(produtosUsuario) {
         btnEditar.appendChild(imgEditar);
         btnEditar.className = 'btn-editar';
         btnEditar.title = 'Editar produto';
-        btnEditar.onclick = () => editarProduto(produto.nome_do_produto);  
- 
+        btnEditar.onclick = () => editarProduto(produto.nome_do_produto);
+
         const btnRemover = document.createElement('button');
         const imgRemover = document.createElement('img');
         imgRemover.src = './assets/imgs/icons/lixeira.png';
@@ -220,8 +220,18 @@ function renderizarTabelaProdutos(produtosUsuario) {
         btnRemover.title = 'Remover produto';
         btnRemover.onclick = () => removerProduto(produto.nome_do_produto);
 
+        const btnVender = document.createElement('button');
+        const imgVender = document.createElement('img');
+        imgVender.src = './assets/imgs/icons/venda.png';
+        imgVender.alt = 'Vender';
+        btnVender.appendChild(imgVender);
+        btnVender.className = 'btn-vender';
+        btnVender.title = 'Vender Produto';
+        btnVender.onclick = () => venderProduto(produto.nome_do_produto);
+
         divOpcoes.appendChild(btnEditar);
         divOpcoes.appendChild(btnRemover);
+        divOpcoes.appendChild(btnVender);
 
         td7.appendChild(divOpcoes);
 
@@ -239,35 +249,35 @@ function renderizarTabelaProdutos(produtosUsuario) {
 
 function renderizarTabelaServicos(servicosUsuario) {
     const tabela = obterElemento('tabela-servicos');
-    
+
     if (!tabela) return;
- 
+
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhasExistentes = tbody.querySelectorAll('tr');
     linhasExistentes.forEach(linha => linha.remove());
- 
+
     if (servicosUsuario.length === 0) {
         renderizarTabelaVaziaServicos();
         return;
     }
- 
+
     servicosUsuario.forEach(servico => {
         const tr = document.createElement('tr');
- 
+
         const td1 = document.createElement('td');
         td1.textContent = servico.categoria_do_servico || '-';
- 
+
         const td2 = document.createElement('td');
         td2.textContent = servico.nome_do_servico || '-';
- 
+
         const td3 = document.createElement('td');
         td3.textContent = servico.valor_do_servico || '-';
- 
+
         const td4 = document.createElement('td');
- 
+
         const divOpcoes = document.createElement('div');
         divOpcoes.className = 'opcoes-btns';
- 
+
         const btnEditar = document.createElement('button');
         const imgEditar = document.createElement('img');
         imgEditar.src = './assets/imgs/icons/lapis.png';
@@ -276,7 +286,7 @@ function renderizarTabelaServicos(servicosUsuario) {
         btnEditar.className = 'btn-editar';
         btnEditar.title = 'Editar serviço';
         btnEditar.onclick = () => editarServico(servico.nome_do_servico);
- 
+
         const btnRemover = document.createElement('button');
         const imgRemover = document.createElement('img');
         imgRemover.src = './assets/imgs/icons/lixeira.png';
@@ -285,17 +295,28 @@ function renderizarTabelaServicos(servicosUsuario) {
         btnRemover.className = 'btn-remover';
         btnRemover.title = 'Remover serviço';
         btnRemover.onclick = () => removerServico(servico.nome_do_servico);
- 
+
+        // DEPOIS:
+        const btnVender = document.createElement('button');
+        const imgVender = document.createElement('img');
+        imgVender.src = './assets/imgs/icons/venda.png';
+        imgVender.alt = 'Vender';
+        btnVender.appendChild(imgVender);
+        btnVender.className = 'btn-vender';
+        btnVender.title = 'Vender Serviço';
+        btnVender.onclick = () => venderServico(servico.nome_do_servico); // ✅
+
         divOpcoes.appendChild(btnEditar);
         divOpcoes.appendChild(btnRemover);
- 
+        divOpcoes.appendChild(btnVender);
+
         td4.appendChild(divOpcoes);
- 
+
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td3);
         tr.appendChild(td4);
- 
+
         tbody.appendChild(tr);
     });
 }
@@ -304,7 +325,7 @@ function renderizarTabelaVaziaProdutos() {
     const tabela = obterElemento('tabela-produtos');
 
     if (!tabela) return;
-    
+
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhas = tbody.querySelectorAll('tr');
     linhas.forEach(linha => linha.remove());
@@ -323,13 +344,13 @@ function renderizarTabelaVaziaProdutos() {
 
 function renderizarTabelaVaziaServicos() {
     const tabela = obterElemento('tabela-servicos');
- 
+
     if (!tabela) return;
-    
+
     const tbody = tabela.querySelector('tbody') || tabela;
     const linhas = tbody.querySelectorAll('tr');
     linhas.forEach(linha => linha.remove());
- 
+
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 4;
@@ -344,12 +365,12 @@ function renderizarTabelaVaziaServicos() {
 
 function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     const paginacao = obterElemento('paginacao-produtosServicos');
-    
+
     if (!paginacao) {
         console.error('❌ Elemento #paginacao-produtosServicos não encontrado');
         return;
     }
-    
+
     const btnProximo = obterElemento('btn-proximaPagina');
     const btnAnterior = obterElemento('btn-anteriorPagina');
 
@@ -378,7 +399,7 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     if (btnProximo) {
         btnProximo.onclick = null;
         btnProximo.onclick = carregarProximaPagina;
-        
+
         if (paginaAtual >= totalPaginas) {
             btnProximo.disabled = true;
             btnProximo.style.opacity = '0.1';
@@ -391,7 +412,7 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     if (btnAnterior) {
         btnAnterior.onclick = null;
         btnAnterior.onclick = carregarPaginaAnterior;
-        
+
         if (paginaAtual === 1) {
             btnAnterior.disabled = true;
             btnAnterior.style.opacity = '0.1';
@@ -436,8 +457,7 @@ async function removerProduto(nomeProduto) {
                 alert('❌ Produto não encontrado');
             } else {
                 alert(
-                    `❌ Erro ${response.status}: ${
-                        erro.detail || 'Erro desconhecido'
+                    `❌ Erro ${response.status}: ${erro.detail || 'Erro desconhecido'
                     }`
                 );
             }
@@ -483,8 +503,7 @@ async function removerServico(nomeServico) {
                 alert('❌ Serviço não encontrado');
             } else {
                 alert(
-                    `❌ Erro ${response.status}: ${
-                        erro.detail || 'Erro desconhecido'
+                    `❌ Erro ${response.status}: ${erro.detail || 'Erro desconhecido'
                     }`
                 );
             }
@@ -499,4 +518,21 @@ async function removerServico(nomeServico) {
         console.error('Erro ao remover serviço:', error);
         alert(`❌ Erro ao remover serviço: ${error.message}`);
     }
+}
+
+function venderProduto(nomeProduto) {
+    renderizarPagina('cadastroVendaProduto');
+    // Aguarda o DOM renderizar antes de preencher
+    setTimeout(() => {
+        const inputNome = document.getElementById('input-nome-produto');
+        if (inputNome) inputNome.value = nomeProduto;
+    }, 0);
+}
+
+function venderServico(nomeServico) {
+    renderizarPagina('cadastroVendaServico');
+    setTimeout(() => {
+        const inputNome = document.getElementById('input-nome-servico');
+        if (inputNome) inputNome.value = nomeServico;
+    }, 0);
 }

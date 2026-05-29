@@ -126,8 +126,8 @@ function paginaCadastroProduto(){
         "></div>
  
         <div class="botoes">
-          <button type="submit" id="btn-cadastrarProduto" onclick="cadastrarProduto()" >Cadastrar</button>
-          <button type="button" id="voltar-telaProdutoServico" style="cursor: pointer;">Voltar</button>
+          <button type="button" id="btn-cadastrarProduto" onclick="cadastrarProduto()" >Cadastrar</button>
+          <button type="button" id="voltar-telaProdutoServico" style="cursor: pointer;" onclick="renderizarPagina('usuarioLayout')">Voltar</button>
         </div>
       </form>
     </div>

@@ -1,0 +1,90 @@
+#container-cadastroVendaServicos {
+    height: 90%;
+    width: 40%;
+    background: white;
+    margin: auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    & .logo {
+        text-align: center;
+        margin-bottom: 5px;
+
+        & img {
+            width: 100px;
+            height: auto;
+        }
+    }
+
+    & h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 27px;
+    }
+
+    & #form-cadastroVendaServico {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+
+        & .linha {
+            display: flex;
+            gap: 19px;
+            margin-bottom: 15px;
+
+            & .campo {
+                flex: 1;
+
+                & label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-size: 12px;
+                    font-weight: bold;
+                }
+
+                & input {
+                    width: 100%;
+                    height: 30px;
+                    background: #d9d9d9;
+                    border: 1px solid gray;
+                    border-radius: 5px;
+                    padding-left: 5px;
+                }
+            }
+        }
+
+        & .valores {
+            text-align: center;
+            margin-top: 35px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+    }
+
+    & #btn-cadastrarVendaServico {
+        width: 240px;
+        height: 45px;
+        margin: 10px auto;
+        background: #ffc107;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    & .voltar {
+        text-align: center;
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+    }
+
+    & .email-cpf {
+        width: 303px;
+    }
+}

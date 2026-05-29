@@ -109,6 +109,7 @@ class produtos(Base):
     __tablename__ = 'produtos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    uuid_produto: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     nome_do_produto: Mapped[str] = mapped_column(String(100), index=True)
     proprietario_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
     proprietario_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index= True)

@@ -30,7 +30,7 @@
 
         & td .opcoes-btns {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-evenly;
         }
 
         & button {
@@ -81,7 +81,7 @@
 
         & td .opcoes-btns {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-evenly;
         }
 
         & button {
@@ -144,12 +144,12 @@
         cursor: pointer;
     }
 
-    & #opcoes-tabelas{
+    & #opcoes-tabelas {
         margin-bottom: 10px;
         display: flex;
         gap: 20px;
 
-        & button{
+        & button {
             color: #333;
             cursor: pointer;
             padding: 3px;
