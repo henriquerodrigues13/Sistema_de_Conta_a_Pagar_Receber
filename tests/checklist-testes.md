@@ -1,34 +1,82 @@
-# Checklist de Testes Iniciais — Sistema de Conta a Pagar e Receber (ajustado ao estado atual)
+## Checklist de Testes — Sistema de Conta a Pagar e Receber (atualizado)
 
->
 ## 1. Backend/API
-- [x] API sobe sem erros (rodar `uvicorn backend.main:app --reload`) e chama `database.init_db()` no lifespan (**Smoke**)
-- [x] `POST /cadastro_usuario`: testa que cria o usuário, retorna `reponsa_usuario` com `nome_completo`, grava `email` único e armazena `senha` como hash (não texto) (**Integração**)
-- [x] `POST /login`: testa comportamento real: credenciais corretas retornam 200 com dados do usuário; senha incorreta retorna 401; usuário inexistente retorna 404 (**Integração**)
-- [ ] Rotas de lançamentos (`receita`, `despesas`, `vendas`) estão comentadas no código: confirmar estado antes de escrever testes; marque-as como "não implementadas" até ativadas (**Manual / Integração**)
+[x] API sobe sem erros (rodar uvicorn backend.main:app --reload) e chama database.init_db() no lifespan (Smoke)
 
-## 2. Regras de Negócio e validações
-- [x] `senha_hash` e `verificar_senha` em `backend/API/criptografia.py`: unit tests para validar que o hash não é igual ao texto e `verificar_senha` retorna True para senha correta (**Unitário**)
-- [ ] Validação de email em `backend/API/validações.py`: mockar `requests.get` em testes (não chamar ZeroBounce real). Validar que resposta `valid` permite cadastro e `invalid` impede cadastro (**Unitário / Integração com Mock**)
-- [ ] Pydantic validações: testar que `cadastro_usuario` rejeita email inválido e campos obrigatórios ausentes (HTTP 422) (**Unitário**)
+[x] POST /cadastro_usuario: cria usuário, retorna reponsa_usuario com nome_completo, confirma que senha não é exposta na resposta, grava email único; email duplicado retorna 409 (Integração)
 
-## 3. Infra e comportamentos auxiliares
-- [ ] Backup automático: `backend/models/backup_db.py` inicia `agenda_backup()` no `lifespan`; teste que arquivos `backup_*.sqlite` aparecem em `~/Documents/backup` e que apenas 3 backups são mantidos (rotacionamento). Em CI, reduzir/alterar intervalo ou mockar filesystem (**Integração/Mock**)
-- [ ] DB de teste: use `sqlite:///./test_cpr.sqlite` ou in-memory para fixtures, e backup/destruição após testes para não poluir `cpr.sqlite` de desenvolvimento (**Fixture**)
+[x] POST /login: credenciais corretas retornam 200; senha incorreta retorna 401; usuário inexistente retorna 404 (Integração)
+
+[x] Swagger docs acessível (Smoke)
+
+[ ] Rotas de lançamentos (receita, despesas, vendas) ainda comentadas: marcar como "não implementadas" até ativadas (Manual/Integração)
+
+[x] POST /cadastro_produtos: sucesso vinculado a usuário existente; produto duplicado retorna 409; usuário inexistente retorna 404 (Integração)
+
+[x] GET /get_produtos_usuario: retorna lista paginada de produtos ativos do usuário com headers X-Total-Items e X-Total-Pages (Integração)
+
+[ ] GET /get_produtos_fornecedor: rota existe mas depende de fornecedor; testes só quando fluxo de fornecedor estiver ativo (Integração futura)
+
+[x] DELETE /delete_produto: marca produto como indisponível e produto some da listagem (Integração)
+
+[x] PATCH /update_produto: atualiza dados do produto com sucesso; produto inexistente retorna 404; payload vazio retorna 400 (Integração)
+
+[ ] GET /get_fornecedor: rota existe mas depende de dados de fornecedor; testes só quando fluxo estiver ativo (Integração futura)
+
+[x] POST /cadastro_servico: sucesso vinculado a usuário existente; serviço duplicado retorna 409; usuário inexistente retorna 404 (Integração)
+
+[x] GET /get_servico_usuario: retorna lista paginada de serviços ativos do usuário com headers X-Total-Items e X-Total-Pages (Integração)
+
+[x] DELETE /delete_servico: marca serviço como deletado e some da listagem (Integração)
+
+[x] PATCH /update_servico: atualiza dados do serviço com sucesso; serviço inexistente retorna 404; payload vazio retorna 400 (Integração)
+
+## 2. Regras de Negócio e Validações
+[x] Criptografia: senha_hash gera hash diferente da senha original; verificar_senha retorna True para senha correta e False para errada (Unitário)
+
+[x] Validação de email: mock de requests.post, resposta "valid" retorna True; resposta "invalid" retorna False (Unitário)
+
+[x] Tratamento de erro HTTP em validação de email: exceção de conexão retorna False em vez de explodir (graceful degradation) (Unitário)
+
+[x] Pydantic: rejeita campos obrigatórios ausentes com ValidationError; rota retorna HTTP 422 para payload com email inválido (Unitário)
+
+[x] Validação de CNPJ removida: não há mais cadastro de fornecedor pelo usuário. Testes de CNPJ removidos. Novo fluxo será testado em receitas/despesas quando implementado (Integração futura)
+
+## 3. Infra e Comportamentos Auxiliares
+[x] DB de teste isolado: sqlite in-memory via conftest.py com StaticPool; banco zerado a cada teste via override_get_session (Fixture)
+
+[x] Backup — rotacionamento: mantém no máximo 3 arquivos, removendo os mais antigos quando há mais de 3 (Unitário)
+
+[x] Backup — rotacionamento com menos de 3 arquivos: nenhum arquivo é removido (Unitário)
+
+[ ] Backup — criação de arquivo e envio por email: depende de refatoração do backup_db.py para aceitar caminhos como parâmetro; pendente para quando isso for feito
 
 ## 4. Frontend → Backend (E2E / Interface)
-- [ ] Fluxo cadastro + login (Happy Path): com backend rodando, enviar POST `/cadastro_usuario`, depois `/login`; validar status 200 e campos retornados. O frontend é estático em `frontend/index.html` e pode ser testado via requisições HTTP diretas ou E2E (Playwright/Cypress) se você expor o frontend por um servidor estático (**E2E/Integração**)
-- [ ] Unhappy Path no login: senha incorreta retorna 401 e frontend deve exibir mensagem — se não houver UI testada, valide via requisição HTTP direta (**E2E/Integração**)
+[ ] Fluxo cadastro + login (Happy Path): via frontend estático com Playwright (E2E futura)
 
-## 5. Notas de segurança e práticas de teste
-- Não use a API key embutida em `backend/API/validações.py` durante testes — sempre mockar `requests.get` e mover a chave para `.env` em produção.
-- Em testes automáticos, inicialize um ambiente isolado (venv) e um DB temporário para evitar estados compartilhados.
-- Limpe arquivos de backup criados por testes que tocam o filesystem.
+[ ] Unhappy Path login: senha incorreta retorna 401 e frontend exibe mensagem (E2E futura)
 
-## 6. Comandos rápidos para dev/test
-```bash
-python -m venv .venv
-source .venv/Scripts/activate
-pip install -r requirements.txt
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
-```
+[ ] Fluxo de lançamento de receita/despesa (E2E futura)
+
+## 5. Notas de Segurança e Práticas de Teste
+[x] validacao_email mockada em todos os testes de integração via fixture autouse no conftest.py — API key não exposta nos testes
+
+[x] Senha nunca retornada nas respostas da API (response_model reponsa_usuario só expõe nome_completo)
+
+[ ] Mover API keys (ZeroBounce, credenciais de email) para .env em produção
+
+[ ] Testes de isolamento de ambiente (venv + DB temporário documentado)
+
+## 6. Testes Futuros Recomendados
+[ ] Testes de carga (stress test básico) para rotas de login e cadastro
+
+[ ] Testes de concorrência: múltiplos cadastros simultâneos
+
+[ ] Fluxo de receitas/despesas quando rotas forem descomentadas e ativadas
+
+## 7. Bugs Conhecidos e Corrigidos
+[x] BUG — DELETE /delete_produto e DELETE /delete_servico nunca retornavam 404:
+    session.execute(update(...)) sempre retorna um objeto CursorResult truthy,
+    fazendo o if ser sempre verdadeiro independente de o registro existir.
+    Corrigido substituindo por select + verificação explícita antes do update.
+    Testes: test_delete_produto_inexistente, test_delete_servico_inexistente
