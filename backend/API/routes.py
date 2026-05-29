@@ -121,7 +121,6 @@ async def get_produtos_usuario(
     produtos_reponse = session.execute(
         select(produtos)
         .where(produtos.proprietario_usuario == usuario_email,
-               produtos.status_do_produto == 'ativo',
                produtos.produto_deletado == False)
         .limit(pages_size)
         .offset(offset)
@@ -468,3 +467,74 @@ async def cadastro_venda_produto(cadastro_da_venda: request_venda_produto,
     return JSONResponse(
         content={'mensagem': f'A venda do produto: {cadastro_da_venda.nome_do_produto} foi cadastrada com sucesso'},
         media_type='text/plain')
+
+@router.get('/get_vendas/{usuario_email}', response_model=list[reponse_venda])
+async def get_vendas(
+        usuario_email: EmailStr,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_venda]:
+
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(vendas)
+        .where(vendas.vendedor_email == usuario_email))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    vendas_reponse = session.execute(
+        select(vendas)
+        .where(vendas.vendedor_email == usuario_email,
+               vendas.venda_deletado == False)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_venda.model_validate(venda) for venda in vendas_reponse]
+
+@router.patch("/update_venda/{usuario_email}/{nome_do_servico_ou_produto}", response_model=patch_servico,
+              responses={404: {"description": "serviço não encontrado."},
+                         400: {"description": "Nenhum dado válido enviado para atualização."}})
+async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
+                            servico_update: patch_servico, session: SessionDep) -> JSONResponse:
+    update_data = servico_update.model_dump(exclude_unset=True, exclude_none=True)
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
+
+    if servico := session.execute(select(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
+                                                    servicos.nome_do_servico == nome_do_servico)).scalar_one_or_none():
+        for key, value in update_data.items():
+            setattr(servico, key, value)
+
+        session.commit()
+        session.refresh(servico)
+        return JSONResponse(content={'mensagem' : f'o servico : {nome_do_servico} foi atualizado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="Serviço não encontrado.")
+
+@router.delete("/delete_venda/{usuario_email}/{nome_do_servico}", response_model=delete_servico,
+               responses={404: {"description": "Serviço não encontrado."}})
+async def deletar_venda(usuario_email: EmailStr,
+                          nome_do_servico: str,
+                          session: SessionDep) -> JSONResponse | HTTPException:
+    if produto := (session.execute(update(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
+                                                          servicos.nome_do_servico == nome_do_servico)
+                                                          .values(servico_deletado=True))):
+
+        session.commit()
+
+        return JSONResponse(content={'mensagem' : f'o servico: {nome_do_servico} foi deletado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="Serviço não encontrado.")

@@ -15,7 +15,8 @@ dependencies = [
     "psycopg2-binary>=2.9",
     "requests>=2.33.1",
     "pydantic[email]",
-    "fastapi[standard]"
+    "fastapi[standard]",
+    "nanoid ==2.0.0"
 ]
 
 [tool.setuptools]
