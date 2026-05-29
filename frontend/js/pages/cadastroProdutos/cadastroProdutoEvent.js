@@ -130,8 +130,7 @@ async function cadastrarProduto() {
                 alert('❌ Usuário não encontrado. Faça login novamente');
             } else {
                 alert(
-                    `❌ Erro ${response.status}: ${
-                        erro.detail || erro.message || 'Erro desconhecido'
+                    `❌ Erro ${response.status}: ${erro.detail || erro.message || 'Erro desconhecido'
                     }`
                 );
             }

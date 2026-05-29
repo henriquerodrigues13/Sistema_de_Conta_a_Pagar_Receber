@@ -1,12 +1,9 @@
 /**
  * Inicializa a aplicação após o carregamento da página.
  */
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
+document.addEventListener( 'DOMContentLoaded', () => {
         verificarLogin();
-    }
-);
+});
 
 /**
  * Renderiza páginas do sistema no container principal.
@@ -14,58 +11,31 @@ document.addEventListener(
  */
 function renderizarPagina(pagina) {
 
-    const app =
-        document.getElementById('app');
+    const app = document.getElementById('app');
 
     const paginas = {
-
         login: paginaLogin,
-
-        paginaInicial:
-            paginaInicial,
-
-        cadastroUsuario:
-            paginaCadastroUsuario,
-
-        cadastroReceita:
-            paginaCadastroReceita,
-
-        cadastroProduto:
-            paginaCadastroProduto,
-
-        cadastroServico:
-            paginaCadastroServico,
-
-        cadastroVendaProduto:
-            paginaCadastroVendaProduto,
-
-        cadastroVendaServico:
-            paginaCadastroVendaServico
+        paginaInicial: paginaInicial,
+        cadastroUsuario: paginaCadastroUsuario,
+        cadastroReceita: paginaCadastroReceita,
+        cadastroProduto: paginaCadastroProduto,
+        cadastroServico: paginaCadastroServico,
+        cadastroVendaProduto: paginaCadastroVendaProduto,
+        cadastroVendaServico: paginaCadastroVendaServico
     };
 
     if (pagina === 'usuarioLayout') {
-
-        app.innerHTML =
-            paginaLayoutUsuario();
-
-        renderizarSection(
-            'sectionDashboard'
-        );
-
+        app.innerHTML = paginaLayoutUsuario();
+        renderizarSection('sectionDashboard');
         return;
     }
 
-    const paginaRenderizada =
-        paginas[pagina];
+    const paginaRenderizada = paginas[pagina];
 
     if (!paginaRenderizada) {
-
-        app.innerHTML =
-            '<p>Página não encontrada</p>';
-
+        app.innerHTML = '<p>Página não encontrada</p>';
         return;
     }
 
-    app.innerHTML =
-        paginaRenderizada();
+    app.innerHTML = paginaRenderizada();
 }
