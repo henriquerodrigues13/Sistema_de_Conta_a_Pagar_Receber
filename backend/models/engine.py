@@ -343,7 +343,7 @@ class delete_venda(BaseModel):
     identificador: str
     vendedor_email: EmailStr
 
-class receitas(Base):
+'''class receitas(Base):
     _tablename_ = 'receitas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     recebedor_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
@@ -358,5 +358,5 @@ class receitas(Base):
 
 class despasas(Base):
     __tablename__ = 'despesas'
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)'''
 

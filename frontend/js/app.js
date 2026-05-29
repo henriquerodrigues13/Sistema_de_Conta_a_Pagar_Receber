@@ -28,6 +28,12 @@ function renderizarPagina(pagina) {
         case 'cadastroServico':
             app.innerHTML = paginaCadastroServico();
             break;
+        case 'cadastroVendaProduto':
+            app.innerHTML = paginaCadastroVendaProduto();
+            break;
+        case 'cadastroVendaServico':
+            app.innerHTML = paginaCadastroVendaServico();
+            break;
         default:
             app.innerHTML = '<p>Página não encontrada</p>';
     }

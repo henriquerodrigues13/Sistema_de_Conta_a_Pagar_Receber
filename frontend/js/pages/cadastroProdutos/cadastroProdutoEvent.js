@@ -11,7 +11,6 @@ async function cadastrarProduto() {
 
     const emailUsuario = obterEmailUsuario();
 
-    // ✅ VALIDAÇÕES
     if (!nomeProduto) {
         alert('❌ Por favor, digite o nome do produto');
         return;
