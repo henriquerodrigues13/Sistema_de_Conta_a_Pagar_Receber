@@ -504,7 +504,7 @@ async def get_vendas(
     return [reponse_venda.model_validate(venda) for venda in vendas_reponse]
 
 @router.patch("/update_venda/{usuario_email}/{identificador}", response_model=patch_venda,
-              responses={404: {"description": "serviço não encontrado."},
+              responses={404: {"description": "venda não encontrado."},
                          400: {"description": "Nenhum dado válido enviado para atualização."}})
 async def atualizar_venda(usuario_email: EmailStr, identificador: str,
                             venda_update: patch_venda, session: SessionDep) -> JSONResponse:
@@ -525,13 +525,125 @@ async def atualizar_venda(usuario_email: EmailStr, identificador: str,
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
 
 @router.delete("/delete_venda/{usuario_email}/{identificador}", response_model=delete_venda,
-               responses={404: {"description": "Serviço não encontrado."}})
+               responses={404: {"description": "Venda não encontrado."}})
 async def deletar_venda(usuario_email: EmailStr,
                           identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
     if venda := (session.execute(update(vendas).where( vendas.vendedor_email== usuario_email,
                                                           vendas.identificador == identificador)
                                                           .values(venda_deletado=True))):
+
+        session.commit()
+
+        return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="A venda não encontrado.")
+
+@router.post('/cadastro_receita', response_model=request_receita,
+             responses={404: {'description': 'Usuario nao existe'},
+                        409: {'description': 'Email invalido'}})
+async def cadastro_receita(cadastro_de_receita: request_receita,
+                            session: SessionDep
+                            ) -> JSONResponse | HTTPException:
+    pagador = None
+    if not (vendedor_existe := session.execute(
+            select(usuarios).where(usuarios.email == cadastro_de_receita.recebedor_email))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='Vendedor nao encontrado')
+
+    data_request = cadastro_de_receita.model_dump(exclude_unset=True)
+
+    if 'pagador_email' in data_request:
+        if not (pagador_email := session.execute(
+                select(usuarios).where(usuarios.email == cadastro_de_receita.comprador_email))
+                .scalar_one_or_none()):
+            raise HTTPException(status_code=404, detail='Comprador nao encontrado')
+        pagador= data_request['pagador_email']
+
+
+    nova_receita = receitas(
+        recebedor_email= cadastro_de_receita.recebedor_email,
+        pagador_email= pagador,
+        tipo_da_receita= cadastro_de_receita.tipo_da_receita,
+        data_da_receita= cadastro_de_receita.data_da_receita,
+        valor_da_receita= cadastro_de_receita.valor_da_receita,
+        forma_de_pagamento= cadastro_de_receita.forma_de_pagamento,
+        observacao= cadastro_de_receita.observacao,
+        documento_anexado= cadastro_de_receita.documento_anexado,
+    )
+
+    session.add(nova_receita)
+    session.commit()
+    session.refresh(nova_receita)
+
+    return JSONResponse(
+        content={'mensagem': f'A receita foi cadastrada com sucesso'},
+        media_type='text/plain')
+
+@router.get('/get_receitas/{usuario_email}', response_model=list[reponse_receita])
+async def get_receitas(
+        usuario_email: EmailStr,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_receita]:
+
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(receitas)
+        .where(receitas.recebedor_email == usuario_email))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    receitas_reponse = session.execute(
+        select(receitas)
+        .where(receitas.recebedor_email == usuario_email,
+               receitas.receita_deletada == False)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_receita.model_validate(receita) for receita in receitas_reponse]
+
+@router.patch("/update_receita/{usuario_email}/{identificador}", response_model=patch_receita,
+              responses={404: {"description": "A receita não encontrado."},
+                         400: {"description": "Nenhum dado válido enviado para atualização."}})
+async def atualizar_venda(usuario_email: EmailStr, identificador: str,
+                            venda_update: patch_receita, session: SessionDep) -> JSONResponse:
+    update_data = venda_update.model_dump(exclude_unset=True, exclude_none=True)
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
+
+    if receita := session.execute(select(receitas).where(receitas.recebedor_email == usuario_email,
+                                                    receitas.identificador == identificador)).scalar_one_or_none():
+        for key, value in update_data.items():
+            setattr(receita, key, value)
+
+        session.commit()
+        session.refresh(receita)
+        return JSONResponse(content={'mensagem' : f'A receita foi atualizado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="A receita não encontrado.")
+
+@router.delete("/delete_receita/{usuario_email}/{identificador}", response_model=delete_receita,
+               responses={404: {"description": "receita não encontrado."}})
+async def deletar_venda(usuario_email: EmailStr,
+                          identificador: str,
+                          session: SessionDep) -> JSONResponse | HTTPException:
+    if venda := (session.execute(update(receitas).where( receitas.recebedor_email == usuario_email,
+                                                          receitas.identificador == identificador)
+                                                          .values(receita_deletada=True))):
 
         session.commit()
 

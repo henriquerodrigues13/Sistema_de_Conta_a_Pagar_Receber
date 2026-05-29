@@ -1,8 +1,8 @@
-from backend.models.engine import Base, fornecedores, produtos, servicos
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import sessionmaker
 from backend.logs import setup_logger
+from backend.models.engine import *
 from pathlib import Path
 import csv
 

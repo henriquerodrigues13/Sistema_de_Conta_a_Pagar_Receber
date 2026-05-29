@@ -50,6 +50,16 @@ class usuarios(Base):
         foreign_keys="[vendas.comprador_email]"
     )
 
+    receitas_recebedor_usuario: Mapped[list['receitas']] = relationship(
+        back_populates='receita_recebedor',
+        foreign_keys='[receitas.recebedor_email]'
+    )
+
+    receitas_pagador_usuario: Mapped[list['receitas']] = relationship(
+        back_populates='receita_pagador',
+        foreign_keys='[receitas.pagador_email]'
+    )
+
 class cadastro_usuario(BaseModel):
     nome_completo: str
     senha: str
@@ -338,20 +348,70 @@ class delete_venda(BaseModel):
     identificador: str
     vendedor_email: EmailStr
 
-'''class receitas(Base):
-    _tablename_ = 'receitas'
+class receitas(Base):
+    __tablename__ = 'receitas'
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    identificador: Mapped[str] = mapped_column(String(10), unique=True, default=gerar_id_venda)
     recebedor_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
-    pagador_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
+    pagador_email: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
     tipo_da_receita: Mapped[str] = mapped_column(String(100), index=True)
-    data_do_cadastro: Mapped[datetime] = mapped_column(DateTime)
+    data_da_receita: Mapped[datetime] = mapped_column(DateTime)
     valor_da_receita: Mapped[float] = mapped_column(Float)
     forma_de_pagamento: Mapped[str] = mapped_column(String(100))
     observacao: Mapped[str] = mapped_column(String(100))
-    documento: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    documento_anexado: Mapped[bytes | None] = mapped_column(LargeBinary)
     receita_deletada: Mapped[bool] = mapped_column(Boolean, default=False)
 
-class despasas(Base):
+    receita_recebedor: Mapped['usuarios'] = relationship(
+        back_populates='receitas_recebedor_usuario',
+        foreign_keys="[receitas.recebedor_email]"
+    )
+
+    receita_pagador: Mapped['usuarios'] = relationship(
+        back_populates='receitas_pagador_usuario',
+        foreign_keys="[receitas.pagador_email]"
+    )
+
+class request_receita(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    recebedor_email: EmailStr
+    pagador_email: EmailStr | None = None
+    tipo_da_receita: str
+    data_da_receita: datetime
+    valor_da_receita: float
+    forma_de_pagamento: str
+    observacao: str
+    documento_anexado: bytes | None = None
+
+class reponse_receita(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    identificador: str
+    recebedor_email: EmailStr
+    pagador_email: EmailStr | None = None
+    tipo_da_receita: str
+    data_da_receita: datetime
+    valor_da_receita: float
+    forma_de_pagamento: str
+    observacao: str
+    documento_anexado: bytes | None = None
+
+class patch_receita(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    pagador_email: EmailStr | None = None
+    tipo_da_receita: str | None = None
+    data_da_receita: datetime | None = None
+    valor_da_receita: float | None = None
+    forma_de_pagamento: str | None = None
+    observacao: str | None = None
+    documento_anexado: bytes | None = None
+
+class delete_receita(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    identificador: str
+    vendedor_email: EmailStr
+
+'''class despasas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 '''
