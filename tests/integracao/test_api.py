@@ -100,7 +100,7 @@ def test_cadastro_produto_com_sucesso(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     }
     
     response = client.post("/cadastro_produtos", json=payload_produto)
@@ -234,7 +234,7 @@ def test_cadastro_produto_com_sucesso(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     }
     
     response = client.post("/cadastro_produtos", json=payload_produto)
@@ -295,7 +295,7 @@ def test_get_produtos_usuario(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     })
 
     response = client.get(f"/get_produtos_usuario/{email_teste}")
@@ -336,7 +336,7 @@ def test_delete_produto(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     })
 
     # Deleta o produto
@@ -375,7 +375,7 @@ def test_update_produto_com_sucesso(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     })
 
     response = client.patch(
@@ -412,7 +412,7 @@ def test_update_produto_payload_vazio(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     })
 
     response = client.patch(
@@ -465,7 +465,7 @@ def test_cadastro_produto_duplicado(client, override_get_session):
         "categoria_do_produto": "Alimentos",
         "valor_de_custo": 10.00,
         "valor_final": 15.00,
-        "descricao_do_produto": "Açaí puro tirado direto do palmeiro"
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
     }
 
     client.post("/cadastro_produtos", json=payload_produto)
@@ -495,3 +495,53 @@ def test_update_produto_inexistente(client, override_get_session):
     )
 
     assert response.status_code == 404
+
+PAYLOAD_USUARIO_PADRAO = {
+    "nome_completo": "Pedro Lucas Leão",
+    "email": "pedro.teste@ufpa.br",
+    "senha": "senha_secreta_123",
+    "numero_telefone": "91988888888",
+    "cep": "68450000",
+    "estado": "PA",
+    "cidade": "Baião",
+    "bairro": "Centro",
+    "logradouro": "Rua Principal, 123"
+}
+
+def test_update_venda(client, override_get_session):
+    """
+    Testa que atualizar uma venda existente retorna HTTP 200.
+    """
+    email_teste = "pedro.teste@ufpa.br"
+
+    client.post("/cadastro_usuario", json=PAYLOAD_USUARIO_PADRAO)
+
+    client.post("/cadastro_produtos", json={
+        "nome_do_produto": "Açaí da Roça",
+        "proprietario_usuario": email_teste,
+        "unidade_de_medida": "Litro",
+        "quantidade_em_estoque": 50,
+        "categoria_do_produto": "Alimentos",
+        "valor_de_custo": 10.00,
+        "valor_final": 15.00,
+        "descricao_do_produto": "Açaí puro tirado direto da palmeira"
+    })
+
+    client.post("/cadastro_venda_produto", json={
+        "nome_do_produto": "Açaí da Roça",
+        "vendedor_email": email_teste,
+        "descricao_da_venda": "Venda de teste",
+        "quantidade": 2,
+        "valor_da_venda": 30.00,
+        "forma_de_pagamento": "PIX",
+        "porcentagem_do_desconto": 0.0,
+        "valor_final": 30.00
+    })
+
+    response = client.patch(
+        f"/update_venda/{email_teste}/Açaí da Roça",
+        json={"valor_final": 25.00}
+    )
+
+    assert response.status_code == 200
+    assert "atualizado" in response.json()["mensagem"]
