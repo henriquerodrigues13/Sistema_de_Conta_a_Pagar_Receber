@@ -1,3 +1,8 @@
+/**
+ * Gera o HTML da página de edição de serviço.
+ * @param {Object} servico - Objeto com os dados do serviço a ser editado.
+ * @returns {string} HTML da página de edição.
+ */
 function paginaEditarServico(servico) {
     return `
         <div id="container-editarServicos">
@@ -7,11 +12,11 @@ function paginaEditarServico(servico) {
                     alt="Logo"
                 />
             </div>
-
+ 
             <h1>Editar Serviço</h1>
-
+ 
             <form id="form-editarServico">
-
+ 
                 <div class="campo">
                     <label>Nome do serviço <span style="color: red;">*</span></label>
                     <input 
@@ -23,34 +28,26 @@ function paginaEditarServico(servico) {
                         required
                     />
                 </div>
-
+ 
                 <div class="campo">
                     <label>Categoria <span style="color: red;">*</span></label>
-
+ 
                     <select id="editar-categoria-servico" required>
                         <option value="informatica" ${servico.categoria_do_servico === 'informatica' ? 'selected' : ''}>Informática</option>
-
-                        <option value="manutencao" ${servico.categoria_do_servico === 'manutencao' ? 'selected' : ''}>Manutenção</option>
-
-                        <option value="design" ${servico.categoria_do_servico === 'design' ? 'selected' : ''}>Design</option>
-
+                        <option value="manutencao"  ${servico.categoria_do_servico === 'manutencao' ? 'selected' : ''}>Manutenção</option>
+                        <option value="design"      ${servico.categoria_do_servico === 'design' ? 'selected' : ''}>Design</option>
                         <option value="consultoria" ${servico.categoria_do_servico === 'consultoria' ? 'selected' : ''}>Consultoria</option>
-
-                        <option value="marketing" ${servico.categoria_do_servico === 'marketing' ? 'selected' : ''}>Marketing</option>
-
-                        <option value="educacao" ${servico.categoria_do_servico === 'educacao' ? 'selected' : ''}>Educação</option>
-
-                        <option value="limpeza" ${servico.categoria_do_servico === 'limpeza' ? 'selected' : ''}>Limpeza</option>
-
-                        <option value="transporte" ${servico.categoria_do_servico === 'transporte' ? 'selected' : ''}>Transporte</option>
-
-                        <option value="outros" ${servico.categoria_do_servico === 'outros' ? 'selected' : ''}>Outros</option>
+                        <option value="marketing"   ${servico.categoria_do_servico === 'marketing' ? 'selected' : ''}>Marketing</option>
+                        <option value="educacao"    ${servico.categoria_do_servico === 'educacao' ? 'selected' : ''}>Educação</option>
+                        <option value="limpeza"     ${servico.categoria_do_servico === 'limpeza' ? 'selected' : ''}>Limpeza</option>
+                        <option value="transporte"  ${servico.categoria_do_servico === 'transporte' ? 'selected' : ''}>Transporte</option>
+                        <option value="outros"      ${servico.categoria_do_servico === 'outros' ? 'selected' : ''}>Outros</option>
                     </select>
                 </div>
-
+ 
                 <div class="campo">
                     <label>Valor do serviço <span style="color: red;">*</span></label>
-
+ 
                     <input 
                         type="text" 
                         placeholder="0,00" 
@@ -60,15 +57,15 @@ function paginaEditarServico(servico) {
                         required
                         class="input-valor"
                     />
-
+ 
                     <small style="color: #999;">
                         Ex: 150,00 ou 150.00
                     </small>
                 </div>
-
+ 
                 <div class="campo">
                     <label>Descrição <span style="color: red;">*</span></label>
-
+ 
                     <textarea 
                         placeholder="Descrição do serviço"
                         id="editar-descricao-servico"
@@ -78,7 +75,7 @@ function paginaEditarServico(servico) {
                         required
                     >${servico.descricao_do_servico || ''}</textarea>
                 </div>
-
+ 
                 <div id="erro-validacao" style="
                     display: none;
                     background-color: #ffe6e6;
@@ -88,9 +85,9 @@ function paginaEditarServico(servico) {
                     margin-bottom: 15px;
                     border-left: 4px solid #c0392b;
                 "></div>
-
+ 
                 <div class="botoes">
-
+ 
                     <button 
                         type="button"
                         id="btn-editarServico"
@@ -98,7 +95,7 @@ function paginaEditarServico(servico) {
                     >
                         Salvar Alterações
                     </button>
-
+ 
                     <button 
                         type="button"
                         id="voltar-telaProdutoServico"
@@ -107,9 +104,9 @@ function paginaEditarServico(servico) {
                     >
                         Voltar
                     </button>
-
+ 
                 </div>
-
+ 
             </form>
         </div>
     `;

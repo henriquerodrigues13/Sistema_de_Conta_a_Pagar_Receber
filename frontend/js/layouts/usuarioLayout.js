@@ -1,56 +1,148 @@
+/**
+ * Renderiza o layout principal do usuário.
+ * @returns {string} Estrutura HTML da página.
+ */
 function paginaLayoutUsuario() {
-  return `
+
+    return `
         <div id="usuarioLayout">
-    <aside class="sidebar">
-      <div class="marcaagua"></div>
-      <div class="logo">
-        <img src="./assets/imgs/logo/logoextensa.png" alt="Logo" />
-      </div>
 
-      <ul class="menu">
-        <li>
-          <button type="button" id="btn-sectionDashboard" onclick="renderizarSection('sectionDashboard', event)">
-            <img src="./assets/imgs/icons/casa.png" class="menu-icon" />
-            Dashboard
-          </button>
-        </li>
+            <aside class="sidebar">
 
-        <li>
-          <button type="button" onclick="renderizarSection('sectionDespesa', event)">
-            <img src="./assets/imgs/icons/pagamento.png" class="menu-icon" />
-            Contas a Pagar
-          </button>
-        </li>
+                <div class="marcaagua"></div>
 
-        <li>
-          <button type="button" onclick="renderizarSection('sectionReceita', event)">
-            <img src="./assets/imgs/icons/dinheiro.png" class="menu-icon" />
-            Contas a Receber
-          </button>
-        </li>
+                <div class="logo">
 
-        <li>
-          <button type="button" onclick="renderizarSection('sectionProdutosServicos', event)">
-            <img src="./assets/imgs/icons/armazem.png" class="menu-icon" />
-            Produtos e Serviços
-          </button>
-        </li>
+                    <img 
+                        src="./assets/imgs/logo/logoextensa.png"
+                        alt="Logo"
+                    />
 
-        <li>
-          <button type="button">
-            <img src="./assets/imgs/icons/relatorio.png" class="menu-icon" />
-            Relatórios
-          </button>
-        </li>
-        <li>
-          <button type="button" onclick="logout()">
-            <img src="./assets/imgs/icons/saida.png" class="menu-icon" />
-            Sair
-          </button>
-        </li>
-      </ul>
-    </aside>
-    <div id="section"></div>
-  </div>
-    `
+                </div>
+
+                <ul class="menu">
+
+                    <li>
+
+                        <button
+                            type="button"
+                            id="btn-sectionDashboard"
+                            onclick="renderizarSection('sectionDashboard', event)"
+                        >
+
+                            <img 
+                                src="./assets/imgs/icons/casa.png"
+                                class="menu-icon"
+                                alt="Dashboard"
+                            />
+
+                            Dashboard
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        <button
+                            type="button"
+                            id="btn-sectionDespesa"
+                            onclick="renderizarSection('sectionDespesa', event)"
+                        >
+
+                            <img 
+                                src="./assets/imgs/icons/pagamento.png"
+                                class="menu-icon"
+                                alt="Contas a pagar"
+                            />
+
+                            Contas a Pagar
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        <button
+                            type="button"
+                            id="btn-sectionReceita"
+                            onclick="renderizarSection('sectionReceita', event)"
+                        >
+
+                            <img 
+                                src="./assets/imgs/icons/dinheiro.png"
+                                class="menu-icon"
+                                alt="Contas a receber"
+                            />
+
+                            Contas a Receber
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        <button
+                            type="button"
+                            id="btn-sectionProdutosServicos"
+                            onclick="renderizarSection('sectionProdutosServicos', event)"
+                        >
+
+                            <img 
+                                src="./assets/imgs/icons/armazem.png"
+                                class="menu-icon"
+                                alt="Produtos e serviços"
+                            />
+
+                            Produtos e Serviços
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        <button type="button">
+
+                            <img 
+                                src="./assets/imgs/icons/relatorio.png"
+                                class="menu-icon"
+                                alt="Relatórios"
+                            />
+
+                            Relatórios
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        <button
+                            type="button"
+                            onclick="logout()"
+                        >
+
+                            <img 
+                                src="./assets/imgs/icons/saida.png"
+                                class="menu-icon"
+                                alt="Sair"
+                            />
+
+                            Sair
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+            </aside>
+
+            <div id="section"></div>
+
+        </div>
+    `;
 }

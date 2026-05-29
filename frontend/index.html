@@ -2,71 +2,130 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Sistema de Contas a Pagar e Receber
+    </title>
 
     <!-- Fontes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
 
-
-    <!-- Arquivos CSS -->
+    <!-- CSS Global -->
     <link rel="stylesheet" href="assets/css/global/reset.css">
-    <link rel="stylesheet" href="assets/css/global/global.css">
-    <link rel="stylesheet" href="assets/css/auth/login.css">
-    <link rel="stylesheet" href="assets/css/auth/register.css">
-    <link rel="stylesheet" href="assets/css/layouts/usuarioLayout.css">
-    <link rel="stylesheet" href="assets/css/pages/despesa/despesaPage.css">
-    <link rel="stylesheet" href="assets/css/pages/receita/receitaPage.css">
-    <link rel="stylesheet" href="assets/css/pages/dashboard/dashboardPage.css">
-    <link rel="stylesheet" href="assets/css/pages/cadastroReceita/cadastroReceitaPage.css">
-    <link rel="stylesheet" href="assets/css/pages/produtosServico/produtosServicosPage.css">
-    <link rel="stylesheet" href="assets/css/pages/cadastroProduto/cadastroProdutoPage.css">
-    <link rel="stylesheet" href="assets/css/pages/cadastroServico/cadastroServicoPage.css">
-    <link rel="stylesheet" href="assets/css/pages/editarProduto/editarProduto.css">
-    <link rel="stylesheet" href="assets/css/pages/editarServico/editarServico.css">
-    <link rel="stylesheet" href="assets/css/paginaInicial/paginaInicial.css">
-    <link rel="stylesheet" href="assets/css/pages/cadastroVenda/cadastroVendaProduto.css">
-    <link rel="stylesheet" href="assets/css/pages/cadastroVenda/cadastroVendaServico.css">
-    
 
-    <title>Sistema de Contas a Pagar e Receber</title>
+    <link rel="stylesheet" href="assets/css/global/global.css">
+
+    <!-- Autenticação -->
+    <link rel="stylesheet" href="assets/css/auth/login.css">
+
+    <link rel="stylesheet" href="assets/css/auth/register.css">
+
+    <!-- Layout -->
+    <link rel="stylesheet" href="assets/css/layouts/usuarioLayout.css">
+
+    <!-- Página Inicial -->
+    <link rel="stylesheet" href="assets/css/paginaInicial/paginaInicial.css">
+
+    <!-- Dashboard -->
+    <link rel="stylesheet" href="assets/css/pages/dashboard/dashboardPage.css">
+
+    <!-- Despesas -->
+    <link rel="stylesheet" href="assets/css/pages/despesa/despesaPage.css">
+
+    <!-- Receitas -->
+    <link rel="stylesheet" href="assets/css/pages/receita/receitaPage.css">
+
+    <link rel="stylesheet" href="assets/css/pages/cadastroReceita/cadastroReceitaPage.css">
+
+    <!-- Produtos e Serviços -->
+    <link rel="stylesheet" href="assets/css/pages/produtosServico/produtosServicosPage.css">
+
+    <link rel="stylesheet" href="assets/css/pages/cadastroProduto/cadastroProdutoPage.css">
+
+    <link rel="stylesheet" href="assets/css/pages/cadastroServico/cadastroServicoPage.css">
+
+    <link rel="stylesheet" href="assets/css/pages/editarProduto/editarProduto.css">
+
+    <link rel="stylesheet" href="assets/css/pages/editarServico/editarServico.css">
+
+    <!-- Vendas -->
+    <link rel="stylesheet" href="assets/css/pages/cadastroVenda/cadastroVendaProduto.css">
+
+    <link rel="stylesheet" href="assets/css/pages/cadastroVenda/cadastroVendaServico.css">
+
 </head>
 
 <body>
 
     <div id="app">
-        <!-- Adiciona dinamicamente -->
+        <!-- Conteúdo renderizado dinamicamente -->
     </div>
 
-    <!-- Arquivos JS -->
-    <script src="js/pages/cadastroVenda/cadastroVendaServico.js"></script>
-    <script src="js/pages/cadastroVenda/cadastroVendaProduto.js"></script>
-    <script src="js/pages/despesas/despesaEvent.js"></script>
-    <script src="js/pages/despesas/despesaPage.js"></script>
-    <script src="js/pages/editarServico/editarServicoEvent.js"></script>
-    <script src="js/pages/editarServico/editarServico.js"></script>
-    <script src="js/pages/editarProduto/editarProdutoEvent.js"></script>
-    <script src="js/pages/editarProduto/editarProduto.js"></script>
-    <script src="js/pages/cadastroServicos/cadastroServicoEvent.js"></script>
-    <script src="js/pages/cadastroServicos/cadastroServicosPage.js"></script>
-    <script src="js/pages/cadastroProdutos/cadastroProdutoEvent.js"></script>
-    <script src="js/pages/cadastroProdutos/cadastroProdutoPage.js"></script>
-    <script src="js/pages/produtosEServicos/produtosServicosEvent.js"></script>
-    <script src="js/pages/produtosEServicos/produtosServicosPage.js"></script>
-    <script src="js/pages/cadastroReceita/cadastroReceita.js"></script>
-    <script src="js/pages/dashboard/dashboardPage.js"></script>
-    <script src="js/pages/receita/receitaPageEvent.js"></script>
-    <script src="js/layouts/layoutEvent.js"></script>
-    <script src="js/pages/receita/receitaPage.js"></script>
-    <script src="js/layouts/usuarioLayout.js"></script>
-    <script src="js/auth/register.js"></script>
-    <script src="js/auth/login.js"></script>
-    <script src="js/paginaInicial/paginaInicial.js"></script>
+    <!-- Configurações -->
     <script src="js/config/config.js"></script>
+
+    <!-- Utilidades -->
     <script src="js/utils/utils.js"></script>
+
+    <!-- Autenticação -->
+    <script src="js/auth/login.js"></script>
+    <script src="js/auth/register.js"></script>
+
+    <!-- Layout -->
+    <script src="js/layouts/usuarioLayout.js"></script>
+    <script src="js/layouts/layoutEvent.js"></script>
+
+    <!-- Página Inicial -->
+    <script src="js/paginaInicial/paginaInicial.js"></script>
+
+    <!-- Dashboard -->
+    <script src="js/pages/dashboard/dashboardPage.js"></script>
+
+    <!-- Receitas -->
+    <script src="js/pages/receita/receitaPage.js"></script>
+    <script src="js/pages/receita/receitaPageEvent.js"></script>
+    <script src="js/pages/cadastroReceita/cadastroReceita.js"></script>
+
+    <!-- Despesas -->
+    <script src="js/pages/despesas/despesaPage.js"></script>
+    <script src="js/pages/despesas/despesaEvent.js"></script>
+
+    <!-- Produtos e Serviços -->
+    <script src="js/pages/produtosEServicos/produtosServicosPage.js"></script>
+    <script src="js/pages/produtosEServicos/produtosServicosEvent.js"></script>
+
+    <!-- Cadastro de Produtos -->
+    <script src="js/pages/cadastroProdutos/cadastroProdutoPage.js"></script>
+    <script src="js/pages/cadastroProdutos/cadastroProdutoEvent.js"></script>
+
+    <!-- Cadastro de Serviços -->
+    <script src="js/pages/cadastroServicos/cadastroServicosPage.js"></script>
+    <script src="js/pages/cadastroServicos/cadastroServicoEvent.js"></script>
+
+    <!-- Editar Produto -->
+    <script src="js/pages/editarProduto/editarProduto.js"></script>
+    <script src="js/pages/editarProduto/editarProdutoEvent.js"></script>
+
+    <!-- Editar Serviço -->
+    <script src="js/pages/editarServico/editarServico.js"></script>
+    <script src="js/pages/editarServico/editarServicoEvent.js"></script>
+
+    <!-- Venda de Produto -->
+    <script src="js/pages/cadastroVenda/cadastroVendaProduto.js"></script>
+
+    <!-- Venda de Serviço -->
+    <script src="js/pages/cadastroVenda/cadastroVendaServico.js"></script>
+
+    <!-- Inicialização -->
     <script src="js/app.js"></script>
 
 </body>

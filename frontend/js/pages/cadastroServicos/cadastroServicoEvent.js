@@ -1,41 +1,35 @@
-async function cadastrarServico() {
+/**
+ * Valida os dados do formulário de serviço.
+ * @param {object} dados Dados do serviço.
+ * @returns {string|null} Mensagem de erro ou null.
+ */
+function validarServico(dados) {
 
-    // ✅ Obter campos
-    const nomeServico = document.querySelector('#form-cadastroServicos input[type="text"]').value.trim();
-
-    const descricao = document.querySelector('#form-cadastroServicos textarea').value.trim();
-
-    const valorServico = document.querySelectorAll('#form-cadastroServicos input[type="text"]')[1].value.trim();
-
-    const categoria = document.querySelector('#form-cadastroServicos select').value;
-
-    const emailUsuario = obterEmailUsuario();
-
-    // ✅ VALIDAÇÕES
+    const {
+        nomeServico,
+        descricao,
+        valorServico,
+        categoria
+    } = dados;
 
     if (!nomeServico) {
-        alert('❌ Digite o nome do serviço');
-        return;
+        return '❌ Digite o nome do serviço';
     }
 
     if (nomeServico.length < 3) {
-        alert('❌ O nome do serviço deve ter pelo menos 3 caracteres');
-        return;
+        return '❌ O nome do serviço deve ter pelo menos 3 caracteres';
     }
 
     if (!descricao) {
-        alert('❌ Digite a descrição do serviço');
-        return;
+        return '❌ Digite a descrição do serviço';
     }
 
     if (descricao.length < 10) {
-        alert('❌ A descrição deve ter pelo menos 10 caracteres');
-        return;
+        return '❌ A descrição deve ter pelo menos 10 caracteres';
     }
 
     if (!valorServico) {
-        alert('❌ Digite o valor do serviço');
-        return;
+        return '❌ Digite o valor do serviço';
     }
 
     const valorServicoFloat = parseFloat(
@@ -43,34 +37,79 @@ async function cadastrarServico() {
     );
 
     if (isNaN(valorServicoFloat) || valorServicoFloat <= 0) {
-        alert('❌ Digite um valor válido maior que 0');
-        return;
+        return '❌ Digite um valor válido maior que 0';
     }
 
     if (!categoria || categoria === 'Selecione') {
-        alert('❌ Selecione uma categoria');
+        return '❌ Selecione uma categoria';
+    }
+
+    return null;
+}
+
+/**
+ * Limpa os campos do formulário de serviços.
+ */
+function limparFormularioServico() {
+
+    document.getElementById('nome-servico').value = '';
+
+    document.getElementById('descricao-servico').value = '';
+
+    document.getElementById('valor-servico').value = '';
+
+    document.getElementById('categoria-servico').selectedIndex = 0;
+}
+
+/**
+ * Realiza o cadastro de um serviço na API.
+ */
+async function cadastrarServico() {
+
+    const nomeServico = document.getElementById('nome-servico').value.trim();
+
+    const descricao = document.getElementById('descricao-servico').value.trim();
+
+    const valorServico = document.getElementById('valor-servico').value.trim();
+
+    const categoria = document.getElementById('categoria-servico').value;
+
+    const emailUsuario = obterEmailUsuario();
+
+    const dadosFormulario = {
+        nomeServico,
+        descricao,
+        valorServico,
+        categoria
+    };
+
+    const erroValidacao = validarServico(dadosFormulario);
+
+    if (erroValidacao) {
+        alert(erroValidacao);
         return;
     }
 
-    // ✅ Dados da API
     const dadosServico = {
         nome_do_servico: nomeServico,
-        prestador_servico_usuario: emailUsuario,
+        prestador_do_servico_usuario: emailUsuario,
         descricao_do_servico: descricao,
-        valor_do_servico: valorServicoFloat,
+        valor_do_servico: parseFloat(
+            valorServico.replace(',', '.')
+        ),
         categoria_do_servico: categoria
     };
 
+    const btnCadastrar = document.getElementById('btn-cadastrarServicos');
+
+    const textoOriginal = btnCadastrar.textContent;
+
     try {
 
-        const btnCadastrar = document.getElementById('btn-cadastrarServicos');
-
-        const textoOriginal = btnCadastrar.textContent;
-
         btnCadastrar.disabled = true;
+
         btnCadastrar.textContent = '⏳ Cadastrando...';
 
-        // ✅ Requisição
         const response = await fetch(`${API_BASE_URL}/cadastro_servico`, {
             method: 'POST',
             headers: {
@@ -79,7 +118,6 @@ async function cadastrarServico() {
             body: JSON.stringify(dadosServico)
         });
 
-        // ✅ Tratamento de erro
         if (!response.ok) {
 
             const erro = await response.json();
@@ -94,29 +132,19 @@ async function cadastrarServico() {
 
             } else {
 
-                alert(`❌ Erro ${response.status}: ${erro.detail || 'Erro desconhecido'}`);
+                alert(
+                    `❌ Erro ${response.status}: ${
+                        erro.detail || 'Erro desconhecido'
+                    }`
+                );
             }
-
-            btnCadastrar.disabled = false;
-            btnCadastrar.textContent = textoOriginal;
 
             return;
         }
 
-        // ✅ Sucesso
         alert('✅ Serviço cadastrado com sucesso!');
 
-        // ✅ Limpar formulário
-        document.querySelectorAll('#form-cadastroServicos input[type="text"]')[0].value = '';
-
-        document.querySelector('#form-cadastroServicos textarea').value = '';
-
-        document.querySelectorAll('#form-cadastroServicos input[type="text"]')[1].value = '';
-
-        document.querySelector('#form-cadastroServicos select').selectedIndex = 0;
-
-        btnCadastrar.disabled = false;
-        btnCadastrar.textContent = textoOriginal;
+        limparFormularioServico();
 
     } catch (error) {
 
@@ -124,9 +152,10 @@ async function cadastrarServico() {
 
         alert(`❌ Erro ao cadastrar serviço: ${error.message}`);
 
-        const btnCadastrar = document.getElementById('btn-cadastrarServicos');
+    } finally {
 
         btnCadastrar.disabled = false;
-        btnCadastrar.textContent = 'Cadastrar';
+
+        btnCadastrar.textContent = textoOriginal;
     }
 }

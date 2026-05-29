@@ -1,7 +1,13 @@
+/**
+ * Busca os dados do produto e renderiza a tela de edição.
+ * @param {string} nomeProduto Nome do produto.
+ */
 async function editarProduto(nomeProduto) {
+
     const emailUsuario = obterEmailUsuario();
 
     try {
+
         const response = await fetch(
             `${API_BASE_URL}/get_produtos_usuario/${emailUsuario}`,
             {
@@ -13,52 +19,101 @@ async function editarProduto(nomeProduto) {
         );
 
         if (!response.ok) {
-            throw new Error('Erro ao buscar produto');
+            throw new Error(
+                'Erro ao buscar produto'
+            );
         }
 
         const produtos = await response.json();
 
         const produto = produtos.find(
-            p => p.nome_do_produto === nomeProduto
+            produto =>
+                produto.nome_do_produto === nomeProduto
         );
 
         if (!produto) {
+
             alert('❌ Produto não encontrado');
+
             return;
         }
 
-        const section = document.getElementById('section');
+        const section = document.getElementById(
+            'section'
+        );
 
-        section.innerHTML = paginaEditarProduto(produto);
+        section.innerHTML = paginaEditarProduto(
+            produto
+        );
 
     } catch (error) {
+
         console.error(error);
+
         alert(`❌ ${error.message}`);
     }
 }
 
-async function salvarEdicaoProduto(nomeProdutoOriginal) {
+/**
+ * Obtém os dados do formulário de edição.
+ * @returns {object} Dados atualizados do produto.
+ */
+function obterDadosAtualizacaoProduto() {
+
+    return {
+        nome_do_produto:
+            obterElemento('editar-nome-produto').value,
+
+        categoria_do_produto:
+            obterElemento('editar-categoria-produto').value,
+
+        unidade_de_medida:
+            obterElemento('editar-unidade-produto').value,
+
+        quantidade_em_estoque: Number(
+            obterElemento(
+                'editar-quantidade-produto'
+            ).value
+        ),
+
+        valor_de_custo: parseFloat(
+            obterElemento(
+                'editar-valorCusto-produto'
+            ).value.replace(',', '.')
+        ),
+
+        valor_final: parseFloat(
+            obterElemento(
+                'editar-valorVenda-produto'
+            ).value.replace(',', '.')
+        ),
+
+        descricao_do_produto:
+            obterElemento(
+                'editar-descricao-produto'
+            ).value,
+
+        status_do_produto:
+            obterElemento(
+                'editar-status-produto'
+            ).value
+    };
+}
+
+/**
+ * Envia os dados atualizados do produto para a API.
+ * @param {string} nomeProdutoOriginal Nome original do produto.
+ */
+async function salvarEdicaoProduto(
+    nomeProdutoOriginal
+) {
+
     const emailUsuario = obterEmailUsuario();
 
     try {
-        const dadosAtualizacao = {
-            nome_do_produto: obterElemento('editar-nome-produto').value,
-            categoria_do_produto: obterElemento('editar-categoria-produto').value,
-            unidade_de_medida: obterElemento('editar-unidade-produto').value,
-            quantidade_em_estoque: Number(
-                obterElemento('editar-quantidade-produto').value
-            ),
-            valor_de_custo: parseFloat(
-                obterElemento('editar-valorCusto-produto')
-                    .value.replace(',', '.')
-            ),
-            valor_final: parseFloat(
-                obterElemento('editar-valorVenda-produto')
-                    .value.replace(',', '.')
-            ),
-            descricao_do_produto: obterElemento('editar-descricao-produto').value,
-            status_do_produto: obterElemento('editar-status-produto').value
-        };
+
+        const dadosAtualizacao =
+            obterDadosAtualizacaoProduto();
 
         const response = await fetch(
             `${API_BASE_URL}/update_produto/${emailUsuario}/${encodeURIComponent(nomeProdutoOriginal)}`,
@@ -67,28 +122,36 @@ async function salvarEdicaoProduto(nomeProdutoOriginal) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(dadosAtualizacao)
+                body: JSON.stringify(
+                    dadosAtualizacao
+                )
             }
         );
 
         if (!response.ok) {
+
             const erro = await response.json();
 
             alert(
                 `❌ Erro ${response.status}: ${
-                    erro.detail || 'Erro ao atualizar produto'
+                    erro.detail ||
+                    'Erro ao atualizar produto'
                 }`
             );
 
             return;
         }
 
-        alert('✅ Produto atualizado com sucesso');
+        alert(
+            '✅ Produto atualizado com sucesso'
+        );
 
         renderizarPagina('usuarioLayout');
 
     } catch (error) {
+
         console.error(error);
+
         alert(`❌ ${error.message}`);
     }
 }

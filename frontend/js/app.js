@@ -1,40 +1,71 @@
-document.addEventListener('DOMContentLoaded', function () {
-    verificarLogin();
-});
-
-function renderizarPagina(pagina) {
-    const app = document.getElementById('app');
-
-    switch (pagina) {
-        case 'login':
-            app.innerHTML = paginaLogin();
-            break;
-        case 'paginaInicial':
-            app.innerHTML = paginaInicial();
-            break;
-        case 'cadastroUsuario':
-            app.innerHTML = paginaCadastroUsuario();
-            break;
-        case 'usuarioLayout':
-            app.innerHTML = paginaLayoutUsuario();
-            renderizarSection('sectionDashboard');
-            break;
-        case 'cadastroReceita':
-            app.innerHTML = paginaCadastroReceita();
-            break;
-        case 'cadastroProduto':
-            app.innerHTML = paginaCadastroProduto();
-            break;
-        case 'cadastroServico':
-            app.innerHTML = paginaCadastroServico();
-            break;
-        case 'cadastroVendaProduto':
-            app.innerHTML = paginaCadastroVendaProduto();
-            break;
-        case 'cadastroVendaServico':
-            app.innerHTML = paginaCadastroVendaServico();
-            break;
-        default:
-            app.innerHTML = '<p>Página não encontrada</p>';
+/**
+ * Inicializa a aplicação após o carregamento da página.
+ */
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+        verificarLogin();
     }
+);
+
+/**
+ * Renderiza páginas do sistema no container principal.
+ * @param {string} pagina Nome da página.
+ */
+function renderizarPagina(pagina) {
+
+    const app =
+        document.getElementById('app');
+
+    const paginas = {
+
+        login: paginaLogin,
+
+        paginaInicial:
+            paginaInicial,
+
+        cadastroUsuario:
+            paginaCadastroUsuario,
+
+        cadastroReceita:
+            paginaCadastroReceita,
+
+        cadastroProduto:
+            paginaCadastroProduto,
+
+        cadastroServico:
+            paginaCadastroServico,
+
+        cadastroVendaProduto:
+            paginaCadastroVendaProduto,
+
+        cadastroVendaServico:
+            paginaCadastroVendaServico
+    };
+
+    if (pagina === 'usuarioLayout') {
+
+        app.innerHTML =
+            paginaLayoutUsuario();
+
+        renderizarSection(
+            'sectionDashboard'
+        );
+
+        return;
+    }
+
+    const paginaRenderizada =
+        paginas[pagina];
+
+    if (!paginaRenderizada) {
+
+        app.innerHTML =
+            '<p>Página não encontrada</p>';
+
+        return;
+    }
+
+    app.innerHTML =
+        paginaRenderizada();
 }

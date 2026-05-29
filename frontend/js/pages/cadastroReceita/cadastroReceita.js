@@ -1,67 +1,156 @@
+/**
+ * Renderiza a página de cadastro de receitas.
+ * @returns {string} Estrutura HTML da página.
+ */
 function paginaCadastroReceita() {
+
     return `
         <div id="container-cadastroReceita">
 
-        <div class="logo">
-            <img src="./assets/imgs/logo/logo.png" alt="Logo">
+            <div class="logo">
+
+                <img 
+                    src="./assets/imgs/logo/logo.png" 
+                    alt="Logo"
+                >
+
+            </div>
+
+            <h1>Cadastro de Receitas</h1>
+
+            <form id="form-cadastroReceita">
+
+                <div class="form-group">
+
+                    <label>
+                        Tipo ou nome da receita
+                    </label>
+
+                    <input 
+                        type="text"
+                        id="input-tipoReceita"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Email do pagador
+                    </label>
+
+                    <input 
+                        type="email"
+                        id="input-emailPagador"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Data de cadastro
+                    </label>
+
+                    <input 
+                        type="date"
+                        id="input-dataCadastroReceita"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Valor
+                    </label>
+
+                    <input 
+                        type="text"
+                        id="input-valorReceita"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Forma de Pagamento
+                    </label>
+
+                    <select id="opcoes-pagamentos">
+
+                        <option value="">
+                            Escolha a forma de pagamento
+                        </option>
+
+                        <option value="ct-credito">
+                            Cartão de crédito
+                        </option>
+
+                        <option value="ct-debito">
+                            Cartão de débito
+                        </option>
+
+                        <option value="pix">
+                            Pix
+                        </option>
+
+                        <option value="dinheiro">
+                            Dinheiro
+                        </option>
+
+                        <option value="outros">
+                            Outros
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Anexar documento
+                    </label>
+
+                    <input 
+                        type="file"
+                        id="files"
+                        accept=".pdf, .doc, .docx, .txt"
+                    >
+
+                </div>
+
+                <div class="form-group-footer">
+
+                    <label>
+                        Observação
+                    </label>
+
+                    <input 
+                        type="text"
+                        id="input-observacaoReceita"
+                    >
+
+                </div>
+
+            </form>
+
+            <button 
+                type="button"
+                id="cadastrarReceita"
+            >
+                Cadastrar
+            </button>
+
+            <button 
+                id="voltar-layout"
+                onclick="renderizarPagina('usuarioLayout')"
+            >
+                Voltar
+            </button>
+
         </div>
-
-        <h1>Cadastro de Receitas</h1>
-
-        <form id="form-cadastroReceita">
-            <div class="form-group">
-                <label>Tipo ou nome da receita</label>
-                <input type="text">
-            </div>
-
-            <div class="form-group">
-                <label>Email do pagador</label>
-                <input type="email">
-            </div>
-
-            <div class="form-group">
-                <label>Data de cadastro</label>
-                <input type="date">
-            </div>
-
-            <div class="form-group">
-                <label>Valor</label>
-                <input type="text">
-            </div>
-
-
-            <div class="form-group">
-                <label>Forma de Pagamento</label>
-                <select name="" id="opcoes-pagamentos">
-                    <option value="">Escolha a forma de pagamento</option>
-                    <option value="ct-credito">Cartão de credito</option>
-                    <option value="ct-debito">Cartão de debito</option>
-                    <option value="pix">Pix</option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="outros">outros</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Anexar documento</label>
-                <input type="file" id="files" accept=".pdf, .doc, .docx, .txt">
-            </div>
-
-            <div class="form-group-footer">
-                <label>Observação</label>
-                <input type="text">
-            </div>
-
-        </form>
-
-        <button type="button" id="cadastrarReceita">
-            Cadastrar
-        </button>
-
-        <button id="voltar-layout" onclick="renderizarPagina('usuarioLayout')">
-            Voltar
-        </button>
-
-    </div>
-    `
+    `;
 }

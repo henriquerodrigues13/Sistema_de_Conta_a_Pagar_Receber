@@ -1,37 +1,103 @@
-function renderizarSection(secao, evento) {
-    const section = document.getElementById('section');
+/**
+ * Remove a classe active de todos os botões do menu.
+ */
+function limparBotoesAtivos() {
 
-    document.querySelectorAll('aside button').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    document
+        .querySelectorAll('aside button')
+        .forEach(botao => {
+            botao.classList.remove('active');
+        });
+}
+
+/**
+ * Define o botão ativo no menu lateral.
+ * @param {string} secao Nome da seção.
+ * @param {Event} evento Evento do clique.
+ */
+function definirBotaoAtivo(secao, evento) {
 
     if (evento) {
-        evento.target.classList.add('active');
-        console.log(evento);
-    } else {
-        document.getElementById(`btn-${secao}`).classList.add('active');
+
+        evento.currentTarget.classList.add(
+            'active'
+        );
+
+        return;
     }
 
+    const botao = document.getElementById(
+        `btn-${secao}`
+    );
+
+    if (botao) {
+        botao.classList.add('active');
+    }
+}
+
+/**
+ * Renderiza a seção selecionada do sistema.
+ * @param {string} secao Nome da seção.
+ * @param {Event} evento Evento do clique.
+ */
+function renderizarSection(secao, evento) {
+
+    const section = document.getElementById(
+        'section'
+    );
+
+    limparBotoesAtivos();
+
+    definirBotaoAtivo(
+        secao,
+        evento
+    );
+
     switch (secao) {
+
         case 'sectionReceita':
-            section.innerHTML = paginaReceita();
-            setTimeout(() => carregarReceitas(1), 1000);
+
+            section.innerHTML =
+                paginaReceita();
+
+            setTimeout(() => {
+                carregarReceitas(1);
+            }, 1000);
+
             break;
+
         case 'sectionDespesa':
-            section.innerHTML = paginaDespesa();
-            setTimeout(() => carregarDespesas(1), 1000);
+
+            section.innerHTML =
+                paginaDespesa();
+
+            setTimeout(() => {
+                carregarDespesas(1);
+            }, 1000);
+
             break;
+
         case 'sectionDashboard':
-            section.innerHTML = paginaDashboard();
+
+            section.innerHTML =
+                paginaDashboard();
+
             break;
+
         case 'sectionProdutosServicos':
-            section.innerHTML = paginaProdutosServicos();
-            alternaTabela('tabelaProdutos');
+
+            section.innerHTML =
+                paginaProdutosServicos();
+
+            alternaTabela(
+                'tabelaProdutos'
+            );
+
             break;
-        case 'sectionDespesa':
-            section.innerHTML = paginaDespesa();
-            break;
+
         default:
-            section.innerHTML = '<p>Página não encontrada</p>';
+
+            section.innerHTML =
+                '<p>Página não encontrada</p>';
     }
 }
