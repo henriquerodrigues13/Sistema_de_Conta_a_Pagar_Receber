@@ -16,7 +16,8 @@ dependencies = [
     "requests>=2.33.1",
     "pydantic[email]",
     "fastapi[standard]",
-    "nanoid ==2.0.0"
+    "nanoid ==2.0.0",
+    "tzdata"
 ]
 
 [tool.setuptools]
