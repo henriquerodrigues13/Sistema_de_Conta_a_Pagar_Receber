@@ -16,7 +16,7 @@ function paginaLayoutUsuario() {
         </li>
 
         <li>
-          <button type="button">
+          <button type="button" onclick="renderizarSection('sectionDespesa', event)">
             <img src="./assets/imgs/icons/pagamento.png" class="menu-icon" />
             Contas a Pagar
           </button>

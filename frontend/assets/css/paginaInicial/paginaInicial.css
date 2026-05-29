@@ -1,0 +1,142 @@
+/* ===========================
+   PÁGINA INICIAL
+=========================== */
+
+#container-paginaInicial {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+/* LEFT */
+#container-paginaInicial .left {
+  width: 58%;
+  background: linear-gradient(to bottom, hsl(0, 98%, 48%), #700000);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+}
+
+#container-paginaInicial .left h1 {
+  color: white;
+  font-size: 38px;
+  text-align: center;
+  margin-bottom: 40px;
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+#container-paginaInicial .left h1 strong {
+  font-weight: bold;
+}
+
+#container-paginaInicial .dashboard {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+#container-paginaInicial .dashboard img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* RIGHT */
+#container-paginaInicial .right {
+  width: 42%;
+  background: #dcdcdc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container-paginaInicial .login-box {
+  width: 80%;
+  max-width: 420px;
+  text-align: center;
+}
+
+#container-paginaInicial .logo {
+  width: 160px;
+  margin-bottom: 20px;
+  margin: auto;
+}
+
+#container-paginaInicial .titulo {
+  font-size: 32px;
+  color: #333;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+#container-paginaInicial .titulo span {
+  color: #c40000;
+  font-weight: bold;
+}
+
+#container-paginaInicial .descricao {
+  color: #666;
+  font-size: 18px;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+/* BOTÕES */
+#container-paginaInicial .btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 20px;
+}
+
+#container-paginaInicial .btn-login {
+  background: #d40000;
+  color: white;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#container-paginaInicial .btn-login:hover {
+  background: #b00000;
+}
+
+#container-paginaInicial .btn-cadastro {
+  background: white;
+  color: #c40000;
+  border: 2px solid #d40000;
+}
+
+#container-paginaInicial .btn-cadastro:hover {
+  background: #fff3f3;
+}
+
+#container-paginaInicial .icon {
+  width: 24px;
+  height: 24px;
+}
+
+#container-paginaInicial .seguranca {
+  margin-top: 35px;
+  color: #888;
+  font-size: 15px;
+}

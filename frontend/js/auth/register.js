@@ -75,7 +75,10 @@ function paginaCadastroUsuario(){
         </div>
       </form>
       <div id="area-btnVoltarLogin">
-        <button type="button" onclick="renderizarPagina('login')" id="btn-voltar">Voltar</button>
+        <p>
+          Já possui login?
+          <button type="button" onclick="renderizarPagina('login')" id="btn-voltar">Logar</button>
+        </p>
       </div>
     </div>
   </div>

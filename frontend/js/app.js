@@ -9,6 +9,9 @@ function renderizarPagina(pagina) {
         case 'login':
             app.innerHTML = paginaLogin();
             break;
+        case 'paginaInicial':
+            app.innerHTML = paginaInicial();
+            break;
         case 'cadastroUsuario':
             app.innerHTML = paginaCadastroUsuario();
             break;

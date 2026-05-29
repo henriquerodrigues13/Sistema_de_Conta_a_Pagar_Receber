@@ -17,12 +17,19 @@ function renderizarSection(secao, evento) {
             section.innerHTML = paginaReceita();
             setTimeout(() => carregarReceitas(1), 1000);
             break;
+        case 'sectionDespesa':
+            section.innerHTML = paginaDespesa();
+            setTimeout(() => carregarDespesas(1), 1000);
+            break;
         case 'sectionDashboard':
             section.innerHTML = paginaDashboard();
             break;
         case 'sectionProdutosServicos':
             section.innerHTML = paginaProdutosServicos();
             alternaTabela('tabelaProdutos');
+            break;
+        case 'sectionDespesa':
+            section.innerHTML = paginaDespesa();
             break;
         default:
             section.innerHTML = '<p>Página não encontrada</p>';

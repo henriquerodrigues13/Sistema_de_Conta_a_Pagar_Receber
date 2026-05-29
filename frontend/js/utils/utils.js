@@ -15,7 +15,7 @@ function verificarLogin() {
         renderizarPagina('usuarioLayout');
         return;
     } else {
-        renderizarPagina('login');
+        renderizarPagina('paginaInicial');
         return;
     }
 }
@@ -23,8 +23,7 @@ function verificarLogin() {
 function logout() {
 
     localStorage.removeItem('usuario');
-    localStorage.removeItem('tipoUsuario');
-    localStorage.removeItem('cfpcnpj');
+    localStorage.removeItem('email');
 
     renderizarPagina('login');
 }

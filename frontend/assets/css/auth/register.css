@@ -139,9 +139,19 @@
         justify-content: center;
         margin-top: 15px;
 
+        & p{
+            font-size: 14px;
+        }
+
         & #btn-voltar{
             border: none;
             background-color: #FFFFFF;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        & #btn-voltar:hover{
+            color: #f2c94c;
         }
     }
 
