@@ -14,8 +14,6 @@ function paginaDespesa(){
                     <th>Descrição</th>
                     <th>Valor</th>
                     <th>Opções</th>
-                    <th>TT</th>
-                    <th>TT</th>
                 </tr>
             </thead>    
             <tbody>

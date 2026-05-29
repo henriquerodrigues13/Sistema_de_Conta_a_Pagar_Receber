@@ -63,18 +63,12 @@ function renderizarTabelaDespesa(despesas) {
  
         const td4 = document.createElement('td');
         td4.textContent = despesa.valor || '-';
- 
-        const td5 = document.createElement('td');
-        td5.textContent = despesa.forma_de_pagamento || '-';
- 
-        const td6 = document.createElement('td');
-        td6.textContent = despesa.data || '-';
 
-        const td7 = document.createElement('td');
+        const td5 = document.createElement('td');
 
 
         const divOpcoes = document.createElement('div');
-        divOpcoes.className = 'opcoes-btns';
+        divOpcoes.className = 'opcoes-btns-despesa';
 
         const btnEditar = document.createElement('button');
         const imgEditar = document.createElement('img');
@@ -107,16 +101,14 @@ function renderizarTabelaDespesa(despesas) {
         divOpcoes.appendChild(btnRemover);
         divOpcoes.appendChild(btnVerNf);
 
-        td7.appendChild(divOpcoes);
+        td5.appendChild(divOpcoes);
 
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td3);
         tr.appendChild(td4);
         tr.appendChild(td5);
-        tr.appendChild(td6);
-        tr.appendChild(td7);
-
+        
         tbody.appendChild(tr);
     });
 }
@@ -129,7 +121,7 @@ function renderizarTabelaVaziaDespesa() {
 
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 7;
+    td.colSpan = 5;
     td.textContent = 'Nenhuma Despesa encontrada';
     td.style.textAlign = 'center';
     td.style.padding = '20px';
