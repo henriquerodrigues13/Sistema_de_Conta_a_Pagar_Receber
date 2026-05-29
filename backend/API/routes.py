@@ -503,38 +503,38 @@ async def get_vendas(
 
     return [reponse_venda.model_validate(venda) for venda in vendas_reponse]
 
-@router.patch("/update_venda/{usuario_email}/{nome_do_servico_ou_produto}", response_model=patch_servico,
+@router.patch("/update_venda/{usuario_email}/{identificador}", response_model=patch_venda,
               responses={404: {"description": "serviço não encontrado."},
                          400: {"description": "Nenhum dado válido enviado para atualização."}})
-async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
-                            servico_update: patch_servico, session: SessionDep) -> JSONResponse:
-    update_data = servico_update.model_dump(exclude_unset=True, exclude_none=True)
+async def atualizar_venda(usuario_email: EmailStr, identificador: str,
+                            venda_update: patch_venda, session: SessionDep) -> JSONResponse:
+    update_data = venda_update.model_dump(exclude_unset=True, exclude_none=True)
 
     if not update_data:
         raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
 
-    if servico := session.execute(select(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
-                                                    servicos.nome_do_servico == nome_do_servico)).scalar_one_or_none():
+    if venda := session.execute(select(vendas).where(vendas.vendedor_email == usuario_email,
+                                                    vendas.identificador == identificador)).scalar_one_or_none():
         for key, value in update_data.items():
-            setattr(servico, key, value)
+            setattr(venda, key, value)
 
         session.commit()
-        session.refresh(servico)
-        return JSONResponse(content={'mensagem' : f'o servico : {nome_do_servico} foi atualizado'}, media_type= 'text/plain')
+        session.refresh(venda)
+        return JSONResponse(content={'mensagem' : f'A venda foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
 
-@router.delete("/delete_venda/{usuario_email}/{nome_do_servico}", response_model=delete_servico,
+@router.delete("/delete_venda/{usuario_email}/{identificador}", response_model=delete_venda,
                responses={404: {"description": "Serviço não encontrado."}})
 async def deletar_venda(usuario_email: EmailStr,
-                          nome_do_servico: str,
+                          identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if produto := (session.execute(update(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
-                                                          servicos.nome_do_servico == nome_do_servico)
-                                                          .values(servico_deletado=True))):
+    if venda := (session.execute(update(vendas).where( vendas.vendedor_email== usuario_email,
+                                                          vendas.identificador == identificador)
+                                                          .values(venda_deletado=True))):
 
         session.commit()
 
-        return JSONResponse(content={'mensagem' : f'o servico: {nome_do_servico} foi deletado'}, media_type= 'text/plain')
+        return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
 
-    raise HTTPException(status_code=404, detail="Serviço não encontrado.")
+    raise HTTPException(status_code=404, detail="A venda não encontrado.")

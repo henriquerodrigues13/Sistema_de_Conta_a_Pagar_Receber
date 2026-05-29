@@ -1,6 +1,5 @@
 from sqlalchemy import Integer, String, Float, ForeignKey, Boolean, DateTime, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -110,7 +109,6 @@ class produtos(Base):
     __tablename__ = 'produtos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    uuid_produto: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     nome_do_produto: Mapped[str] = mapped_column(String(100), index=True)
     proprietario_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'), index= True)
     proprietario_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index= True)
@@ -186,7 +184,6 @@ class servicos(Base):
     __tablename__ = 'servicos'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, unique=True)
     nome_do_servico: Mapped[str] = mapped_column(String(100), index=True)
     prestador_do_servico_fornecedor: Mapped[str | None] = mapped_column(String(100), ForeignKey('fornecedores.cnpj'),index=True)
     prestador_do_servico_usuario: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'),index=True)
@@ -250,7 +247,7 @@ class vendas(Base):
     __tablename__ = 'vendas'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    idetificador: Mapped[str] = mapped_column(String(10), unique=True, default=gerar_id_venda)
+    identificador: Mapped[str] = mapped_column(String(10), unique=True, default=gerar_id_venda)
     nome_do_servico: Mapped[str | None] = mapped_column(String(100), ForeignKey('servicos.nome_do_servico'),index=True)
     nome_do_produto: Mapped[str | None] = mapped_column(String(100), ForeignKey('produtos.nome_do_produto'), index=True)
     vendedor_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
@@ -313,21 +310,20 @@ class request_venda_servico(BaseModel):
 class reponse_venda(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     identificador: str
-    nome_do_servico: str
-    nome_do_produto: str
-    nome_do_servico: str
+    nome_do_servico: str | None = None
+    nome_do_produto: str | None = None
     vendedor_email: EmailStr
     comprador_email: EmailStr | None = None
     comprador_cpf: EmailStr | None = None
     descricao_da_venda: str
-    quantidade: int
+    quantidade: int | None = None
     valor_da_venda: float
     forma_de_pagamento: str
     porcentagem_do_desconto: float
     valor_final: float
     data_do_registro_venda: datetime
 
-class update_venda(BaseModel):
+class patch_venda(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     comprador_email: EmailStr | None = None
     comprador_cpf: EmailStr | None = None
@@ -343,7 +339,7 @@ class delete_venda(BaseModel):
     identificador: str
     vendedor_email: EmailStr
 
-class receitas(Base):
+'''class receitas(Base):
     _tablename_ = 'receitas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     recebedor_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
@@ -359,4 +355,4 @@ class receitas(Base):
 class despasas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-
+'''
