@@ -88,8 +88,8 @@ body {
 
     & button#cadastrarDespesa {
         width: 230px;
-        height: 50px;
-        margin: 120px auto 20px auto;
+        height: 40px;
+        margin: 60px auto 15px auto;
         background: #ffc107;
         border: none;
         border-radius: 10px;
@@ -98,11 +98,22 @@ body {
         cursor: pointer;
     }
 
-    & #voltar {
+    & button#cadastrarDespesa:hover{
+        background-color: #d5a106;
+    }
+
+    & #voltar-layout {
         text-align: center;
         font-weight: bold;
         border: none;
         cursor: pointer;
+        background-color: rgba(228, 78, 78, 0.585);
+        padding: 2px;
+        border-radius: 4px;
+    }
+
+    & #voltar-layout:hover{
+        background-color: rgb(228, 78, 78);
     }
 
 
@@ -110,7 +121,7 @@ body {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px 40px;
-        padding: 15px;
+        padding: 10px;
 
         & input {
             width: 99%;

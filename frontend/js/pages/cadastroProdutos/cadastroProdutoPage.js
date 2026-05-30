@@ -67,7 +67,6 @@ function paginaCadastroProduto() {
                         step="1"
                         required
                     />
-                    <small style="color: #999;">Mínimo: 1</small>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -75,26 +74,22 @@ function paginaCadastroProduto() {
                         <label>Valor de custo <span style="color: red;">*</span></label>
                         <input 
                             type="text" 
-                            placeholder="0,00" 
+                            placeholder="Ex: 10,50 ou 10.50" 
                             id="valorCusto-produto"
-                            pattern="[0-9]+([,\\.][0-9]{1,2})?"
                             required
                             class="input-valor"
                         />
-                        <small style="color: #999;">Ex: 10,50 ou 10.50</small>
                     </div>
 
                     <div class="campo">
                         <label>Valor de venda <span style="color: red;">*</span></label>
                         <input 
                             type="text" 
-                            placeholder="0,00" 
                             id="valorVenda-produto"
-                            pattern="[0-9]+([,\\.][0-9]{1,2})?"
+                            placeholder="Ex: 15,50 ou 15.50"
                             required
                             class="input-valor"
                         />
-                        <small style="color: #999;">Ex: 15,50 ou 15.50</small>
                     </div>
                 </div>
 
@@ -108,10 +103,6 @@ function paginaCadastroProduto() {
                         rows="4"
                         required
                     ></textarea>
-
-                    <small style="color: #999;">
-                        Caracteres: <span id="char-count">0</span>/500
-                    </small>
                 </div>
 
                 <div class="campo">
@@ -138,7 +129,7 @@ function paginaCadastroProduto() {
                         style="cursor: pointer;" 
                         onclick="renderizarPagina('usuarioLayout')"
                     >
-                        Voltar
+                       < Voltar
                     </button>
                 </div>
             </form>

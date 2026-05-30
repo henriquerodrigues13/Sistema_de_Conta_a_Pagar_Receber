@@ -76,7 +76,7 @@ function paginaCadastroServico() {
                         id="btn-voltarDashboard"
                         onclick="renderizarPagina('usuarioLayout')"
                     >
-                        Voltar
+                        < Voltar
                     </button>
                 </div>
             </form>

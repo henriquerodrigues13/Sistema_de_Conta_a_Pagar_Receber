@@ -84,7 +84,7 @@ function paginaCadastroDespesa(){
         </button>
 
         <button id="voltar-layout" onclick="renderizarPagina('usuarioLayout')">
-            Voltar
+            < Voltar
         </button>
 
     </div>

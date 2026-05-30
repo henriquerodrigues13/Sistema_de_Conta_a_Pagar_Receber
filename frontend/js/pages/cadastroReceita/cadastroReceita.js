@@ -148,7 +148,7 @@ function paginaCadastroReceita() {
                 id="voltar-layout"
                 onclick="renderizarPagina('usuarioLayout')"
             >
-                Voltar
+                < Voltar
             </button>
 
         </div>

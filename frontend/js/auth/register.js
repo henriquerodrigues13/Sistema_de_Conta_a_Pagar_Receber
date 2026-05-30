@@ -10,7 +10,7 @@ function paginaCadastroUsuario() {
             <div class="left">
 
                 <h1>
-                    REDFINANCE
+                    RED FINANCE
                 </h1>
 
             </div>

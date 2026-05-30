@@ -1,6 +1,6 @@
 #tela-cadastroUsuario {
-    width: 55%;
-    height: 95%;
+    width: 50%;
+    height: 98%;
     margin: auto;
     background-color: #FFFFFF;
     border-radius: 12px;
@@ -38,6 +38,7 @@
         & h2 {
             font-size: 38px;
             margin-bottom: 5px;
+            color: #343A40;
         }
 
         & p {
@@ -138,6 +139,7 @@
         display: flex;
         justify-content: center;
         margin-top: 15px;
+        color: #343A40;
 
         & p{
             font-size: 14px;
@@ -146,12 +148,13 @@
         & #btn-voltar{
             border: none;
             background-color: #FFFFFF;
+            color: #FF383C;
             cursor: pointer;
             font-size: 16px;
         }
 
         & #btn-voltar:hover{
-            color: #f2c94c;
+            color: #830404;
         }
     }
 

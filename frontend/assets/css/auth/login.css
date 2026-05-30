@@ -74,6 +74,11 @@
                 height: 100%;
                 border-radius: 5px;
                 font-weight: bold;
+                cursor: pointer;
+            }
+
+            & .btn-entrar #btn-logar:hover{
+                background: #b00000;
             }
         }
 
@@ -90,6 +95,11 @@
             color: #FF383C;
             font-weight: bold;
             background-color: #FFFFFF;
+            cursor: pointer;
+        }
+
+        & #cadastrar button:hover{
+            color: #b00000;
         }
     }
 }

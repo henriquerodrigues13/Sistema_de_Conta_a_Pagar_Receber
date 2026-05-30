@@ -138,7 +138,7 @@ function paginaCadastroVendaProduto() {
 
             </form>
 
-            <button 
+            <button
                 type="button" 
                 id="btn-cadastrarVendaProduto" 
                 onclick="submitVendaProduto()"
@@ -150,7 +150,7 @@ function paginaCadastroVendaProduto() {
                 onclick="renderizarPagina('usuarioLayout')" 
                 class="voltar"
             >
-                Voltar
+               < Voltar
             </button>
 
         </div>
