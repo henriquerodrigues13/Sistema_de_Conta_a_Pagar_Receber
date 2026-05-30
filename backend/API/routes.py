@@ -546,7 +546,7 @@ async def cadastro_receita(cadastro_de_receita: request_receita,
                             session: SessionDep
                             ) -> JSONResponse | HTTPException:
     pagador = None
-    if not (vendedor_existe := session.execute(
+    if not (recebedor_existe := session.execute(
             select(usuarios).where(usuarios.email == cadastro_de_receita.recebedor_email))
             .scalar_one_or_none()):
         raise HTTPException(status_code=404, detail='Vendedor nao encontrado')
@@ -555,10 +555,10 @@ async def cadastro_receita(cadastro_de_receita: request_receita,
 
     if 'pagador_email' in data_request:
         if not (pagador_email := session.execute(
-                select(usuarios).where(usuarios.email == cadastro_de_receita.comprador_email))
+                select(usuarios).where(usuarios.email == cadastro_de_receita.pagador_email))
                 .scalar_one_or_none()):
             raise HTTPException(status_code=404, detail='Comprador nao encontrado')
-        pagador= data_request['pagador_email']
+        pagador = data_request['pagador_email']
 
 
     nova_receita = receitas(
@@ -618,9 +618,9 @@ async def get_receitas(
 @router.patch("/update_receita/{usuario_email}/{identificador}", response_model=patch_receita,
               responses={404: {"description": "A receita não encontrado."},
                          400: {"description": "Nenhum dado válido enviado para atualização."}})
-async def atualizar_venda(usuario_email: EmailStr, identificador: str,
-                            venda_update: patch_receita, session: SessionDep) -> JSONResponse:
-    update_data = venda_update.model_dump(exclude_unset=True, exclude_none=True)
+async def atualizar_receita(usuario_email: EmailStr, identificador: str,
+                            receita_update: patch_receita, session: SessionDep) -> JSONResponse:
+    update_data = receita_update.model_dump(exclude_unset=True, exclude_none=True)
 
     if not update_data:
         raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
@@ -638,15 +638,126 @@ async def atualizar_venda(usuario_email: EmailStr, identificador: str,
 
 @router.delete("/delete_receita/{usuario_email}/{identificador}", response_model=delete_receita,
                responses={404: {"description": "receita não encontrado."}})
-async def deletar_venda(usuario_email: EmailStr,
+async def deletar_receita(usuario_email: EmailStr,
                           identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if venda := (session.execute(update(receitas).where( receitas.recebedor_email == usuario_email,
+    if receita := (session.execute(update(receitas).where( receitas.recebedor_email == usuario_email,
                                                           receitas.identificador == identificador)
                                                           .values(receita_deletada=True))):
 
         session.commit()
 
-        return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
+        return JSONResponse(content={'mensagem' : f'A receita foi deletado'}, media_type= 'text/plain')
 
-    raise HTTPException(status_code=404, detail="A venda não encontrado.")
+    raise HTTPException(status_code=404, detail="A receita não encontrado.")
+
+@router.post('/cadastro_despesa', response_model=request_despesa)
+async def cadastro_despesa(cadastro_de_despesa: request_despesa,
+                            session: SessionDep
+                            ) -> JSONResponse | HTTPException:
+    recebedor = None
+    if not (pagador_existe := session.execute(
+            select(usuarios).where(usuarios.email == cadastro_de_despesa.pagador_email))
+            .scalar_one_or_none()):
+        raise HTTPException(status_code=404, detail='Pagador não encontrado')
+
+    data_request = cadastro_de_despesa.model_dump(exclude_unset=True)
+
+    if 'recebedor_email' in data_request:
+        if not (recebedor_email := session.execute(
+                select(usuarios).where(usuarios.email == cadastro_de_despesa.recebedor_email))
+                .scalar_one_or_none()):
+            raise HTTPException(status_code=404, detail='Recebedor não encontrado')
+        recebedor = data_request['recebedor_email']
+
+
+    nova_despesa = despesas(
+        pagador_email= cadastro_de_despesa.pagador_email,
+        recebedor_email= recebedor,
+        tipo_da_despesa= cadastro_de_despesa.tipo_da_despesa,
+        descricao_da_despesa= cadastro_de_despesa.descricao_da_despesa,
+        valor_total_da_despesa= cadastro_de_despesa.valor_total_da_despesa,
+        forma_de_pagamento= cadastro_de_despesa.forma_de_pagamento,
+        valor_por_unidade= cadastro_de_despesa.valor_por_unidade,
+        documento_anexado= cadastro_de_despesa.documento_anexado,
+        valor_de_revenda= cadastro_de_despesa.valor_de_revenda,
+    )
+
+    session.add(nova_despesa)
+    session.commit()
+    session.refresh(nova_despesa)
+
+    return JSONResponse(
+        content={'mensagem': f'A receita foi cadastrada com sucesso'},
+        media_type='text/plain')
+
+@router.get('/get_despesas/{usuario_email}', response_model=list[reponse_despesa])
+async def get_despesa(
+        usuario_email: EmailStr,
+        session: SessionDep,
+        response: Response,
+        page: int = Query(1, ge= 1),
+        ) -> list[reponse_despesa]:
+
+    pages_size = 10
+
+    total = session.scalar(
+        select(func.count())
+        .select_from(despesas)
+        .where(despesas.pagador_email == usuario_email))
+
+    total_pages = (total + pages_size - 1) // pages_size
+
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
+    offset = (page - 1) * pages_size
+
+    response.headers["X-Total-Pages"] = str(total_pages)
+    response.headers["X-Total-Items"] = str(total)
+
+    despesas_reponse = session.execute(
+        select(despesas)
+        .where(despesas.pagador_email == usuario_email,
+               despesas.despesa_deletada == False)
+        .limit(pages_size)
+        .offset(offset)
+    ).scalars().all()
+
+    return [reponse_despesa.model_validate(despensa) for despensa in despesas_reponse]
+
+@router.patch("/update_despesa/{usuario_email}/{identificador}", response_model=patch_despesa,
+              responses={404: {"description": "A despesa não encontrado."},
+                         400: {"description": "Nenhum dado válido enviado para atualização."}})
+async def atualizar_despesa(usuario_email: EmailStr, identificador: str,
+                            despensa_update: patch_despesa, session: SessionDep) -> JSONResponse:
+    update_data = despensa_update.model_dump(exclude_unset=True, exclude_none=True)
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum dado válido enviado para atualização.")
+
+    if despesa := session.execute(select(despesas).where(despesas.pagador_email == usuario_email,
+                                                   despesas.identificador == identificador)).scalar_one_or_none():
+        for key, value in update_data.items():
+            setattr(despesa, key, value)
+
+        session.commit()
+        session.refresh(despesa)
+        return JSONResponse(content={'mensagem' : f'A despesa foi atualizado'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="A despesa não encontrado.")
+
+@router.delete("/delete_despesa/{usuario_email}/{identificador}", response_model=delete_receita,
+               responses={404: {"description": "A despesa não encontrado."}})
+async def deletar_despesa(usuario_email: EmailStr,
+                          identificador: str,
+                          session: SessionDep) -> JSONResponse | HTTPException:
+    if despesa := (session.execute(update(despesas).where( despesas.pagador_email == usuario_email,
+                                                          despesas.identificador == identificador)
+                                                          .values(despesa_deletada=True))):
+
+        session.commit()
+
+        return JSONResponse(content={'mensagem' : f'A despesa foi deletada'}, media_type= 'text/plain')
+
+    raise HTTPException(status_code=404, detail="A despesa não encontrado.")

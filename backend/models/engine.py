@@ -60,6 +60,16 @@ class usuarios(Base):
         foreign_keys='[receitas.pagador_email]'
     )
 
+    despesas_pagador_usuario: Mapped[list['despesas']] = relationship(
+        back_populates='despesa_pagador',
+        foreign_keys='[despesas.pagador_email]'
+    )
+
+    despesa_recebedor_usuario: Mapped[list['despesas']] = relationship(
+        back_populates='despesa_recebedor',
+        foreign_keys='[despesas.recebedor_email]'
+    )
+
 class cadastro_usuario(BaseModel):
     nome_completo: str
     senha: str
@@ -411,7 +421,72 @@ class delete_receita(BaseModel):
     identificador: str
     vendedor_email: EmailStr
 
-'''class despasas(Base):
+class despesas(Base):
     __tablename__ = 'despesas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-'''
+    identificador: Mapped[str] = mapped_column(String(10), unique=True, default=gerar_id_venda)
+    pagador_email: Mapped[str] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
+    recebedor_email: Mapped[str | None] = mapped_column(String(100), ForeignKey('usuarios.email'), index=True)
+    tipo_da_despesa: Mapped[str] = mapped_column(String(100), index=True)
+    descricao_da_despesa: Mapped[str] = mapped_column(String(100))
+    valor_total_da_despesa: Mapped[float] = mapped_column(Float)
+    forma_de_pagamento: Mapped[str] = mapped_column(String(100))
+    valor_por_unidade: Mapped[float] = mapped_column(Float)
+    documento_anexado: Mapped[bytes | None] = mapped_column(LargeBinary)
+    valor_de_revenda: Mapped[float | None] = mapped_column(Float)
+    unidade_de_medida_revenda: Mapped[str | None] = mapped_column(String(100))
+    despesa_deletada: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    despesa_pagador: Mapped['usuarios'] = relationship(
+        back_populates='despesas_pagador_usuario',
+        foreign_keys="[despesas.pagador_email]"
+    )
+
+    despesa_recebedor: Mapped['usuarios'] = relationship(
+        back_populates='despesa_recebedor_usuario',
+        foreign_keys="[despesas.recebedor_email]"
+    )
+
+class request_despesa(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    pagador_email: EmailStr
+    recebedor_email: EmailStr | None = None
+    tipo_da_despesa: str
+    descricao_da_despesa: str
+    valor_total_da_despesa: float
+    forma_de_pagamento: str
+    valor_por_unidade: float
+    documento_anexado: bytes | None = None
+    valor_de_revenda: float | None = None
+    unidade_de_medida_revenda: str | None = None
+
+class reponse_despesa(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    identificador: str
+    pagador_email: EmailStr
+    recebedor_email: EmailStr | None = None
+    tipo_da_despesa: str
+    descricao_da_despesa: str
+    valor_total_da_despesa: float
+    forma_de_pagamento: str
+    valor_por_unidade: float
+    documento_anexado: bytes | None = None
+    valor_de_revenda: float | None = None
+    unidade_de_medida_revenda: str | None = None
+
+class patch_despesa(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    recebedor_email: EmailStr | None = None
+    tipo_da_despesa: str | None = None
+    descricao_da_despesa: str | None = None
+    valor_total_da_despesa: float | None = None
+    forma_de_pagamento: str | None = None
+    valor_por_unidade: float | None = None
+    documento_anexado: bytes | None = None
+    valor_de_revenda: float | None = None
+    unidade_de_medida_revenda: str | None = None
+
+class delete_despesa(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    identificador: str
+    pagador_email: EmailStr
