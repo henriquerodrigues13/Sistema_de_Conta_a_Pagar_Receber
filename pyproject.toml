@@ -17,7 +17,8 @@ dependencies = [
     "pydantic[email]",
     "fastapi[standard]",
     "nanoid ==2.0.0",
-    "tzdata"
+    "tzdata",
+    "fastapi-mail==1.4.1"
 ]
 
 [tool.setuptools]

@@ -1,14 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, BackgroundTasks
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from backend.models.database import get_session
 from starlette.responses import JSONResponse
+from sqlalchemy import select, func, update
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.engine import *
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, update
 from typing import Annotated
 
-from backend.models.engine import reponse_servicos
+BRASILIA = timezone(timedelta(hours=-3))
+
+conf = ConnectionConfig(
+    MAIL_USERNAME="henriquefnaf2680@gmail.com",
+    MAIL_PASSWORD="tuqq rxpr rxyy jome",
+    MAIL_FROM="henriquefnaf2680@gmail.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+)
+
+fast_mail = FastMail(conf)
 
 router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -57,6 +70,46 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     session.refresh(novo_usuario)
 
     return reponsa_usuario.model_validate(novo_usuario)
+
+@router.post('/recuperacao_senha', response_model=request_recuperacao_senha)
+async def recuperacao_senha(usuario: request_recuperacao_senha,
+                            session: SessionDep,
+                            background_tasks: BackgroundTasks) -> HTTPException | JSONResponse:
+    if usuario_existe := session.execute(select(usuarios).where(usuarios.email == usuario.email)).scalar_one_or_none():
+
+        usuario = usuario_existe
+
+        token = gerador_de_token()
+        usuario.token_reset_senha = token
+        usuario.expiracao_do_token = limite_de_expiracao_token()
+
+        session.commit()
+        session.refresh(usuario)
+
+        message = MessageSchema(
+            subject="Recuperação de senha",
+            recipients = [usuario.email],
+            body=f"Seu token: {token}",
+            subtype="plain"
+        )
+
+        background_tasks.add_task(fast_mail.send_message, message)
+
+        return JSONResponse(status_code=201, content={'message': 'Email para recuperação de senha, enviado'})
+    raise HTTPException(status_code=404, detail='Usuario não encontrado')
+
+@router.post('/reset_senha', response_model=request_reset_senha)
+async def recuperacao_senha(reset: request_reset_senha,
+                            session: SessionDep) -> HTTPException | JSONResponse:
+
+    if usuario := session.execute(select(usuarios).where(usuarios.token_reset_senha == reset.token)).scalar_one_or_none():
+        if usuario.expiracao_do_token.replace(tzinfo=BRASILIA) > datetime.now(BRASILIA):
+            session.execute(update(usuarios).where(usuarios.token_reset_senha == reset.token).
+                            values(senha=senha_hash(reset.senha)))
+            session.commit()
+            return JSONResponse(status_code=200, content={'message': 'Senha atualizada'})
+        raise HTTPException(status_code=400, detail='Token expirado')
+    raise HTTPException(status_code=404, detail='Token não encontrado')
 
 @router.post('/cadastro_produtos', response_model=request_produtos,
              responses={404: {'description': 'Usuario nao existe'},

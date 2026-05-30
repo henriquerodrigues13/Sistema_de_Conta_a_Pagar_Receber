@@ -29,6 +29,8 @@ class usuarios(Base):
     cidade: Mapped[str] = mapped_column(String(100))
     bairro: Mapped[str] = mapped_column(String(100))
     logradouro: Mapped[str] = mapped_column(String(100))
+    token_reset_senha: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    expiracao_do_token: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     produtos_do_usuario : Mapped[list['produtos']] = relationship(
         back_populates='usuario_produtos',
@@ -85,6 +87,15 @@ class login_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     email : EmailStr
     senha : str
+
+class request_recuperacao_senha(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    email: EmailStr
+
+class request_reset_senha(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    token: str
+    senha: str
 
 class reponsa_usuario(BaseModel):
     model_config = ConfigDict(from_attributes=True)
