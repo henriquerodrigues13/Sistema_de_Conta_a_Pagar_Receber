@@ -173,8 +173,7 @@ async def get_produtos_usuario(
 
     produtos_reponse = session.execute(
         select(produtos)
-        .where(produtos.proprietario_usuario == usuario_email,
-               produtos.produto_deletado == False)
+        .where(produtos.proprietario_usuario == usuario_email)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -207,10 +206,9 @@ async def atualizar_produto(usuario_email: EmailStr, nome_do_produto: str,
 async def deletar_produto(usuario_email: EmailStr,
                           nome_do_produto: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if produto := (session.execute(update(produtos).where(produtos.proprietario_usuario == usuario_email,
-                                                          produtos.nome_do_produto == nome_do_produto)
-                                                          .values(status_do_produto='indisponivel', produto_deletado=True))):
-
+    if produto := (session.execute(select(produtos).where(produtos.proprietario_usuario == usuario_email,
+                                                          produtos.nome_do_produto == nome_do_produto))).scalar_one_or_none():
+        session.delete(produto)
         session.commit()
 
         return JSONResponse(content={'mensagem' : f'o produto {nome_do_produto} foi deletado'}, media_type= 'text/plain')
@@ -337,8 +335,7 @@ async def get_servico_usuario(
 
     servico_reponse = session.execute(
         select(servicos)
-        .where(servicos.prestador_do_servico_usuario == usuario_email,
-               servicos.servico_deletado == False)
+        .where(servicos.prestador_do_servico_usuario == usuario_email)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -371,10 +368,10 @@ async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
 async def deletar_servico(usuario_email: EmailStr,
                           nome_do_servico: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if produto := (session.execute(update(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
-                                                          servicos.nome_do_servico == nome_do_servico)
-                                                          .values(servico_deletado=True))):
+    if servico := (session.execute(select(servicos).where(servicos.prestador_do_servico_usuario == usuario_email,
+                                                          servicos.nome_do_servico == nome_do_servico))).scalar_one_or_none():
 
+        session.delete(servico)
         session.commit()
 
         return JSONResponse(content={'mensagem' : f'o servico: {nome_do_servico} foi deletado'}, media_type= 'text/plain')
@@ -548,8 +545,7 @@ async def get_vendas(
 
     vendas_reponse = session.execute(
         select(vendas)
-        .where(vendas.vendedor_email == usuario_email,
-               vendas.venda_deletado == False)
+        .where(vendas.vendedor_email == usuario_email)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -582,10 +578,10 @@ async def atualizar_venda(usuario_email: EmailStr, identificador: str,
 async def deletar_venda(usuario_email: EmailStr,
                           identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if venda := (session.execute(update(vendas).where( vendas.vendedor_email== usuario_email,
-                                                          vendas.identificador == identificador)
-                                                          .values(venda_deletado=True))):
+    if venda := (session.execute(select(vendas).where( vendas.vendedor_email== usuario_email,
+                                                          vendas.identificador == identificador))).scalar_one_or_none():
 
+        session.delete(venda)
         session.commit()
 
         return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
@@ -660,8 +656,7 @@ async def get_receitas(
 
     receitas_reponse = session.execute(
         select(receitas)
-        .where(receitas.recebedor_email == usuario_email,
-               receitas.receita_deletada == False)
+        .where(receitas.recebedor_email == usuario_email)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -694,10 +689,10 @@ async def atualizar_receita(usuario_email: EmailStr, identificador: str,
 async def deletar_receita(usuario_email: EmailStr,
                           identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if receita := (session.execute(update(receitas).where( receitas.recebedor_email == usuario_email,
-                                                          receitas.identificador == identificador)
-                                                          .values(receita_deletada=True))):
+    if receita := (session.execute(select(receitas).where( receitas.recebedor_email == usuario_email,
+                                                          receitas.identificador == identificador))).scalar_one_or_none():
 
+        session.delete(receita)
         session.commit()
 
         return JSONResponse(content={'mensagem' : f'A receita foi deletado'}, media_type= 'text/plain')
@@ -771,8 +766,7 @@ async def get_despesa(
 
     despesas_reponse = session.execute(
         select(despesas)
-        .where(despesas.pagador_email == usuario_email,
-               despesas.despesa_deletada == False)
+        .where(despesas.pagador_email == usuario_email)
         .limit(pages_size)
         .offset(offset)
     ).scalars().all()
@@ -805,10 +799,10 @@ async def atualizar_despesa(usuario_email: EmailStr, identificador: str,
 async def deletar_despesa(usuario_email: EmailStr,
                           identificador: str,
                           session: SessionDep) -> JSONResponse | HTTPException:
-    if despesa := (session.execute(update(despesas).where( despesas.pagador_email == usuario_email,
-                                                          despesas.identificador == identificador)
-                                                          .values(despesa_deletada=True))):
+    if despesa := (session.execute(select(despesas).where( despesas.pagador_email == usuario_email,
+                                                          despesas.identificador == identificador))).scalar_one_or_none():
 
+        session.delete(despesa)
         session.commit()
 
         return JSONResponse(content={'mensagem' : f'A despesa foi deletada'}, media_type= 'text/plain')

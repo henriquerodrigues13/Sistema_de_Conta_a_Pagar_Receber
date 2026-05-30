@@ -149,7 +149,6 @@ class produtos(Base):
     valor_final: Mapped[float] = mapped_column(Float)
     descricao_do_produto: Mapped[str | None] = mapped_column(String(500))
     status_do_produto: Mapped[str] = mapped_column(String(100), default= 'ativo')
-    produto_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     usuario_produtos : Mapped['usuarios'] = relationship(
         back_populates='produtos_do_usuario',
@@ -220,7 +219,6 @@ class servicos(Base):
     descricao_do_servico: Mapped[str | None] = mapped_column(String(500))
     valor_do_servico: Mapped[float] = mapped_column(Float)
     categoria_do_servico: Mapped[str] = mapped_column(String(100))
-    servico_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     usuario_servicos : Mapped['usuarios'] = relationship(
         back_populates='servicos_do_usuario',
@@ -290,7 +288,6 @@ class vendas(Base):
     porcentagem_do_desconto: Mapped[float] = mapped_column(Float)
     valor_final: Mapped[float] = mapped_column(Float)
     data_do_registro_venda: Mapped[datetime] = mapped_column(DateTime(timezone=True),default=lambda: datetime.now(BRASILIA))
-    venda_deletado: Mapped[bool] = mapped_column(Boolean, default= False)
 
     venda_produto: Mapped['produtos'] = relationship(
         back_populates='produtos_vendidos',
@@ -382,7 +379,6 @@ class receitas(Base):
     forma_de_pagamento: Mapped[str] = mapped_column(String(100))
     observacao: Mapped[str] = mapped_column(String(100))
     documento_anexado: Mapped[bytes | None] = mapped_column(LargeBinary)
-    receita_deletada: Mapped[bool] = mapped_column(Boolean, default=False)
 
     receita_recebedor: Mapped['usuarios'] = relationship(
         back_populates='receitas_recebedor_usuario',
@@ -446,7 +442,6 @@ class despesas(Base):
     documento_anexado: Mapped[bytes | None] = mapped_column(LargeBinary)
     valor_de_revenda: Mapped[float | None] = mapped_column(Float)
     unidade_de_medida_revenda: Mapped[str | None] = mapped_column(String(100))
-    despesa_deletada: Mapped[bool] = mapped_column(Boolean, default=False)
 
     despesa_pagador: Mapped['usuarios'] = relationship(
         back_populates='despesas_pagador_usuario',
