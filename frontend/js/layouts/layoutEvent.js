@@ -40,29 +40,29 @@ function renderizarSection(secao, evento) {
 
     switch (secao) {
         case 'sectionReceita':
-            section.innerHTML = paginaReceita();
+            section.innerHTML = sectionReceita();
             setTimeout(() => {
                 carregarReceitas(1);
             }, 1000);
             break;
         case 'sectionDespesa':
-            section.innerHTML = paginaDespesa();
+            section.innerHTML = sectionDespesa();
             setTimeout(() => {
                 carregarDespesas(1);
             }, 1000);
             break;
         case 'sectionDashboard':
-            section.innerHTML = paginaDashboard();
+            section.innerHTML = sectionDashboard();
             setTimeout(() => {
                 carregarTotaisDashboard();
             }, 1000);
             break;
         case 'sectionProdutosServicos':
-            section.innerHTML = paginaProdutosServicos();
-            alternaTabela('tabelaProdutos');
+            section.innerHTML = sectionProdutosServicos();
+            alternaTabelaProdutoServico('tabelaProdutos');
             break;
         case 'sectionRelatorio':
-            section.innerHTML = paginaRelatorio();
+            section.innerHTML = sectionRelatorio();
             break;
 
         default:

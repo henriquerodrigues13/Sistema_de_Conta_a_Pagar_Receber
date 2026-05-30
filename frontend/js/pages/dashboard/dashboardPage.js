@@ -1,8 +1,8 @@
 /**
- * Gera o HTML da página do dashboard e dispara o carregamento dos totais.
- * @returns {string} HTML da página.
+ * Gera o HTML da seção do dashboard e dispara o carregamento dos totais.
+ * @returns {string} HTML da seção.
  */
-function paginaDashboard() {
+function sectionDashboard() {
     const nome = obterNomeUsuario();
  
     return `

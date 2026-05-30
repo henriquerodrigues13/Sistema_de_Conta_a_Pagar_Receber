@@ -1,8 +1,8 @@
 /**
- * Gera o HTML da página de listagem de despesas.
- * @returns {string} HTML da página.
+ * Gera o HTML da seção de listagem de despesas.
+ * @returns {string} HTML da seção.
  */
-function paginaDespesa() {
+function sectionDespesa() {
     return `
         <div id="container-despesa">
  

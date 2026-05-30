@@ -1,8 +1,8 @@
 /**
- * Gera o HTML da página de listagem de receitas e vendas.
- * @returns {string} HTML da página.
+ * Gera o HTML da seção de listagem de receitas e vendas.
+ * @returns {string} HTML da seção.
  */
-function paginaReceita() {
+function sectionReceita() {
     return `
         <div id="container-receita">
 

@@ -1,16 +1,16 @@
 /**
- * Gera o HTML da página de listagem de produtos e serviços.
- * @returns {string} HTML da página.
+ * Gera o HTML da seção de listagem de produtos e serviços.
+ * @returns {string} HTML da seção.
  */
-function paginaProdutosServicos() {
+function sectionProdutosServicos() {
     return `
         <div id="container-produtoServico">
  
             <h2>Produtos e Serviços</h2>
  
             <div id="opcoes-tabelas">
-                <button type="button" class="ativo" onclick="alternaTabela('tabelaProdutos')">Produto</button>
-                <button type="button" onclick="alternaTabela('tabelaServicos')">Serviço</button>
+                <button type="button" class="ativo" onclick="alternaTabelaProdutoServico('tabelaProdutos')">Produto</button>
+                <button type="button" onclick="alternaTabelaProdutoServico('tabelaServicos')">Serviço</button>
             </div>
  
             <input 
@@ -51,7 +51,7 @@ function paginaProdutosServicos() {
                     <img src="./assets/imgs/icons/anterior.png">
                 </button>
  
-                <span id="span-pagina"></span>
+                <span id="span-paginaProdutoServico"></span>
  
                 <button id="btn-proximaPagina">
                     <img src="./assets/imgs/icons/proximo.png">

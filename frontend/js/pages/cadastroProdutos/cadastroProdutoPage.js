@@ -123,19 +123,6 @@ function paginaCadastroProduto() {
                     </select>
                 </div>
 
-                <div 
-                    id="erro-validacao" 
-                    style="
-                        display: none;
-                        background-color: #ffe6e6;
-                        color: #c0392b;
-                        padding: 10px;
-                        border-radius: 5px;
-                        margin-bottom: 15px;
-                        border-left: 4px solid #c0392b;
-                    "
-                ></div>
-
                 <div class="botoes">
                     <button 
                         type="button" 

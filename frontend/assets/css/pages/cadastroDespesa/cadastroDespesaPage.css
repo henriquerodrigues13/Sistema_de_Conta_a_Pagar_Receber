@@ -86,7 +86,7 @@ body {
 
     }
 
-    & button#cadastrarReceita {
+    & button#cadastrarDespesa {
         width: 230px;
         height: 50px;
         margin: 120px auto 20px auto;

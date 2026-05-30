@@ -3,7 +3,7 @@ function paginaCadastroDespesa(){
          <div id="container-cadastroDespesa">
 
         <div class="logo">
-            <img src="" alt="Logo">
+            <img src="./assets/imgs/logo/logo.png" alt="Logo">
         </div>
 
         <h1>Cadastro de Despesas</h1>
@@ -79,17 +79,7 @@ function paginaCadastroDespesa(){
             </div>
         </div>
 
-        <div id="erro-validacao" style="
-                display: none;
-                background-color: #ffe6e6;
-                color: #c0392b;
-                padding: 10px;
-                border-radius: 5px;
-                margin-bottom: 15px;
-                border-left: 4px solid #c0392b;
-            "></div>
-
-        <button type="button" id="cadastrarReceita" onclick="cadastrarDespesa()">
+        <button type="button" id="cadastrarDespesa" onclick="cadastrarDespesa()">
             Cadastrar
         </button>
 

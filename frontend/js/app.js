@@ -38,9 +38,9 @@ function renderizarPagina(pagina) {
         return;
     }
 
-    app.innerHTML = paginaRenderizada(); // ← HTML inserido primeiro
+    app.innerHTML = paginaRenderizada();
 
     if (pagina === 'cadastroDespesa') {
-        iniciarPaginaCadastroDespesa(); // ← depois os listeners
+        iniciarPaginaCadastroDespesa(); 
     }
 }

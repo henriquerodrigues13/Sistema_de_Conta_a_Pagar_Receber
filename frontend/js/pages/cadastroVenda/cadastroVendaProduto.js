@@ -7,7 +7,7 @@ function paginaCadastroVendaProduto() {
         <div id="container-cadastroVendaProdutos">
 
             <div class="logo">
-                <img src="logo.png" alt="Logo">
+                <img src="./assets/imgs/logo/logo.png" alt="Logo">
             </div>
 
             <h1>Venda de Produto</h1>
@@ -146,12 +146,12 @@ function paginaCadastroVendaProduto() {
                 Realizar Venda
             </button>
 
-            <a 
+            <button
                 onclick="renderizarPagina('usuarioLayout')" 
                 class="voltar"
             >
                 Voltar
-            </a>
+            </button>
 
         </div>
     `;

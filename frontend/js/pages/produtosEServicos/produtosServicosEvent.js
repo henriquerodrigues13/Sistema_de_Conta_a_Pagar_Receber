@@ -1,18 +1,4 @@
 /**
- * Retorna o elemento do DOM pelo ID informado.
- * Emite um aviso no console caso o elemento não seja encontrado.
- * @param {string} id - ID do elemento.
- * @returns {HTMLElement|null}
- */
-function obterElemento(id) {
-    const elemento = document.getElementById(id);
-    if (!elemento) {
-        console.warn(`⚠️ Elemento com ID "${id}" não encontrado`);
-    }
-    return elemento;
-}
-
-/**
  * Busca os produtos do usuário na API e renderiza a tabela com paginação.
  * Em caso de erro na requisição, renderiza a tabela vazia.
  * @param {number} [pagina=1] - Número da página a carregar.
@@ -21,12 +7,15 @@ async function carregarProdutos(pagina = 1) {
     const emailUsuario = obterEmailUsuario();
 
     const carregando = obterElemento('carregando-produtos');
+
     if (carregando) carregando.style.display = 'block';
 
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/get_produtos_usuario/${emailUsuario}?page=${pagina}`,
-            { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+        const response = await fetch(`${API_BASE_URL}/get_produtos_usuario/${emailUsuario}?page=${pagina}`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }
         );
 
         if (!response.ok) {
@@ -36,40 +25,38 @@ async function carregarProdutos(pagina = 1) {
         }
 
         const produtosUsuario = await response.json();
-        const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
+
+        const totalDeProdutos = parseInt(response.headers.get('X-Total-Items') || '0', 10);
+
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
 
-        const spanTotal = obterElemento('span-total-produtos');
-        if (spanTotal) spanTotal.textContent = total;
+        atualizarTotal(totalDeProdutos, 'span-total-produtos');
 
         renderizarTabelaProdutos(produtosUsuario);
+
         renderizarPaginacao(pagina, totalPages, 'produtos');
 
         const tabelaProdutos = obterElemento('tabela-produtos');
-        if (tabelaProdutos) tabelaProdutos.style.display = 'table';
 
-        const paginacao = obterElemento('paginacao-produtosServicos');
-        if (paginacao) paginacao.style.display = 'flex';
+        if (tabelaProdutos) tabelaProdutos.style.display = 'table';
 
     } catch (error) {
         console.error(error.message);
         renderizarTabelaVaziaProdutos();
-        const tabelaProdutos = obterElemento('tabela-produtos');
-        if (tabelaProdutos) tabelaProdutos.style.display = 'table';
     } finally {
         if (carregando) carregando.style.display = 'none';
     }
 }
 
 /**
- * Busca os serviços do usuário na API e renderiza a tabela com paginação.
- * Em caso de erro na requisição, renderiza a tabela vazia.
+ * Busca os serviços do usuário na API e renderiza a tabela.
  * @param {number} [pagina=1] - Número da página a carregar.
  */
 async function carregarServicos(pagina = 1) {
     const emailUsuario = obterEmailUsuario();
 
     const carregando = obterElemento('carregando-servicos');
+
     if (carregando) carregando.style.display = 'block';
 
     try {
@@ -85,26 +72,25 @@ async function carregarServicos(pagina = 1) {
         }
 
         const servicosUsuario = await response.json();
-        const total = parseInt(response.headers.get('X-Total-Items') || '0', 10);
+
+        const totalDeServicos = parseInt(response.headers.get('X-Total-Items') || '0', 10);
+
         const totalPages = parseInt(response.headers.get('X-Total-Pages') || '1', 10);
 
-        const spanTotal = obterElemento('span-total-servicos');
-        if (spanTotal) spanTotal.textContent = total;
+        atualizarTotal(totalDeServicos, 'span-total-servicos');
 
         renderizarTabelaServicos(servicosUsuario);
+
         renderizarPaginacao(pagina, totalPages, 'servicos');
 
         const tabelaServicos = obterElemento('tabela-servicos');
-        if (tabelaServicos) tabelaServicos.style.display = 'table';
 
-        const paginacao = obterElemento('paginacao-produtosServicos');
-        if (paginacao) paginacao.style.display = 'flex';
+        if (tabelaServicos) tabelaServicos.style.display = 'table';
 
     } catch (error) {
         console.error(error.message);
         renderizarTabelaVaziaServicos();
-        const tabelaServicos = obterElemento('tabela-servicos');
-        if (tabelaServicos) tabelaServicos.style.display = 'table';
+
     } finally {
         if (carregando) carregando.style.display = 'none';
     }
@@ -115,17 +101,23 @@ async function carregarServicos(pagina = 1) {
  * ajustando botões, totais, placeholder e carregando os dados correspondentes.
  * @param {'tabelaProdutos'|'tabelaServicos'} nomeTabela - Tabela a ser exibida.
  */
-function alternaTabela(nomeTabela) {
+function alternaTabelaProdutoServico(nomeTabela) {
     const tabelaProdutos = obterElemento('tabela-produtos');
     const tabelaServicos = obterElemento('tabela-servicos');
+
     const carregandoProdutos = obterElemento('carregando-produtos');
     const carregandoServicos = obterElemento('carregando-servicos');
+
     const totalProdutos = obterElemento('total-produtos');
     const totalServicos = obterElemento('total-servicos');
+
     const btnAdicionarProduto = obterElemento('btn-adicionarProduto');
     const btnAdicionarServico = obterElemento('btn-adicionarServico');
+
     const inputPesquisa = obterElemento('input-pesquisarProdutosServicos');
+
     const paginacao = obterElemento('paginacao-produtosServicos');
+
     const opcoesTabelas = obterElemento('opcoes-tabelas');
     const botoes = opcoesTabelas ? opcoesTabelas.querySelectorAll('button') : [];
 
@@ -138,66 +130,44 @@ function alternaTabela(nomeTabela) {
     if (nomeTabela === 'tabelaProdutos') {
         if (carregandoProdutos) carregandoProdutos.style.display = 'block';
         if (carregandoServicos) carregandoServicos.style.display = 'none';
+
         if (totalProdutos) totalProdutos.style.display = 'block';
         if (totalServicos) totalServicos.style.display = 'none';
+
         if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'inline-block';
         if (btnAdicionarServico) btnAdicionarServico.style.display = 'none';
+
         if (inputPesquisa) { inputPesquisa.placeholder = 'Pesquisar produtos'; inputPesquisa.value = ''; }
+
         if (botoes[0]) botoes[0].classList.add('ativo');
+
         setTimeout(() => carregarProdutos(1), 500);
 
     } else if (nomeTabela === 'tabelaServicos') {
         if (carregandoProdutos) carregandoProdutos.style.display = 'none';
         if (carregandoServicos) carregandoServicos.style.display = 'block';
+
         if (totalProdutos) totalProdutos.style.display = 'none';
         if (totalServicos) totalServicos.style.display = 'block';
+
         if (btnAdicionarProduto) btnAdicionarProduto.style.display = 'none';
         if (btnAdicionarServico) btnAdicionarServico.style.display = 'inline-block';
+
         if (inputPesquisa) { inputPesquisa.placeholder = 'Pesquisar serviços'; inputPesquisa.value = ''; }
+
         if (botoes[1]) botoes[1].classList.add('ativo');
+
         setTimeout(() => carregarServicos(1), 500);
     }
 }
 
 /**
- * Cria um botão de ação (editar/remover/vender) com ícone para as tabelas.
- * @param {string} srcImg   - Caminho do ícone.
- * @param {string} altImg   - Texto alternativo da imagem.
- * @param {string} className - Classe CSS do botão.
- * @param {string} title    - Tooltip do botão.
- * @param {Function} handler - Função executada ao clicar.
- * @returns {HTMLButtonElement}
- */
-function criarBotaoAcao(srcImg, altImg, className, title, handler) {
-    const btn = document.createElement('button');
-    const img = document.createElement('img');
-    img.src = srcImg;
-    img.alt = altImg;
-    btn.appendChild(img);
-    btn.className = className;
-    btn.title = title;
-    btn.onclick = handler;
-    return btn;
-}
-
-/**
- * Limpa o tbody de uma tabela e remove todas as linhas existentes.
- * @param {HTMLElement} tabela - Elemento da tabela.
- * @returns {HTMLElement} tbody limpo.
- */
-function limparTbody(tabela) {
-    const tbody = tabela.querySelector('tbody') || tabela;
-    tbody.querySelectorAll('tr').forEach(linha => linha.remove());
-    return tbody;
-}
-
-/**
  * Renderiza as linhas de produtos no tbody da tabela de produtos.
- * Exibe tabela vazia caso a lista esteja vazia.
  * @param {Object[]} produtosUsuario - Lista de produtos retornada pela API.
  */
 function renderizarTabelaProdutos(produtosUsuario) {
     const tabela = obterElemento('tabela-produtos');
+
     if (!tabela) return;
 
     const tbody = limparTbody(tabela);
@@ -224,7 +194,9 @@ function renderizarTabelaProdutos(produtosUsuario) {
         });
 
         const tdOpcoes = document.createElement('td');
+
         const divOpcoes = document.createElement('div');
+
         divOpcoes.className = 'opcoes-btns';
 
         divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/lapis.png', 'Editar', 'btn-editar', 'Editar produto', () => editarProduto(produto.nome_do_produto)));
@@ -232,18 +204,20 @@ function renderizarTabelaProdutos(produtosUsuario) {
         divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/venda.png', 'Vender', 'btn-vender', 'Vender Produto', () => venderProduto(produto.nome_do_produto)));
 
         tdOpcoes.appendChild(divOpcoes);
+
         tr.appendChild(tdOpcoes);
+
         tbody.appendChild(tr);
     });
 }
 
 /**
  * Renderiza as linhas de serviços no tbody da tabela de serviços.
- * Exibe tabela vazia caso a lista esteja vazia.
  * @param {Object[]} servicosUsuario - Lista de serviços retornada pela API.
  */
 function renderizarTabelaServicos(servicosUsuario) {
     const tabela = obterElemento('tabela-servicos');
+
     if (!tabela) return;
 
     const tbody = limparTbody(tabela);
@@ -275,7 +249,9 @@ function renderizarTabelaServicos(servicosUsuario) {
         divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/venda.png', 'Vender', 'btn-vender', 'Vender Serviço', () => venderServico(servico.nome_do_servico)));
 
         tdOpcoes.appendChild(divOpcoes);
+
         tr.appendChild(tdOpcoes);
+
         tbody.appendChild(tr);
     });
 }
@@ -285,7 +261,9 @@ function renderizarTabelaServicos(servicosUsuario) {
  */
 function renderizarTabelaVaziaProdutos() {
     const tabela = obterElemento('tabela-produtos');
+
     if (!tabela) return;
+
     _renderizarLinhaVazia(tabela, 7, 'Nenhum produto encontrado');
 }
 
@@ -294,28 +272,10 @@ function renderizarTabelaVaziaProdutos() {
  */
 function renderizarTabelaVaziaServicos() {
     const tabela = obterElemento('tabela-servicos');
-    if (!tabela) return;
-    _renderizarLinhaVazia(tabela, 4, 'Nenhum serviço encontrado');
-}
 
-/**
- * Insere uma única linha centralizada com mensagem de lista vazia em uma tabela.
- * @param {HTMLElement} tabela   - Elemento da tabela.
- * @param {number}      colSpan  - Número de colunas a mesclar.
- * @param {string}      mensagem - Texto a exibir.
- */
-function _renderizarLinhaVazia(tabela, colSpan, mensagem) {
-    const tbody = limparTbody(tabela);
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = colSpan;
-    td.textContent = mensagem;
-    td.style.textAlign = 'center';
-    td.style.padding = '20px';
-    td.style.color = 'black';
-    td.style.border = '#B8B8B8 solid 1px';
-    tr.appendChild(td);
-    tbody.appendChild(tr);
+    if (!tabela) return;
+
+    _renderizarLinhaVazia(tabela, 4, 'Nenhum serviço encontrado');
 }
 
 /**
@@ -327,6 +287,7 @@ function _renderizarLinhaVazia(tabela, colSpan, mensagem) {
  */
 function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     const paginacao = obterElemento('paginacao-produtosServicos');
+
     if (!paginacao) {
         console.error('❌ Elemento #paginacao-produtosServicos não encontrado');
         return;
@@ -337,6 +298,7 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
     const carregar = tipo === 'servicos' ? carregarServicos : carregarProdutos;
 
     const btnProximo = obterElemento('btn-proximaPagina');
+
     const btnAnterior = obterElemento('btn-anteriorPagina');
 
     if (btnProximo) {
@@ -351,7 +313,8 @@ function renderizarPaginacao(paginaAtual, totalPaginas, tipo = 'produtos') {
         btnAnterior.style.opacity = paginaAtual === 1 ? '0.1' : '0.9';
     }
 
-    const spanPagina = obterElemento('span-pagina');
+    const spanPagina = obterElemento('span-paginaProdutoServico');
+
     if (spanPagina) spanPagina.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
 }
 
@@ -380,7 +343,7 @@ async function removerProduto(nomeProduto) {
             return;
         }
 
-        alert(`✅ Produto "${nomeProduto}" removido com sucesso`);
+        alert(`✅ Produto removido com sucesso`);
         carregarProdutos(1);
 
     } catch (error) {
