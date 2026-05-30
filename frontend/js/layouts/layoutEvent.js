@@ -2,12 +2,9 @@
  * Remove a classe active de todos os botões do menu.
  */
 function limparBotoesAtivos() {
-
-    document
-        .querySelectorAll('aside button')
-        .forEach(botao => {
-            botao.classList.remove('active');
-        });
+    document.querySelectorAll('aside button').forEach(botao => {
+        botao.classList.remove('active');
+    });
 }
 
 /**
@@ -18,17 +15,11 @@ function limparBotoesAtivos() {
 function definirBotaoAtivo(secao, evento) {
 
     if (evento) {
-
-        evento.currentTarget.classList.add(
-            'active'
-        );
-
+        evento.currentTarget.classList.add('active');
         return;
     }
 
-    const botao = document.getElementById(
-        `btn-${secao}`
-    );
+    const botao = document.getElementById(`btn-${secao}`);
 
     if (botao) {
         botao.classList.add('active');
@@ -41,62 +32,40 @@ function definirBotaoAtivo(secao, evento) {
  * @param {Event} evento Evento do clique.
  */
 function renderizarSection(secao, evento) {
-
-    const section = document.getElementById(
-        'section'
-    );
+    const section = document.getElementById('section');
 
     limparBotoesAtivos();
 
-    definirBotaoAtivo(
-        secao,
-        evento
-    );
+    definirBotaoAtivo(secao, evento);
 
     switch (secao) {
-
         case 'sectionReceita':
-
-            section.innerHTML =
-                paginaReceita();
-
+            section.innerHTML = paginaReceita();
             setTimeout(() => {
                 carregarReceitas(1);
             }, 1000);
-
             break;
-
         case 'sectionDespesa':
-
-            section.innerHTML =
-                paginaDespesa();
-
+            section.innerHTML = paginaDespesa();
             setTimeout(() => {
                 carregarDespesas(1);
             }, 1000);
-
             break;
-
         case 'sectionDashboard':
-
-            section.innerHTML =
-                paginaDashboard();
-
+            section.innerHTML = paginaDashboard();
+            setTimeout(() => {
+                carregarTotaisDashboard();
+            }, 1000);
             break;
-
         case 'sectionProdutosServicos':
-
-            section.innerHTML =
-                paginaProdutosServicos();
-
-            alternaTabela(
-                'tabelaProdutos'
-            );
-
+            section.innerHTML = paginaProdutosServicos();
+            alternaTabela('tabelaProdutos');
+            break;
+        case 'sectionRelatorio':
+            section.innerHTML = paginaRelatorio();
             break;
 
         default:
-
             section.innerHTML =
                 '<p>Página não encontrada</p>';
     }

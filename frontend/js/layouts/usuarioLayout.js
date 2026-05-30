@@ -104,7 +104,7 @@ function paginaLayoutUsuario() {
 
                     <li>
 
-                        <button type="button">
+                        <button type="button" id="sectionRelatorio" onclick="renderizarSection('sectionRelatorio', event)">
 
                             <img 
                                 src="./assets/imgs/icons/relatorio.png"

@@ -103,6 +103,7 @@ async function carregarReceitas(pagina = 1) {
         }
 
         const receitas = await response.json();
+        console.log(receitas);
 
         const total = parseInt(
             response.headers.get('X-Total-Items') || '0',
@@ -175,6 +176,7 @@ async function carregarVendas(pagina = 1) {
         }
 
         const vendas = await response.json();
+        console.log(vendas);
 
         const total = parseInt(
             response.headers.get('X-Total-Items') || '0',
@@ -238,11 +240,11 @@ function renderizarTabelaReceitas(receitas) {
 
         [
             receita.id,
-            receita.tipo_de_receita,
-            receita.email_pagador,
-            receita.valor,
+            receita.tipo_da_receita,
+            receita.pagador_email,
+            receita.valor_da_receita,
             receita.forma_de_pagamento,
-            receita.data_de_cadastro
+            receita.data_da_receita
         ].forEach(valor => {
 
             const td = document.createElement('td');
@@ -324,7 +326,7 @@ function renderizarTabelaVendas(vendas) {
             venda.comprador_email,
             venda.valor_final,
             venda.forma_de_pagamento,
-            venda.data_da_venda
+            venda.data_do_registro_venda
         ].forEach(valor => {
 
             const td = document.createElement('td');

@@ -1,24 +1,21 @@
 /**
- * Renderiza a página de despesas.
- * @returns {string} Estrutura HTML da página.
+ * Gera o HTML da página de listagem de despesas.
+ * @returns {string} HTML da página.
  */
 function paginaDespesa() {
-
     return `
         <div id="container-despesa">
-
+ 
             <h2>Despesas</h2>
-
+ 
             <input 
                 type="text" 
-                placeholder="Pesquisar receita" 
+                placeholder="Pesquisar despesa" 
                 id="input-pesquisarDespesa"
             >
-
+ 
             <table id="tabela-despesa">
-
                 <thead>
-
                     <tr id="cabecalho-tabela-despesa">
                         <th>ID</th>
                         <th>Tipo de Despesa</th>
@@ -26,49 +23,25 @@ function paginaDespesa() {
                         <th>Valor</th>
                         <th>Opções</th>
                     </tr>
-
                 </thead>
-
                 <tbody></tbody>
-
             </table>
-
-            <div 
-                id="paginacao-despesa" 
-                style="display: none;"
-            >
-
+ 
+            <div id="paginacao-despesa" style="display: none;">
                 <button id="btn-anteriorPagina">
-                    <img 
-                        src="./assets/imgs/icons/anterior.png"
-                        alt="Página anterior"
-                    >
+                    <img src="./assets/imgs/icons/anterior.png" alt="Página anterior">
                 </button>
-
                 <span id="span-pagina"></span>
-
                 <button id="btn-proximaPagina">
-                    <img 
-                        src="./assets/imgs/icons/proximo.png"
-                        alt="Próxima página"
-                    >
+                    <img src="./assets/imgs/icons/proximo.png" alt="Próxima página">
                 </button>
-
             </div>
-
-            <div 
-                id="carregando" 
-                style="
-                    display: block;
-                    text-align: center;
-                    padding: 20px;
-                "
-            >
+ 
+            <div id="carregando" style="display: block; text-align: center; padding: 20px;">
                 <p>⏳ Carregando despesas...</p>
             </div>
-
+ 
             <div id="baixo-sectionDespesa">
-
                 <button 
                     type="button" 
                     id="btn-adicionarDespesa" 
@@ -76,14 +49,13 @@ function paginaDespesa() {
                 >
                     + Cadastrar Despesa
                 </button>
-
-                <p id="total-receitas">
-                    Total de Receitas: 
+ 
+                <p id="total-despesas">
+                    Total de Despesas:
                     <span id="span-total">0</span>
                 </p>
-
             </div>
-
+ 
         </div>
     `;
 }

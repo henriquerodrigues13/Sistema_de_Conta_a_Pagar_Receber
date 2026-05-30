@@ -18,10 +18,11 @@ function renderizarPagina(pagina) {
         paginaInicial: paginaInicial,
         cadastroUsuario: paginaCadastroUsuario,
         cadastroReceita: paginaCadastroReceita,
+        cadastroDespesa: paginaCadastroDespesa,
         cadastroProduto: paginaCadastroProduto,
         cadastroServico: paginaCadastroServico,
         cadastroVendaProduto: paginaCadastroVendaProduto,
-        cadastroVendaServico: paginaCadastroVendaServico
+        cadastroVendaServico: paginaCadastroVendaServico,
     };
 
     if (pagina === 'usuarioLayout') {
@@ -37,5 +38,9 @@ function renderizarPagina(pagina) {
         return;
     }
 
-    app.innerHTML = paginaRenderizada();
+    app.innerHTML = paginaRenderizada(); // ← HTML inserido primeiro
+
+    if (pagina === 'cadastroDespesa') {
+        iniciarPaginaCadastroDespesa(); // ← depois os listeners
+    }
 }
