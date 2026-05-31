@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import sessionmaker
 from backend.logs import setup_logger
-from backend.models.engine import *
+from backend.models.tabelas import *
 from pathlib import Path
 import csv
 
@@ -15,19 +15,19 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def init_db():
+def criar_banco_de_dados():
     logger.debug('Iniciando DB')
     Base.metadata.create_all(bind=engine)
-    populate_db()
+    popula_banco_de_dados()
 
-def get_session():
+def cria_sessao_banco_de_dados():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-def populate_db():
+def popula_banco_de_dados():
     CSV_FORNECEDORES = Path(__file__).parent.parent.parent / 'dados' /'fornecedores.csv'
 
     with open(CSV_FORNECEDORES, encoding="utf-8-sig", newline="") as f:

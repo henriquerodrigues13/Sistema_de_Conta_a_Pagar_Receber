@@ -8,9 +8,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import backend.main as backend_main
-import backend.models.database as database_module
+import backend.models.banco_dados_inicia as database_module
 # Importamos o Base para criar toda a estrutura do banco de dados
-from backend.models.engine import Base
+from backend.models.tabelas import Base
 
 @pytest.fixture(scope="session")
 def app():

@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Float, ForeignKey, Boolean, DateTime, LargeBinary
+from sqlalchemy import Integer, String, Float, ForeignKey, DateTime, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
@@ -70,6 +70,11 @@ class usuarios(Base):
     despesa_recebedor_usuario: Mapped[list['despesas']] = relationship(
         back_populates='despesa_recebedor',
         foreign_keys='[despesas.recebedor_email]'
+    )
+
+    notas_do_usuario: Mapped[list['nota_fiscal']] = relationship(
+        back_populates='nota_usuario',
+        foreign_keys="[nota_fiscal.usuario_email]"
     )
 
 class cadastro_usuario(BaseModel):
@@ -496,3 +501,48 @@ class delete_despesa(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     identificador: str
     pagador_email: EmailStr
+
+class nota_fiscal(Base):
+    __tablename__ = "nota_fiscal"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    identificador: Mapped[str] = mapped_column(String(100), unique=True, default=gerar_id_venda)
+    usuario_email: Mapped[str] = mapped_column(String(100), ForeignKey("usuarios.email"))
+    numero_da_nota: Mapped[int] = mapped_column(Integer, index=True)
+
+    nota_usuario: Mapped['usuarios'] = relationship(
+        back_populates='notas_do_usuario',
+        foreign_keys="[nota_fiscal.usuario_email]"
+    )
+
+class request_nota_fiscal(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    usuario_email: EmailStr
+    emitente_razao_social: str
+    emitente_cnpj: str
+    emitente_inscricao_estadual: str
+    emitente_inscricao_municipal: str
+    emitente_codigo_municipal: str
+    emitente_cep: str
+    emitente_uf: str
+    emitente_logradouro: str
+    emitente_bairro: str
+    emitente_municipio: str
+    emitente_pais: str
+    emitente_regime_tributario: str
+    cliente_nome_razao_social: str
+    cliente_cpf_cnj: str
+    cliente_indicador_ie: str
+    cliente_codigo_municipal: str
+    cliente_cep: str
+    cliente_uf: str
+    cliente_logradouro: str
+    cliente_bairro: str
+    cliente_municipio: str
+    cliente_pais: str
+    produto_codigo: str
+    produto_valor_unidade: str
+    produto_quantidade: str
+    nota_informacoes: str
+    nota_forma_de_pagamento: str
+    nota_modalidade_do_frete: str

@@ -18,7 +18,9 @@ dependencies = [
     "fastapi[standard]",
     "nanoid ==2.0.0",
     "tzdata",
-    "fastapi-mail==1.4.1"
+    "fastapi-mail==1.4.1",
+    "pynfe",
+    "signxml"
 ]
 
 [tool.setuptools]
