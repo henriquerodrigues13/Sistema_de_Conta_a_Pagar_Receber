@@ -301,7 +301,7 @@ function renderizarTabelaVendas(vendas) {
                 './assets/imgs/icons/taxa.png',
                 'Nota',
                 'btn-ver-nf',
-                'Ver Nota Fiscal',
+                'Emitir Nota Fiscal',
                 () => emitirNotaVenda()
             )
         );
