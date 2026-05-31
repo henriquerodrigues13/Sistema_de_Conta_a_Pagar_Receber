@@ -15,7 +15,7 @@ function paginaEditarProduto(produto) {
                 />
             </div>
 
-            <h1>Editar Produto</h1>
+            <h1>Atualizar Produto</h1>
 
             <form id="form-editarProduto">
 
@@ -208,19 +208,6 @@ function paginaEditarProduto(produto) {
 
                 </div>
 
-                <div 
-                    id="erro-validacao" 
-                    style="
-                        display: none;
-                        background-color: #ffe6e6;
-                        color: #c0392b;
-                        padding: 10px;
-                        border-radius: 5px;
-                        margin-bottom: 15px;
-                        border-left: 4px solid #c0392b;
-                    "
-                ></div>
-
                 <div class="botoes">
 
                     <button 
@@ -228,14 +215,14 @@ function paginaEditarProduto(produto) {
                         id="btn-editarProduto"
                         onclick="salvarEdicaoProduto('${produto.nome_do_produto}')"
                     >
-                        Salvar Alterações
+                        Atualizar
                     </button>
 
                     <button 
                         type="button"
                         id="voltar-telaProdutoServico"
                         style="cursor: pointer;"
-                        onclick="renderizarSection('sectionProdutosServicos', event)"
+                        onclick="renderizarPagina('usuarioLayout')"
                     >
                         Voltar
                     </button>

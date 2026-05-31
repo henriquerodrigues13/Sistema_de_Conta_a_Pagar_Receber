@@ -85,7 +85,6 @@ function renderizarTabelaDespesa(despesas) {
 
         divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/lapis.png', 'Editar', 'btn-editar-despesa', 'Editar Despesa', () => editarDespesa(despesa.identificador)));
         divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/lixeira.png', 'Remover', 'btn-remover', 'Remover Despesa', () => removerDespesa(despesa.identificador)));
-        divOpcoes.appendChild(criarBotaoAcao('./assets/imgs/icons/taxa.png', 'Ver NF', 'btn-ver-nf', 'Ver Nota Fiscal', () => verNota(despesa.identificador)));
 
         tdOpcoes.appendChild(divOpcoes);
 
@@ -189,6 +188,9 @@ async function removerDespesa(identificador) {
  */
 function editarDespesa(identificador) {
     renderizarPagina('cadastroDespesa');
+
+    const h1 = document.querySelector('h1');
+    if (h1) h1.textContent = "Atualizar Despesa";
 
     setTimeout(async () => {
         const emailUsuario = obterEmailUsuario();

@@ -13,10 +13,12 @@
     & .logo {
         text-align: center;
         margin-bottom: 5px;
+        margin: auto;
 
         & img {
             width: 100px;
             height: auto;
+            margin: auto;
         }
     }
 
@@ -46,7 +48,8 @@
                     font-weight: bold;
                 }
 
-                & input {
+                & input,
+                select {
                     width: 100%;
                     height: 30px;
                     background: #d9d9d9;
@@ -78,10 +81,19 @@
     }
 
     & .voltar {
+        width: 10%;
+        margin: auto;
         text-align: center;
-        text-decoration: none;
-        color: black;
         font-weight: bold;
+        border: none;
+        cursor: pointer;
+        background-color: rgba(228, 78, 78, 0.585);
+        padding: 2px;
+        border-radius: 4px;
+    }
+
+    & .voltar:hover {
+        background-color: rgb(228, 78, 78);
     }
 
     & .email-cpf {

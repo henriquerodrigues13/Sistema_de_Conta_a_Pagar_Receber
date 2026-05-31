@@ -100,7 +100,6 @@ function paginaLogin() {
 }
 
 function initLogin() {
-    console.log('initLogin chamado');
 
     const form = document.getElementById('systemform');
     

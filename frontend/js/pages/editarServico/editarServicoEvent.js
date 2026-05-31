@@ -1,8 +1,9 @@
 /**
- * Busca os dados de um serviço pelo nome e renderiza a página de edição.
+ * Busca os dados de um serviço pelo nome e renderiza a tela de edição.
  * @param {string} nomeServico - Nome do serviço a ser editado.
  */
 async function editarServico(nomeServico) {
+
     const emailUsuario = obterEmailUsuario();
  
     try {
@@ -27,7 +28,7 @@ async function editarServico(nomeServico) {
             return;
         }
  
-        document.getElementById('section').innerHTML = paginaEditarServico(servico);
+        document.getElementById('app').innerHTML = paginaEditarServico(servico);
  
     } catch (error) {
         console.error(error);
@@ -36,12 +37,11 @@ async function editarServico(nomeServico) {
 }
  
 /**
- * Coleta os dados do formulário, envia o PATCH para a API e redireciona
- * o usuário em caso de sucesso.
- * @param {string} nomeServicoOriginal - Nome original do serviço, usado como
- *                                       identificador na rota da API.
+ * Envia os dados atualizados do serviço para a API.
+ * @param {string} nomeServicoOriginal - Nome original do serviço.s
  */
 async function salvarEdicaoServico(nomeServicoOriginal) {
+    
     const emailUsuario = obterEmailUsuario();
  
     try {

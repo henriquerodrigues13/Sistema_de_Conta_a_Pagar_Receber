@@ -11,7 +11,7 @@ function paginaCadastroDespesa(){
         <form id="form-cadastroReceita">
 
             <div class="form-group">
-                <label>Tipo ou nome da Despesa</label>
+                <label>Tipo da Despesa</label>
                 <input type="text" id="input-tipoDespesa">
             </div>
 
@@ -28,12 +28,12 @@ function paginaCadastroDespesa(){
             <div class="form-group">
                 <label>Forma de Pagamento</label>
                 <select id="opcoes-pagamentosDespesa">
-                    <option value="">Escolha a forma de pagamento</option>
-                    <option value="ct-credito">Cartão de crédito</option>
-                    <option value="ct-debito">Cartão de débito</option>
-                    <option value="pix">Pix</option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="outros">Outros</option>
+                    <option value="">Selecione</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Débito">Débito</option>
+                            <option value="Crédito">Crédito</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Dinheiro">Dinheiro</option>
                 </select>
             </div>
 

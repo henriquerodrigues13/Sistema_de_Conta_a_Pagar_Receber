@@ -56,7 +56,18 @@ function paginaCadastroVendaServico() {
                         >
                     </div>
 
-                    <div class="campo"></div>
+                    <div class="campo">
+                        <label>Forma de pagamento</label>
+
+                        <select id="input-pagamento-servico">
+                            <option value="">Selecione</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Débito">Débito</option>
+                            <option value="Crédito">Crédito</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                        </select>
+                    </div>
 
                 </div>
 
@@ -88,18 +99,7 @@ function paginaCadastroVendaServico() {
 
                 <div class="linha">
 
-                    <div class="campo">
-                        <label>Forma de pagamento</label>
-
-                        <select id="input-pagamento-servico">
-                            <option value="">Selecione</option>
-                            <option value="Pix">Pix</option>
-                            <option value="Débito">Débito</option>
-                            <option value="Crédito">Crédito</option>
-                            <option value="Boleto">Boleto</option>
-                            <option value="Dinheiro">Dinheiro</option>
-                        </select>
-                    </div>
+                    
 
                     <div class="campo">
                         <label>Descrição</label>
@@ -154,16 +154,6 @@ function paginaCadastroVendaServico() {
 }
 
 /**
- * Formata um valor monetário para o padrão brasileiro.
- * @param {number} valor Valor numérico.
- * @returns {string} Valor formatado.
- */
-function formatarValor(valor) {
-
-    return valor.toFixed(2).replace('.', ',');
-}
-
-/**
  * Calcula o valor final do serviço.
  * @param {number} valor Valor original.
  * @param {number} desconto Desconto em porcentagem.
@@ -205,7 +195,7 @@ function calcularResumoServico() {
     );
 
     if (spanValor) {
-        spanValor.textContent = formatarValor(valor);
+        spanValor.textContent = valor.toFixed(2).replace('.', ',');
     }
 
     if (spanDesconto) {
@@ -213,7 +203,7 @@ function calcularResumoServico() {
     }
 
     if (spanValorFinal) {
-        spanValorFinal.textContent = formatarValor(valorFinal);
+        spanValorFinal.textContent = valorFinal.toFixed(2).replace('.', ',');
     }
 }
 
