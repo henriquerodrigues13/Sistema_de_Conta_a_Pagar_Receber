@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from backend.models.database import get_session
+
+from backend.API.emitir_NFe import emitir_NotaFiscal
+from backend.models.banco_dados_inicia import cria_sessao_banco_de_dados
 from starlette.responses import JSONResponse
 from sqlalchemy import select, func, update
 from backend.API.criptografia import *
 from backend.API.validações import *
-from backend.models.engine import *
+from backend.models.tabelas import *
 from sqlalchemy.orm import Session
 from typing import Annotated
 
@@ -24,7 +26,7 @@ conf = ConnectionConfig(
 fast_mail = FastMail(conf)
 
 router = APIRouter(tags=["cadastro e login"])
-SessionDep = Annotated[Session, Depends(get_session)]
+SessionDep = Annotated[Session, Depends(cria_sessao_banco_de_dados)]
 
 
 @router.post(path='/login', response_model=reponsa_usuario,
@@ -587,6 +589,33 @@ async def deletar_venda(usuario_email: EmailStr,
         return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A venda não encontrado.")
+
+@router.post('/cadastro_nota_fiscal', response_model=request_nota_fiscal)
+async def cadastro_nota_fiscal(cadastro_da_nota_fiscal: request_nota_fiscal,
+                            session: SessionDep) -> JSONResponse | HTTPException:
+
+    if not (usuario_existe := session.execute(select(usuarios).where(usuarios.email == cadastro_da_nota_fiscal.usuario_email)).scalar_one_or_none()):
+        if 0 ==(maior_numero := session.scalar(select(func.max(nota_fiscal.numero_da_nota))
+                                                       .where(nota_fiscal.usuario_email == cadastro_da_nota_fiscal.usuario_email)) or 0):
+            #emitir_NotaFiscal(dados=cadastro_da_nota_fiscal.model_dump(exclude_unset=True), numero_da_nota= 1)
+            nova_nota = nota_fiscal(
+                usuario_email = cadastro_da_nota_fiscal.usuario_email,
+                numero_da_nota = 1
+            )
+            session.commit()
+            session.refresh(nova_nota)
+            return JSONResponse(content={'mensage': 'nota emitida'}, media_type= 'text/plain')
+        else:
+            #emitir_NotaFiscal(dados=cadastro_da_nota_fiscal.model_dump(exclude_unset=True), numero_da_nota= cadastro_da_nota_fiscal.numero_da_nota + 1)
+            nova_nota = nota_fiscal(
+                usuario_email=cadastro_da_nota_fiscal.usuario_email,
+                numero_da_nota= maior_numero.numero_da_nota + 1
+            )
+            session.commit()
+            session.refresh(nova_nota)
+            return JSONResponse(content={'mensage': 'nota emitida'}, media_type='text/plain')
+
+    raise HTTPException(status_code=404, detail="Usuario não encontrado")
 
 @router.post('/cadastro_receita', response_model=request_receita,
              responses={404: {'description': 'Usuario nao existe'},

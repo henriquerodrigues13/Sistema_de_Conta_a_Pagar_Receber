@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 import backend.API.validações as validacoes_modulo
 from backend.API.validações import validacao_email
-from backend.models.engine import cadastro_usuario
+from backend.models.tabelas import cadastro_usuario
 
 def test_validacao_email_com_resposta_valid():
     """Testa que se o serviço externo responder 'valid', a função retorna True."""
