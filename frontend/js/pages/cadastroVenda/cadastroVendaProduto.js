@@ -22,7 +22,6 @@ function paginaCadastroVendaProduto() {
                         <input 
                             type="text" 
                             id="input-nome-produto" 
-                            readonly
                         >
                     </div>
 

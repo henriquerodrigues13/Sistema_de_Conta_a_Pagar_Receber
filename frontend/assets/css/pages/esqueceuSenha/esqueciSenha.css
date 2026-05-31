@@ -1,0 +1,88 @@
+#container-esqueciSenha {
+    width: 810px;
+    height: 660px;
+    background: white;
+    margin: 40px auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px gray;
+    overflow: hidden;
+}
+
+#container-esqueciSenha .topo {
+    height: 85px;
+    background: #6b0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+#container-esqueciSenha .logoImg {
+    width: 70px;
+    height: auto;   
+}
+
+#container-esqueciSenha .logoTexto {
+    color: white;
+    font-size: 45px;
+    font-weight: bold;
+    margin: 0;
+}
+
+#container-esqueciSenha .conteudo {
+    width: 280px;
+    margin: 85px auto 0 auto;
+}
+
+#container-esqueciSenha .textoSenha {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+#container-esqueciSenha .texto {
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+#container-esqueciSenha form {
+    display: flex;
+    flex-direction: column;
+}
+
+#container-esqueciSenha label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+#container-esqueciSenha input {
+    height: 30px;
+    background: #d9d9d9;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding-left: 8px;
+}
+
+#container-esqueciSenha button {
+    width: 220px;
+    height: 45px;
+    margin: 30px auto 0 auto;
+    background: #ffc107;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#container-esqueciSenha button:hover{
+    background-color: #c09a29;
+}
+
+#container-esqueciSenha .voltar {
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}

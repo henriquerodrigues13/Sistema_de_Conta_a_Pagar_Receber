@@ -84,24 +84,20 @@ function paginaCadastroReceita() {
                             Escolha a forma de pagamento
                         </option>
 
-                        <option value="ct-credito">
+                        <option value="Cartão de Credito">
                             Cartão de crédito
                         </option>
 
-                        <option value="ct-debito">
+                        <option value="Cartão de Debito">
                             Cartão de débito
                         </option>
 
-                        <option value="pix">
+                        <option value="Pix">
                             Pix
                         </option>
 
-                        <option value="dinheiro">
+                        <option value="Dinheiro">
                             Dinheiro
-                        </option>
-
-                        <option value="outros">
-                            Outros
                         </option>
 
                     </select>
@@ -140,6 +136,7 @@ function paginaCadastroReceita() {
             <button 
                 type="button"
                 id="cadastrarReceita"
+                onclick="cadastrarReceita()"
             >
                 Cadastrar
             </button>

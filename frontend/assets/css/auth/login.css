@@ -80,6 +80,23 @@
             & .btn-entrar #btn-logar:hover{
                 background: #b00000;
             }
+
+            & #esqueciSenha{
+                color: #FF383C;
+                text-align: right;
+                border: none;
+                font-size: 9px;
+                width: 22%;
+                position: relative;
+                top: 3px;
+                left: 78%;
+                background-color: #FFFFFF;
+                cursor: pointer;
+            }
+
+            & #esqueciSenha:hover{
+                color: #b00000;
+            }
         }
 
         & #cadastrar {

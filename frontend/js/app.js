@@ -1,8 +1,8 @@
 /**
  * Inicializa a aplicação após o carregamento da página.
  */
-document.addEventListener( 'DOMContentLoaded', () => {
-        verificarLogin();
+document.addEventListener('DOMContentLoaded', () => {
+    verificarLogin();
 });
 
 /**
@@ -23,6 +23,9 @@ function renderizarPagina(pagina) {
         cadastroServico: paginaCadastroServico,
         cadastroVendaProduto: paginaCadastroVendaProduto,
         cadastroVendaServico: paginaCadastroVendaServico,
+        esquecerSenha: paginaEsqueciSenha,
+        validarCod: paginaValidarCod,
+        alterarSenha: paginaAlterarSenha,
     };
 
     if (pagina === 'usuarioLayout') {
@@ -40,7 +43,9 @@ function renderizarPagina(pagina) {
 
     app.innerHTML = paginaRenderizada();
 
-    if (pagina === 'cadastroDespesa') {
-        iniciarPaginaCadastroDespesa(); 
-    }
+    if (pagina === 'login') initLogin();
+    if (pagina === 'cadastroDespesa') iniciarPaginaCadastroDespesa();
+    if (pagina === 'esquecerSenha') initEsqueciSenha();
+    if (pagina === 'validarCod') initValidarCod();
+    if (pagina === 'alterarSenha') initAlterarSenha();
 }

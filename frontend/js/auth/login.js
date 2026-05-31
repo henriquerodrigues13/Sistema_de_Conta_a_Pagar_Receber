@@ -57,6 +57,10 @@ function paginaLogin() {
                             placeholder="Digite sua senha"
                         >
 
+                        <button type="button" id="esqueciSenha">
+                            Esqueceu sua senha?
+                        </button>
+
                     </div>
 
                     <div class="btn-entrar">
@@ -64,7 +68,6 @@ function paginaLogin() {
                         <button
                             type="button"
                             id="btn-logar"
-                            onclick="fazerLogin()"
                         >
                             Entrar
                         </button>
@@ -81,7 +84,7 @@ function paginaLogin() {
 
                         <button
                             type="button"
-                            onclick="renderizarPagina('cadastroUsuario')"
+                            id="btn-cadastrar"
                         >
                             <b>Cadastre-se</b>
                         </button>
@@ -94,6 +97,35 @@ function paginaLogin() {
 
         </div>
     `;
+}
+
+function initLogin() {
+    console.log('initLogin chamado');
+
+    const form = document.getElementById('systemform');
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+    });
+
+    form.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+    });
+
+    document.getElementById('esqueciSenha').addEventListener('click', (e) => {
+        e.preventDefault();
+        renderizarPagina('esquecerSenha');
+    });
+
+    document.getElementById('btn-logar').addEventListener('click', (e) => {
+        e.preventDefault();
+        fazerLogin();
+    });
+
+    document.getElementById('btn-cadastrar').addEventListener('click', (e) => {
+        e.preventDefault();
+        renderizarPagina('cadastroUsuario');
+    });
 }
 
 /**

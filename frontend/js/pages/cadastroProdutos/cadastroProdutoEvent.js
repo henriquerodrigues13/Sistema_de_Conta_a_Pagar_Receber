@@ -139,6 +139,7 @@ async function cadastrarProduto() {
         }
 
         alert('✅ Produto cadastrado com sucesso!');
+        renderizarPagina('usuarioLayout');
 
     } catch (error) {
         console.error('Erro ao cadastrar produto:', error);
