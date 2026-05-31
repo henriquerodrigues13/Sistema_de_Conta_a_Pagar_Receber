@@ -45,3 +45,6 @@ testpaths = [
 ]
 python_files = ["test_*.py", "*_test.py"]
 python_functions = ["test_*"]
+markers = [
+    "e2e: end-to-end tests using Playwright",
+]

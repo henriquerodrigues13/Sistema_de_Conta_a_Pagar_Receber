@@ -6,7 +6,7 @@
 
 ---
 
-## Como rodar os testes
+## Instalação
 
 ```bash
 # 1. Ative o virtualenv
@@ -14,22 +14,32 @@
 source .venv/bin/activate       # Linux/Mac
 
 # 2. Instale as dependências (só precisa fazer uma vez)
-pip install -e .
-playwright install chromium     # Para E2E tests
+pip install -e ".[test]"
+playwright install chromium     # Para E2E tests (necessário uma única vez)
+```
 
-# 3. Rode TODOS os testes (unit + integração + E2E com navegador visível)
+## Como rodar os testes
+
+```bash
+# SUITE COMPLETA — 68 testes (unit + integração + E2E com navegador visível)
 pytest -v --headed
 
-# 4. Ou rode sem navegador (mais rápido, só unit + integração)
+# SEM NAVEGADOR — unit + integração apenas (mais rápido)
 pytest tests/unit/ tests/integracao/ -v
 
-# 5. Ou rode só E2E
+# SÓ E2E — com navegador
 pytest tests/e2e/ -v --headed
+
+# SÓ unit
+pytest tests/unit/ -v
+
+# SÓ integração
+pytest tests/integracao/ -v
 ```
 
 **Importante:** O comando `pytest -v --headed` automaticamente:
 - Mata qualquer uvicorn rodando
-- Sobe um novo backend limpo
+- Sobe um novo backend limpo (via `conftest.py`)
 - Roda todos os 68 testes (unit, integração, E2E)
 - E2E testes aparecem no Chromium (não headless)
 - Mata o backend ao final
@@ -237,9 +247,32 @@ Verifique se o mock do `fast_mail.send_message` está correto. Precisa ser `Asyn
 
 ---
 
+## Configuração em máquinas diferentes (CI/CD)
+
+**Windows:**
+```bash
+.venv\Scripts\activate
+pip install -e ".[test]"
+playwright install chromium
+pytest -v --headed
+```
+
+**Linux/Mac:**
+```bash
+source .venv/bin/activate
+pip install -e ".[test]"
+playwright install chromium
+pytest -v --headed
+```
+
+O `pyproject.toml` declara todas as dependências, então `pip install -e ".[test]"` instala tudo automaticamente em qualquer PC.
+
+---
+
 ## Arquivos relacionados
 
 - `conftest.py` — fixtures globais (banco em memória, mock de email)
 - `BUG_REPORT.md` — bugs encontrados no código de produção
 - `CHANGELOG_TESTES.md` — o que foi mudado na suite e por quê
-- `pyproject.toml` — configuração do pytest
+- `pyproject.toml` — configuração do pytest e dependências
+- `../requirements.txt` — export de todas as versões exatas (gerado via `pip freeze`)

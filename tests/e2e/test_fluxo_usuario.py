@@ -456,7 +456,7 @@ def test_fluxo_cadastro_de_despesa_aparece_na_tabela(page):
 
     # Campo: Forma de Pagamento (select/dropdown)
     # O select tem id='opcoes-pagamentosDespesa' e precisamos selecionar pelo value
-    page.select_option("#opcoes-pagamentosDespesa", value="pix")
+    page.select_option("#opcoes-pagamentosDespesa", value="Pix")
 
     # Campo: Valor pago por unidade
     page.fill("#input-valorUnidadeDespesa", "350.00")

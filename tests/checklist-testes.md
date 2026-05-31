@@ -2,7 +2,7 @@
 
 **Status:** ✅ **COMPLETO**  
 **Última atualização:** 2026-05-31  
-**Suite final:** 62 passed + 4 xfailed (66 testes totais)
+**Suite final:** 64 passed + 4 xfailed = 68 testes totais
 
 ---
 
@@ -119,4 +119,3 @@ COVERAGE:           100% (29/29 endpoints)
 FRONTEND:           4 fluxos E2E com navegador real
 ```
 
-**Suite pronta para CI/CD, produção e manutenção futura.**
