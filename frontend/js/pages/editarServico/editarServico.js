@@ -13,7 +13,7 @@ function paginaEditarServico(servico) {
                 />
             </div>
  
-            <h1>Editar Serviço</h1>
+            <h1>Atualizar Serviço</h1>
  
             <form id="form-editarServico">
  
@@ -76,16 +76,6 @@ function paginaEditarServico(servico) {
                     >${servico.descricao_do_servico || ''}</textarea>
                 </div>
  
-                <div id="erro-validacao" style="
-                    display: none;
-                    background-color: #ffe6e6;
-                    color: #c0392b;
-                    padding: 10px;
-                    border-radius: 5px;
-                    margin-bottom: 15px;
-                    border-left: 4px solid #c0392b;
-                "></div>
- 
                 <div class="botoes">
  
                     <button 
@@ -93,14 +83,14 @@ function paginaEditarServico(servico) {
                         id="btn-editarServico"
                         onclick="salvarEdicaoServico('${servico.nome_do_servico}')"
                     >
-                        Salvar Alterações
+                        Atualizar
                     </button>
  
                     <button 
                         type="button"
                         id="voltar-telaProdutoServico"
                         style="cursor: pointer;"
-                        onclick="renderizarSection('sectionProdutosServicos', event)"
+                        onclick="renderizarPagina('usuarioLayout')"
                     >
                         Voltar
                     </button>

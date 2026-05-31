@@ -1,0 +1,36 @@
+#container-relatorio {
+    background-color: white;
+    width: 70%;
+    margin: 40px auto;
+    padding: 20px;
+
+    & h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    & #card-relatorio {
+        border: #B8B8B8 solid 1px;
+        padding: 20px;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: fit-content;
+        margin: auto;
+
+        & button {
+            background-color: #ffc107;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+
+            &:hover {
+                background-color: #e0a800;
+            }
+        }
+    }
+}

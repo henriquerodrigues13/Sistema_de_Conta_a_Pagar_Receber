@@ -1,0 +1,92 @@
+#container-notaVendaCliente {
+    height: 680px;
+    width: 520px;
+    background: white;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#container-notaVendaCliente .logo {
+    text-align: center;
+    margin-bottom: 1px;
+}
+
+#container-notaVendaCliente .logo img {
+    width: 80px;
+    height: auto;
+    margin: auto;
+}
+
+#container-notaVendaCliente h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 45px;
+    font-size: 24px;
+}
+
+#form-notaVendaCliente {
+    display: flex;
+    flex-direction: column;
+}
+
+#form-notaVendaCliente .linha {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+#form-notaVendaCliente .campo {
+    flex: 1;
+}
+
+#form-notaVendaCliente .campo label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#form-notaVendaCliente .campo input {
+    width: 100%;
+    height: 30px;
+    background: #d9d9d9;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+#btn-cadastrarNotaCliente {
+    width: 240px;
+    height: 40px;
+    margin: 30px auto 10px auto;
+    background: #ffc107;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#btn-cadastrarNotaCliente:hover {
+    background-color: #d5a106;
+}
+
+#container-notaVendaCliente .voltar {
+    width: 60px;
+    margin: 0 auto;
+    text-align: center;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+#container-notaVendaCliente .voltar:hover {
+    background-color: rgb(228, 78, 78);
+}

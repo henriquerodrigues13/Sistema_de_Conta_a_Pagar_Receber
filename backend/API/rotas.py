@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, BackgroundTasks
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-
-from backend.API.emitir_NFe import emitir_NotaFiscal
 from backend.models.banco_dados_inicia import cria_sessao_banco_de_dados
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from backend.API.emitir_NFe import emitir_NotaFiscal
 from starlette.responses import JSONResponse
 from sqlalchemy import select, func, update
 from backend.API.criptografia import *
 from backend.API.validações import *
 from backend.models.tabelas import *
 from sqlalchemy.orm import Session
+from backend.API.gerador import *
 from typing import Annotated
 
 BRASILIA = timezone(timedelta(hours=-3))
@@ -27,6 +27,15 @@ fast_mail = FastMail(conf)
 
 router = APIRouter(tags=["cadastro e login"])
 SessionDep = Annotated[Session, Depends(cria_sessao_banco_de_dados)]
+
+def model_to_dict(obj):
+    return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+
+def formatar_brl(v):
+    try:
+        return f"R$ {float(v):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except:
+        return str(v)
 
 
 @router.post(path='/login', response_model=reponsa_usuario,
@@ -837,3 +846,82 @@ async def deletar_despesa(usuario_email: EmailStr,
         return JSONResponse(content={'mensagem' : f'A despesa foi deletada'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A despesa não encontrado.")
+
+@router.get('/relatorio/{formato}/{email}', response_model=None, responses={
+    200: {"content": {
+        "application/pdf": {},
+        "application/xml": {},
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+    }}
+})
+async def get_relatorio(formato: formato_arquivo, email: str, session: SessionDep):
+
+    usuario = session.execute(
+        select(usuarios).where(usuarios.email == email)
+    ).scalar_one_or_none()
+    if not usuario:
+        raise HTTPException(status_code=404, detail='Usuário não encontrado.')
+
+    lista_receitas = session.execute(
+        select(receitas).where(receitas.recebedor_email == email)
+    ).scalars().all()
+
+    lista_despesas = session.execute(
+        select(despesas).where(despesas.pagador_email == email)
+    ).scalars().all()
+
+    lista_vendas = session.execute(
+        select(vendas).where(vendas.vendedor_email == email)
+    ).scalars().all()
+
+    lista_produtos = session.execute(
+        select(produtos).where(produtos.proprietario_usuario == email)
+    ).scalars().all()
+
+    lista_servicos = session.execute(
+        select(servicos).where(servicos.prestador_do_servico_usuario == email)
+    ).scalars().all()
+
+    lista_receitas = [model_to_dict(r) for r in lista_receitas]
+    lista_despesas = [model_to_dict(d) for d in lista_despesas]
+    lista_vendas = [model_to_dict(v) for v in lista_vendas]
+    lista_produtos = [model_to_dict(p) for p in lista_produtos]
+    lista_servicos = [model_to_dict(s) for s in lista_servicos]
+    total_rec = sum(r["valor_da_receita"] for r in lista_receitas)
+    total_desp = sum(d["valor_total_da_despesa"] for d in lista_despesas)
+    saldo = total_rec - total_desp
+
+    dados = {
+        "tipo_relatorio": "Relatório Completo",
+        "nome_sistema": "Sistema CPR",
+        "periodo_inicio": "",
+        "periodo_fim": "",
+        "data_geracao": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "usuario_nome": usuario.nome_completo,
+        "usuario_email": usuario.email,
+        "usuario_telefone": usuario.numero_telefone,
+        "usuario_cidade": usuario.cidade,
+        "usuario_estado": usuario.estado,
+        "receitas": lista_receitas,
+        "despesas": lista_despesas,
+        "vendas": lista_vendas,
+        "produtos": lista_produtos,
+        "servicos": lista_servicos,
+        "total_receitas": formatar_brl(total_rec),
+        "qtd_receitas": len(lista_receitas),
+        "total_despesas": formatar_brl(total_desp),
+        "qtd_despesas": len(lista_despesas),
+        "saldo_periodo":  formatar_brl(saldo),
+        "status_saldo":   "positivo" if saldo >= 0 else "negativo",
+        "observacoes": "",
+        "total_inconsistencias": "0",
+        "inconsistencias": [],
+    }
+
+    if formato == formato_arquivo.xml:
+        return gerar_xml(dados)
+    elif formato == formato_arquivo.xls:
+        return gerar_xls(dados)
+    elif formato == formato_arquivo.pdf:
+        return gerar_pdf(dados)
+    return None

@@ -22,7 +22,6 @@ function paginaCadastroVendaProduto() {
                         <input 
                             type="text" 
                             id="input-nome-produto" 
-                            readonly
                         >
                     </div>
 
@@ -34,6 +33,7 @@ function paginaCadastroVendaProduto() {
                             id="input-valor-produto" 
                             placeholder="0,00" 
                             step="0.01"
+                            oninput="calcularResumoProduto()"
                         >
                     </div>
 
@@ -50,6 +50,7 @@ function paginaCadastroVendaProduto() {
                             placeholder="1" 
                             min="1" 
                             value="1"
+                            oninput="calcularResumoProduto()"
                         >
                     </div>
 
@@ -63,6 +64,7 @@ function paginaCadastroVendaProduto() {
                             min="0" 
                             max="100" 
                             value="0"
+                            oninput="calcularResumoProduto()"
                         >
                     </div>
 
@@ -98,7 +100,7 @@ function paginaCadastroVendaProduto() {
                         <label>Forma de pagamento</label>
 
                         <select id="input-pagamento-produto">
-                            <option value="">Selecione</option>
+                           <option value="">Selecione</option>
                             <option value="Pix">Pix</option>
                             <option value="Débito">Débito</option>
                             <option value="Crédito">Crédito</option>
@@ -121,8 +123,8 @@ function paginaCadastroVendaProduto() {
 
                 <div class="valores">
                     <p>
-                        Subtotal: R$ 
-                        <span id="span-subtotal-produto">0,00</span>
+                        Valor: R$ 
+                        <span id="span-valor-produto">0,00</span>
                     </p>
 
                     <p>
@@ -155,6 +157,58 @@ function paginaCadastroVendaProduto() {
 
         </div>
     `;
+}
+
+/**
+ * Atualiza os valores exibidos no resumo da venda.
+ */
+function calcularResumoProduto() {
+
+    const valor = parseFloat(
+        document.getElementById('input-valor-produto')?.value
+    ) || 0;
+
+    const quantidade = parseInt(
+        document.getElementById('input-quantidade-produto')?.value
+    ) || 1;
+
+    const desconto = parseFloat(
+        document.getElementById('input-desconto-produto')?.value
+    ) || 0;
+
+    const valorFinal = calcularValorFinal(
+        valor,
+        quantidade,
+        desconto
+    );
+
+    const spanValor = document.getElementById(
+        'span-valor-produto'
+    );
+
+    const spanDesconto = document.getElementById(
+        'span-desconto-produto'
+    );
+
+    const spanValorFinal = document.getElementById(
+        'span-valorFinal-produto'
+    );
+
+    if (spanValor) {
+        spanValor.textContent = (valor * quantidade)
+            .toFixed(2)
+            .replace('.', ',');
+    }
+
+    if (spanDesconto) {
+        spanDesconto.textContent = desconto.toFixed(0);
+    }
+
+    if (spanValorFinal) {
+        spanValorFinal.textContent = valorFinal
+            .toFixed(2)
+            .replace('.', ',');
+    }
 }
 
 /**
@@ -307,11 +361,8 @@ async function submitVendaProduto() {
 
             const erro = await response.json();
 
-            console.log(erro);
-
             alert(
-                `❌ Erro ${response.status}: ${
-                    erro.detail || 'Erro desconhecido'
+                `❌ Erro ${response.status}: ${erro.detail || 'Erro desconhecido'
                 }`
             );
 

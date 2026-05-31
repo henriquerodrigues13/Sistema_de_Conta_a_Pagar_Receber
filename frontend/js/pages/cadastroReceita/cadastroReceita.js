@@ -23,7 +23,7 @@ function paginaCadastroReceita() {
                 <div class="form-group">
 
                     <label>
-                        Tipo ou nome da receita
+                        Tipo da receita
                     </label>
 
                     <input 
@@ -42,6 +42,7 @@ function paginaCadastroReceita() {
                     <input 
                         type="email"
                         id="input-emailPagador"
+                        placeholder="Opcional"
                     >
 
                 </div>
@@ -79,31 +80,12 @@ function paginaCadastroReceita() {
                     </label>
 
                     <select id="opcoes-pagamentos">
-
-                        <option value="">
-                            Escolha a forma de pagamento
-                        </option>
-
-                        <option value="ct-credito">
-                            Cartão de crédito
-                        </option>
-
-                        <option value="ct-debito">
-                            Cartão de débito
-                        </option>
-
-                        <option value="pix">
-                            Pix
-                        </option>
-
-                        <option value="dinheiro">
-                            Dinheiro
-                        </option>
-
-                        <option value="outros">
-                            Outros
-                        </option>
-
+                        <option value="">Selecione</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Débito">Débito</option>
+                        <option value="Crédito">Crédito</option>
+                        <option value="Boleto">Boleto</option>
+                        <option value="Dinheiro">Dinheiro</option>
                     </select>
 
                 </div>
@@ -140,6 +122,7 @@ function paginaCadastroReceita() {
             <button 
                 type="button"
                 id="cadastrarReceita"
+                onclick="cadastrarReceita()"
             >
                 Cadastrar
             </button>

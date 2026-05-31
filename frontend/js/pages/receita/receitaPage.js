@@ -104,15 +104,6 @@ function sectionReceita() {
                     + Cadastrar Receita
                 </button>
 
-                <button 
-                    type="button"
-                    id="btn-adicionarVenda"
-                    onclick="renderizarPagina('cadastroVendaProduto')"
-                    style="display: none;"
-                >
-                    + Registrar Venda
-                </button>
-
                 <p id="total-receitas">
                     Total de Receitas:
                     <span id="span-total-receitas">0</span>

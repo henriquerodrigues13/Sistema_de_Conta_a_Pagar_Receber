@@ -144,7 +144,7 @@ async function cadastrarServico() {
 
         alert('✅ Serviço cadastrado com sucesso!');
 
-        limparFormularioServico();
+        renderizarPagina('usuarioLayout');
 
     } catch (error) {
 

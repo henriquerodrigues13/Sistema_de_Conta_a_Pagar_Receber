@@ -1,9 +1,10 @@
-from sqlalchemy import Integer, String, Float, ForeignKey, DateTime, LargeBinary
+from sqlalchemy import Integer, String, Float, ForeignKey, DateTime, LargeBinary, Enum
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from nanoid import generate
+from enum import Enum
 
 
 BRASILIA = ZoneInfo("America/Sao_Paulo")
@@ -546,3 +547,8 @@ class request_nota_fiscal(BaseModel):
     nota_informacoes: str
     nota_forma_de_pagamento: str
     nota_modalidade_do_frete: str
+
+class formato_arquivo(str, Enum):
+    pdf = "pdf"
+    xls = "xls"
+    xml = "xml"

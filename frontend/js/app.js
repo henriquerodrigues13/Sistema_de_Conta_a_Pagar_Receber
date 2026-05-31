@@ -1,29 +1,13 @@
-/**
- * Inicializa a aplicação após o carregamento da página.
- */
-document.addEventListener( 'DOMContentLoaded', () => {
-        verificarLogin();
+document.addEventListener('DOMContentLoaded', () => {
+    verificarLogin();
 });
 
 /**
  * Renderiza páginas do sistema no container principal.
- * @param {string} pagina Nome da página.
+ * @param {string} pagina - Nome da página a renderizar.
  */
 function renderizarPagina(pagina) {
-
-    const app = document.getElementById('app');
-
-    const paginas = {
-        login: paginaLogin,
-        paginaInicial: paginaInicial,
-        cadastroUsuario: paginaCadastroUsuario,
-        cadastroReceita: paginaCadastroReceita,
-        cadastroDespesa: paginaCadastroDespesa,
-        cadastroProduto: paginaCadastroProduto,
-        cadastroServico: paginaCadastroServico,
-        cadastroVendaProduto: paginaCadastroVendaProduto,
-        cadastroVendaServico: paginaCadastroVendaServico,
-    };
+    const app = obterElemento('app');
 
     if (pagina === 'usuarioLayout') {
         app.innerHTML = paginaLayoutUsuario();
@@ -31,16 +15,32 @@ function renderizarPagina(pagina) {
         return;
     }
 
-    const paginaRenderizada = paginas[pagina];
+    const paginas = {
+        login:                 { render: paginaLogin },
+        paginaInicial:         { render: paginaInicial },
+        cadastroUsuario:       { render: paginaCadastroUsuario },
+        cadastroReceita:       { render: paginaCadastroReceita },
+        cadastroDespesa:       { render: paginaCadastroDespesa,      init: iniciarPaginaCadastroDespesa },
+        cadastroProduto:       { render: paginaCadastroProduto },
+        cadastroServico:       { render: paginaCadastroServico },
+        cadastroVendaProduto:  { render: paginaCadastroVendaProduto },
+        cadastroVendaServico:  { render: paginaCadastroVendaServico },
+        esquecerSenha:         { render: paginaEsqueciSenha,         init: initEsqueciSenha },
+        validarCod:            { render: paginaValidarCod,           init: initValidarCod },
+        alterarSenha:          { render: paginaAlterarSenha,         init: initAlterarSenha },
+        login:                 { render: paginaLogin,                init: initLogin },
+        paginaEmitente: { render: paginaNfEmitente},
+        paginaCliente: {render: paginaNfCliente},
+        paginaProduto: {render: paginaNfProduto},
+    };
 
-    if (!paginaRenderizada) {
+    const entrada = paginas[pagina];
+
+    if (!entrada) {
         app.innerHTML = '<p>Página não encontrada</p>';
         return;
     }
 
-    app.innerHTML = paginaRenderizada();
-
-    if (pagina === 'cadastroDespesa') {
-        iniciarPaginaCadastroDespesa(); 
-    }
+    app.innerHTML = entrada.render();
+    entrada.init?.();
 }

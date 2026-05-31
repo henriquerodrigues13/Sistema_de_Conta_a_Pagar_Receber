@@ -20,7 +20,9 @@ dependencies = [
     "tzdata",
     "fastapi-mail==1.4.1",
     "pynfe",
-    "signxml"
+    "signxml",
+    "openpyxl",
+    "reportlab"
 ]
 
 [project.optional-dependencies]

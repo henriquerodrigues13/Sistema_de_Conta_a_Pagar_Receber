@@ -14,7 +14,6 @@ function alternaTabelaReceitaVenda(nomeTabela) {
     const totalVendas = obterElemento('total-vendas');
 
     const btnReceita = obterElemento('btn-adicionarReceita');
-    const btnVenda = obterElemento('btn-adicionarVenda');
 
     const inputPesquisa = obterElemento('input-pesquisarReceitaVenda');
 
@@ -38,7 +37,6 @@ function alternaTabelaReceitaVenda(nomeTabela) {
         if (totalVendas) totalVendas.style.display = 'none';
 
         if (btnReceita) btnReceita.style.display = 'inline-block';
-        if (btnVenda) btnVenda.style.display = 'none';
 
         if (inputPesquisa) {
             inputPesquisa.placeholder = 'Pesquisar receitas';
@@ -47,7 +45,7 @@ function alternaTabelaReceitaVenda(nomeTabela) {
 
         if (botoes[0]) botoes[0].classList.add('ativo');
 
-        setTimeout(() => carregarReceitas(1), 500);
+        carregarReceitas(1);
 
     } else if (nomeTabela === 'tabelaVendas') {
 
@@ -58,7 +56,6 @@ function alternaTabelaReceitaVenda(nomeTabela) {
         if (totalVendas) totalVendas.style.display = 'block';
 
         if (btnReceita) btnReceita.style.display = 'none';
-        if (btnVenda) btnVenda.style.display = 'inline-block';
 
         if (inputPesquisa) {
             inputPesquisa.placeholder = 'Pesquisar vendas';
@@ -67,7 +64,7 @@ function alternaTabelaReceitaVenda(nomeTabela) {
 
         if (botoes[1]) botoes[1].classList.add('ativo');
 
-        setTimeout(() => carregarVendas(1), 500);
+        carregarVendas(1);
     }
 }
 
@@ -230,16 +227,6 @@ function renderizarTabelaReceitas(receitas) {
             )
         );
 
-        divOpcoes.appendChild(
-            criarBotaoAcao(
-                './assets/imgs/icons/taxa.png',
-                'Nota',
-                'btn-ver-nf',
-                'Ver Nota Fiscal',
-                () => verNotaReceita(receita.identificador)
-            )
-        );
-
         tdOpcoes.appendChild(divOpcoes);
 
         tr.appendChild(tdOpcoes);
@@ -314,8 +301,8 @@ function renderizarTabelaVendas(vendas) {
                 './assets/imgs/icons/taxa.png',
                 'Nota',
                 'btn-ver-nf',
-                'Ver Nota Fiscal',
-                () => verNotaVenda(venda.identificador)
+                'Emitir Nota Fiscal',
+                () => emitirNotaVenda()
             )
         );
 
@@ -328,7 +315,7 @@ function renderizarTabelaVendas(vendas) {
 }
 
 /**
- *Renderiza linha de 'nenhuma receita encontrada' na tabela de receitas.
+ * Renderiza linha de 'nenhuma receita encontrada' na tabela de receitas.
  */
 function renderizarTabelaVaziaReceitas() {
     const tabela = obterElemento('tabela-receita');
@@ -482,6 +469,9 @@ async function removerVenda(identificador) {
 function editarReceita(identificador) {
     renderizarPagina('cadastroReceita');
 
+    const h1 = document.querySelector('h1');
+    if (h1) h1.textContent = "Atualizar Receita";
+
     setTimeout(async () => {
         const emailUsuario = obterEmailUsuario();
 
@@ -504,12 +494,12 @@ function editarReceita(identificador) {
                 return;
             }
 
-            document.getElementById('input-tipoReceita').value          = receita.tipo_da_receita   || '';
-            document.getElementById('input-emailPagador').value         = receita.pagador_email      || '';
-            document.getElementById('input-dataCadastroReceita').value  = receita.data_da_receita?.split('T')[0] || '';
-            document.getElementById('input-valorReceita').value         = receita.valor_da_receita   || '';
-            document.getElementById('opcoes-pagamentos').value          = receita.forma_de_pagamento || '';
-            document.getElementById('input-observacaoReceita').value    = receita.observacao         || '';
+            document.getElementById('input-tipoReceita').value = receita.tipo_da_receita || '';
+            document.getElementById('input-emailPagador').value = receita.pagador_email || '';
+            document.getElementById('input-dataCadastroReceita').value = receita.data_da_receita?.split('T')[0] || '';
+            document.getElementById('input-valorReceita').value = receita.valor_da_receita || '';
+            document.getElementById('opcoes-pagamentos').value = receita.forma_de_pagamento || '';
+            document.getElementById('input-observacaoReceita').value = receita.observacao || '';
 
             const btn = obterElemento('cadastrarReceita');
             btn.textContent = 'Atualizar';
@@ -527,15 +517,15 @@ function editarReceita(identificador) {
  * @param {string} identificador - Identificador único da receita.
  */
 async function atualizarReceita(identificador) {
-    const tipoReceita    = document.getElementById('input-tipoReceita').value.trim();
-    const emailPagador   = document.getElementById('input-emailPagador').value.trim();
-    const dataReceita    = document.getElementById('input-dataCadastroReceita').value;
-    const valorRaw       = document.getElementById('input-valorReceita').value.trim();
+    const tipoReceita = document.getElementById('input-tipoReceita').value.trim();
+    const emailPagador = document.getElementById('input-emailPagador').value.trim();
+    const dataReceita = document.getElementById('input-dataCadastroReceita').value;
+    const valorRaw = document.getElementById('input-valorReceita').value.trim();
     const formaPagamento = document.getElementById('opcoes-pagamentos').value;
-    const observacao     = document.getElementById('input-observacaoReceita').value.trim();
+    const observacao = document.getElementById('input-observacaoReceita').value.trim();
 
-    if (!tipoReceita)   return alert('O tipo ou nome da receita é obrigatório.');
-    if (!dataReceita)   return alert('A data de cadastro é obrigatória.');
+    if (!tipoReceita) return alert('O tipo ou nome da receita é obrigatório.');
+    if (!dataReceita) return alert('A data de cadastro é obrigatória.');
 
     const valorReceita = parseFloat(valorRaw.replace(',', '.'));
     if (!valorRaw || isNaN(valorReceita) || valorReceita <= 0)
@@ -544,12 +534,12 @@ async function atualizarReceita(identificador) {
     if (!formaPagamento) return alert('Selecione a forma de pagamento.');
 
     const body = {
-        tipo_da_receita:    tipoReceita,
-        data_da_receita:    dataReceita,
-        valor_da_receita:   valorReceita,
+        tipo_da_receita: tipoReceita,
+        data_da_receita: dataReceita,
+        valor_da_receita: valorReceita,
         forma_de_pagamento: formaPagamento,
         ...(emailPagador && { pagador_email: emailPagador }),
-        ...(observacao   && { observacao }),
+        ...(observacao && { observacao }),
     };
 
     const emailUsuario = obterEmailUsuario();
@@ -612,27 +602,31 @@ function editarVenda(identificador) {
 
             setTimeout(() => {
                 if (isProduto) {
-                    document.getElementById('input-nome-produto').value              = venda.nome_do_produto         || '';
-                    document.getElementById('input-valor-produto').value             = venda.valor_da_venda          || '';
-                    document.getElementById('input-quantidade-produto').value        = venda.quantidade              || 1;
-                    document.getElementById('input-desconto-produto').value          = venda.porcentagem_do_desconto || 0;
-                    document.getElementById('input-comprador-email-produto').value   = venda.comprador_email         || '';
-                    document.getElementById('input-comprador-cpf-produto').value     = venda.comprador_cpf           || '';
-                    document.getElementById('input-pagamento-produto').value         = venda.forma_de_pagamento      || '';
-                    document.getElementById('input-descricao-produto').value         = venda.descricao_da_venda      || '';
+                    const h1 = document.querySelector('h1');
+                    if (h1) h1.textContent = "Atualizar Venda Produto";
+                    document.getElementById('input-nome-produto').value = venda.nome_do_produto || '';
+                    document.getElementById('input-valor-produto').value = venda.valor_da_venda || '';
+                    document.getElementById('input-quantidade-produto').value = venda.quantidade || 1;
+                    document.getElementById('input-desconto-produto').value = venda.porcentagem_do_desconto || 0;
+                    document.getElementById('input-comprador-email-produto').value = venda.comprador_email || '';
+                    document.getElementById('input-comprador-cpf-produto').value = venda.comprador_cpf || '';
+                    document.getElementById('input-pagamento-produto').value = venda.forma_de_pagamento || '';
+                    document.getElementById('input-descricao-produto').value = venda.descricao_da_venda || '';
 
                     const btn = obterElemento('btn-cadastrarVendaProduto');
                     btn.textContent = 'Atualizar';
                     btn.onclick = () => atualizarVenda(identificador, true);
 
                 } else {
-                    document.getElementById('input-nome-servico').value              = venda.nome_do_servico         || '';
-                    document.getElementById('input-valor-servico').value             = venda.valor_da_venda          || '';
-                    document.getElementById('input-desconto-servico').value          = venda.porcentagem_do_desconto || 0;
-                    document.getElementById('input-comprador-email-servico').value   = venda.comprador_email         || '';
-                    document.getElementById('input-comprador-cpf-servico').value     = venda.comprador_cpf           || '';
-                    document.getElementById('input-pagamento-servico').value         = venda.forma_de_pagamento      || '';
-                    document.getElementById('input-descricao-servico').value         = venda.descricao_da_venda      || '';
+                    const h1 = document.querySelector('h1');
+                    if (h1) h1.textContent = "Atualizar Venda Servico";
+                    document.getElementById('input-nome-servico').value = venda.nome_do_servico || '';
+                    document.getElementById('input-valor-servico').value = venda.valor_da_venda || '';
+                    document.getElementById('input-desconto-servico').value = venda.porcentagem_do_desconto || 0;
+                    document.getElementById('input-comprador-email-servico').value = venda.comprador_email || '';
+                    document.getElementById('input-comprador-cpf-servico').value = venda.comprador_cpf || '';
+                    document.getElementById('input-pagamento-servico').value = venda.forma_de_pagamento || '';
+                    document.getElementById('input-descricao-servico').value = venda.descricao_da_venda || '';
 
                     const btn = obterElemento('btn-cadastrarVendaServico');
                     btn.textContent = 'Atualizar';
@@ -655,48 +649,48 @@ async function atualizarVenda(identificador, isProduto) {
     let nome, valor, desconto, quantidade, pagamento, descricao, compradorEmail, compradorCpf, nomeCampo;
 
     if (isProduto) {
-        nome           = document.getElementById('input-nome-produto').value.trim();
-        valor          = parseFloat(document.getElementById('input-valor-produto').value);
-        quantidade     = parseInt(document.getElementById('input-quantidade-produto').value) || 1;
-        desconto       = parseFloat(document.getElementById('input-desconto-produto').value) || 0;
-        pagamento      = document.getElementById('input-pagamento-produto').value;
-        descricao      = document.getElementById('input-descricao-produto').value.trim();
+        nome = document.getElementById('input-nome-produto').value.trim();
+        valor = parseFloat(document.getElementById('input-valor-produto').value);
+        quantidade = parseInt(document.getElementById('input-quantidade-produto').value) || 1;
+        desconto = parseFloat(document.getElementById('input-desconto-produto').value) || 0;
+        pagamento = document.getElementById('input-pagamento-produto').value;
+        descricao = document.getElementById('input-descricao-produto').value.trim();
         compradorEmail = document.getElementById('input-comprador-email-produto').value.trim();
-        compradorCpf   = document.getElementById('input-comprador-cpf-produto').value.trim();
-        nomeCampo      = 'nome_do_produto';
+        compradorCpf = document.getElementById('input-comprador-cpf-produto').value.trim();
+        nomeCampo = 'nome_do_produto';
     } else {
-        nome           = document.getElementById('input-nome-servico').value.trim();
-        valor          = parseFloat(document.getElementById('input-valor-servico').value);
-        quantidade     = 1;
-        desconto       = parseFloat(document.getElementById('input-desconto-servico').value) || 0;
-        pagamento      = document.getElementById('input-pagamento-servico').value;
-        descricao      = document.getElementById('input-descricao-servico').value.trim();
+        nome = document.getElementById('input-nome-servico').value.trim();
+        valor = parseFloat(document.getElementById('input-valor-servico').value);
+        quantidade = 1;
+        desconto = parseFloat(document.getElementById('input-desconto-servico').value) || 0;
+        pagamento = document.getElementById('input-pagamento-servico').value;
+        descricao = document.getElementById('input-descricao-servico').value.trim();
         compradorEmail = document.getElementById('input-comprador-email-servico').value.trim();
-        compradorCpf   = document.getElementById('input-comprador-cpf-servico').value.trim();
-        nomeCampo      = 'nome_do_servico';
+        compradorCpf = document.getElementById('input-comprador-cpf-servico').value.trim();
+        nomeCampo = 'nome_do_servico';
     }
 
-    if (!nome)                      return alert(`❌ Informe o nome do ${isProduto ? 'produto' : 'serviço'}.`);
+    if (!nome) return alert(`❌ Informe o nome do ${isProduto ? 'produto' : 'serviço'}.`);
     if (isNaN(valor) || valor <= 0) return alert('❌ Informe um valor válido.');
-    if (!pagamento)                 return alert('❌ Selecione a forma de pagamento.');
+    if (!pagamento) return alert('❌ Selecione a forma de pagamento.');
 
     const valorFinal = calcularValorFinal(valor, quantidade, desconto);
 
     const body = {
-        [nomeCampo]:             nome,
-        valor_da_venda:          valor,
+        [nomeCampo]: nome,
+        valor_da_venda: valor,
         quantidade,
         porcentagem_do_desconto: desconto,
-        valor_final:             valorFinal,
-        forma_de_pagamento:      pagamento,
-        descricao_da_venda:      descricao || '',
+        valor_final: valorFinal,
+        forma_de_pagamento: pagamento,
+        descricao_da_venda: descricao || '',
         ...(compradorEmail && { comprador_email: compradorEmail }),
-        ...(compradorCpf   && { comprador_cpf:   compradorCpf   }),
+        ...(compradorCpf && { comprador_cpf: compradorCpf }),
     };
 
-    const emailUsuario  = obterEmailUsuario();
-    const btnId         = isProduto ? 'btn-cadastrarVendaProduto' : 'btn-cadastrarVendaServico';
-    const btn           = obterElemento(btnId);
+    const emailUsuario = obterEmailUsuario();
+    const btnId = isProduto ? 'btn-cadastrarVendaProduto' : 'btn-cadastrarVendaServico';
+    const btn = obterElemento(btnId);
     const textoOriginal = btn?.textContent;
 
     try {
@@ -729,4 +723,11 @@ async function atualizarVenda(identificador, isProduto) {
     } finally {
         if (btn) { btn.disabled = false; btn.textContent = textoOriginal; }
     }
+}
+
+/**
+ * Redireciona para a página de emissão de nota fiscal da venda.
+ */
+function emitirNotaVenda() {
+    renderizarPagina('paginaEmitente');
 }
