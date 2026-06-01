@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, Backgrou
 from backend.models.banco_dados_inicia import cria_sessao_banco_de_dados
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from backend.API.emitir_NFe import emitir_NotaFiscal
+from build.lib.backend.logs import setup_logger
 from starlette.responses import JSONResponse
 from sqlalchemy import select, func, update
 from backend.API.criptografia import *
@@ -11,7 +12,10 @@ from sqlalchemy.orm import Session
 from backend.API.gerador import *
 from typing import Annotated
 
+
 BRASILIA = timezone(timedelta(hours=-3))
+
+logger = setup_logger('rotas')
 
 conf = ConnectionConfig(
     MAIL_USERNAME="henriquefnaf2680@gmail.com",
@@ -47,6 +51,7 @@ async def login(usuario_login: login_usuario, session: SessionDep) -> reponsa_us
         select(usuarios).where(usuarios.email == usuario_login.email)
     ).scalar_one_or_none()):
         if verificar_senha(senha=usuario_login.senha, hash_salvo=usuario_existe.senha):
+            logger.info(f'O usuario {usuario_existe.nome_completo} com o email {usuario_existe.email} entrou no sistema')
             return reponsa_usuario.model_validate(usuario_existe)
         raise HTTPException(status_code=401, detail="Senha incorreta")
     raise HTTPException(status_code=404, detail='Usuario nao encontrado')
@@ -58,7 +63,7 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     if not (isEmail_valido:=validacao_email(email=cadastro_do_usuario.email)):
         raise HTTPException(status_code=401, detail='Email invalido')
 
-    if (usario_ja_existe := session.execute(
+    if (usuario_ja_existe := session.execute(
             select(usuarios).where(usuarios.email == cadastro_do_usuario.email))
             .scalar_one_or_none()):
         raise HTTPException(status_code=409, detail='Usuario ja existe')
@@ -80,6 +85,7 @@ async def cadastro_usuario(cadastro_do_usuario: cadastro_usuario, session: Sessi
     session.commit()
     session.refresh(novo_usuario)
 
+    logger.info(f'O usuario {cadastro_do_usuario.nome_completo} com o email {cadastro_do_usuario.email} se cadastrou no sistema')
     return reponsa_usuario.model_validate(novo_usuario)
 
 @router.post('/recuperacao_senha', response_model=request_recuperacao_senha)
@@ -106,6 +112,7 @@ async def recuperacao_senha(usuario: request_recuperacao_senha,
 
         background_tasks.add_task(fast_mail.send_message, message)
 
+        logger.info(f'O email {usuario.email} pediu para recupera senha')
         return JSONResponse(status_code=201, content={'message': 'Email para recuperação de senha, enviado'})
     raise HTTPException(status_code=404, detail='Usuario não encontrado')
 
@@ -118,6 +125,7 @@ async def recuperacao_senha(reset: request_reset_senha,
             session.execute(update(usuarios).where(usuarios.token_reset_senha == reset.token).
                             values(senha=senha_hash(reset.senha)))
             session.commit()
+            logger.info(f'O usuario de email {usuario.email} alterou a sua senha')
             return JSONResponse(status_code=200, content={'message': 'Senha atualizada'})
         raise HTTPException(status_code=400, detail='Token expirado')
     raise HTTPException(status_code=404, detail='Token não encontrado')
@@ -154,6 +162,8 @@ async def cadastro_produtos(cadastro_produto: request_produtos,
     session.commit()
     session.refresh(novo_produto)
 
+    logger.info(
+        f'O usuario com o email {cadastro_produto.proprietario_usuario} cadastrou o produto {cadastro_produto.nome_do_produto} no sistema')
     return JSONResponse(content={'mensagem' : f'O produto {cadastro_produto.nome_do_produto} com sucesso'},
                         media_type= 'text/plain')
 
@@ -189,6 +199,8 @@ async def get_produtos_usuario(
         .offset(offset)
     ).scalars().all()
 
+    logger.info(
+        f'O usuario com o email {usuario_email} requisitou um get dos seu produtos')
     return [reponse_produtos_usuario.model_validate(produto) for produto in produtos_reponse]
 
 @router.patch("/update_produto/{usuario_email}/{nome_do_produto}", response_model=patch_produto,
@@ -208,6 +220,8 @@ async def atualizar_produto(usuario_email: EmailStr, nome_do_produto: str,
 
         session.commit()
 
+        logger.info(
+            f'O usuario com o email {usuario_email} alterou o produto {produto.nome_do_produto} no sistema')
         return JSONResponse(content={'mensagem' : f'o produto: {nome_do_produto} foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Produto não encontrado.")
@@ -221,7 +235,7 @@ async def deletar_produto(usuario_email: EmailStr,
                                                           produtos.nome_do_produto == nome_do_produto))).scalar_one_or_none():
         session.delete(produto)
         session.commit()
-
+        logger.info(f'O usuario com o email {usuario_email} deletou o produto {produto.nome_do_produto} no sistema')
         return JSONResponse(content={'mensagem' : f'o produto {nome_do_produto} foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Produto não encontrado.")
@@ -316,6 +330,8 @@ async def cadastro_servico(cadastro_do_servico: request_servico,
     session.commit()
     session.refresh(novo_servico)
 
+    logger.info(
+        f'O usuario com o email {email_nao_existe.email} cadastrou o serviço {cadastro_do_servico.nome_do_servico} no sistema')
     return JSONResponse(content={'mensagem' : f'O servico: {cadastro_do_servico.nome_do_servico} foi cadastro com sucesso'},
                         media_type= 'text/plain')
 
@@ -351,6 +367,8 @@ async def get_servico_usuario(
         .offset(offset)
     ).scalars().all()
 
+    logger.info(
+        f'O usuario com o email {usuario_email} requisitou uma vizualização dos serviços no sistema')
     return [reponse_servicos.model_validate(servico) for servico in servico_reponse]
 
 @router.patch("/update_servico/{usuario_email}/{nome_do_servico}", response_model=patch_servico,
@@ -370,6 +388,8 @@ async def atualizar_servico(usuario_email: EmailStr, nome_do_servico: str,
 
         session.commit()
         session.refresh(servico)
+        logger.info(
+            f'O usuario com o email {usuario_email} atualizou o serviço {nome_do_servico} no sistema')
         return JSONResponse(content={'mensagem' : f'o servico : {nome_do_servico} foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
@@ -385,6 +405,8 @@ async def deletar_servico(usuario_email: EmailStr,
         session.delete(servico)
         session.commit()
 
+        logger.info(
+            f'O usuario com o email {usuario_email} deletou o serviço {nome_do_servico} no sistema')
         return JSONResponse(content={'mensagem' : f'o servico: {nome_do_servico} foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
@@ -471,6 +493,8 @@ async def cadastro_venda_servico(cadastro_da_venda: request_venda_servico,
     session.commit()
     session.refresh(nova_venda)
 
+    logger.info(
+        f'O usuario com o email {cadastro_da_venda.vendedor_email} adicinou uma venda do serviço {cadastro_da_venda.nome_do_servico} no sistema')
     return JSONResponse(content={'mensagem' : f'A venda do serviço: {cadastro_da_venda.nome_do_servico} foi cadastrada com sucesso'},
                         media_type= 'text/plain')
 
@@ -525,6 +549,8 @@ async def cadastro_venda_produto(cadastro_da_venda: request_venda_produto,
     session.commit()
     session.refresh(nova_venda)
 
+    logger.info(
+        f'O usuario com o email {cadastro_da_venda.vendedor_email} adicinou uma venda do produto {cadastro_da_venda.nome_do_produto} no sistema')
     return JSONResponse(
         content={'mensagem': f'A venda do produto: {cadastro_da_venda.nome_do_produto} foi cadastrada com sucesso'},
         media_type='text/plain')
@@ -561,6 +587,7 @@ async def get_vendas(
         .offset(offset)
     ).scalars().all()
 
+    logger.info(f'O usuario com o email {usuario_email} requisitou a vizualização das vendas no sistema')
     return [reponse_venda.model_validate(venda) for venda in vendas_reponse]
 
 @router.patch("/update_venda/{usuario_email}/{identificador}", response_model=patch_venda,
@@ -581,7 +608,7 @@ async def atualizar_venda(usuario_email: EmailStr, identificador: str,
         session.commit()
         session.refresh(venda)
         return JSONResponse(content={'mensagem' : f'A venda foi atualizado'}, media_type= 'text/plain')
-
+    logger.info(f'O usuario com o email {usuario_email} atualiza a venda com identificador {identificador} no sistema')
     raise HTTPException(status_code=404, detail="Serviço não encontrado.")
 
 @router.delete("/delete_venda/{usuario_email}/{identificador}", response_model=delete_venda,
@@ -595,6 +622,8 @@ async def deletar_venda(usuario_email: EmailStr,
         session.delete(venda)
         session.commit()
 
+        logger.info(
+            f'O usuario com o email {usuario_email} deletou a venda com identificador {identificador} no sistema')
         return JSONResponse(content={'mensagem' : f'A venda foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A venda não encontrado.")
@@ -613,6 +642,8 @@ async def cadastro_nota_fiscal(cadastro_da_nota_fiscal: request_nota_fiscal,
             )
             session.commit()
             session.refresh(nova_nota)
+            logger.info(
+                f'O usuario com o email {cadastro_da_nota_fiscal.usuario_email} requisitou uma nota fiscal no sistema')
             return JSONResponse(content={'mensage': 'nota emitida'}, media_type= 'text/plain')
         else:
             #emitir_NotaFiscal(dados=cadastro_da_nota_fiscal.model_dump(exclude_unset=True), numero_da_nota= cadastro_da_nota_fiscal.numero_da_nota + 1)
@@ -622,6 +653,8 @@ async def cadastro_nota_fiscal(cadastro_da_nota_fiscal: request_nota_fiscal,
             )
             session.commit()
             session.refresh(nova_nota)
+            logger.info(
+                f'O usuario com o email {cadastro_da_nota_fiscal.usuario_email} requisitou uma nota fiscal no sistema')
             return JSONResponse(content={'mensage': 'nota emitida'}, media_type='text/plain')
 
     raise HTTPException(status_code=404, detail="Usuario não encontrado")
@@ -663,6 +696,8 @@ async def cadastro_receita(cadastro_de_receita: request_receita,
     session.commit()
     session.refresh(nova_receita)
 
+    logger.info(
+        f'O usuario com o email {cadastro_de_receita.recebedor_email} adicionou uma receita no sistema')
     return JSONResponse(
         content={'mensagem': f'A receita foi cadastrada com sucesso'},
         media_type='text/plain')
@@ -699,6 +734,8 @@ async def get_receitas(
         .offset(offset)
     ).scalars().all()
 
+    logger.info(
+        f'O usuario com o email {usuario_email} requisitou a vizualização das receitas no sistema')
     return [reponse_receita.model_validate(receita) for receita in receitas_reponse]
 
 @router.patch("/update_receita/{usuario_email}/{identificador}", response_model=patch_receita,
@@ -718,6 +755,9 @@ async def atualizar_receita(usuario_email: EmailStr, identificador: str,
 
         session.commit()
         session.refresh(receita)
+
+        logger.info(
+            f'O usuario com o email {usuario_email} atualizou a receita com identificador: {identificador} no sistema')
         return JSONResponse(content={'mensagem' : f'A receita foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A receita não encontrado.")
@@ -733,6 +773,8 @@ async def deletar_receita(usuario_email: EmailStr,
         session.delete(receita)
         session.commit()
 
+        logger.info(
+            f'O usuario com o email {usuario_email} deletou a receita com identificador: {identificador} no sistema')
         return JSONResponse(content={'mensagem' : f'A receita foi deletado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A receita não encontrado.")
@@ -773,6 +815,8 @@ async def cadastro_despesa(cadastro_de_despesa: request_despesa,
     session.commit()
     session.refresh(nova_despesa)
 
+    logger.info(
+        f'O usuario com o email {cadastro_de_despesa.pagador_email} adicionou uma despesas no sistema')
     return JSONResponse(
         content={'mensagem': f'A receita foi cadastrada com sucesso'},
         media_type='text/plain')
@@ -809,6 +853,8 @@ async def get_despesa(
         .offset(offset)
     ).scalars().all()
 
+    logger.info(
+        f'O usuario com o email {usuario_email} requisitou a vizualização das despesas no sistema')
     return [reponse_despesa.model_validate(despensa) for despensa in despesas_reponse]
 
 @router.patch("/update_despesa/{usuario_email}/{identificador}", response_model=patch_despesa,
@@ -828,6 +874,9 @@ async def atualizar_despesa(usuario_email: EmailStr, identificador: str,
 
         session.commit()
         session.refresh(despesa)
+
+        logger.info(
+            f'O usuario com o email {usuario_email} atualizou a despesa com identificador: {identificador} no sistema')
         return JSONResponse(content={'mensagem' : f'A despesa foi atualizado'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A despesa não encontrado.")
@@ -843,6 +892,8 @@ async def deletar_despesa(usuario_email: EmailStr,
         session.delete(despesa)
         session.commit()
 
+        logger.info(
+            f'O usuario com o email {usuario_email} deletou a despesa com identificador: {identificador} no sistema')
         return JSONResponse(content={'mensagem' : f'A despesa foi deletada'}, media_type= 'text/plain')
 
     raise HTTPException(status_code=404, detail="A despesa não encontrado.")
@@ -919,9 +970,12 @@ async def get_relatorio(formato: formato_arquivo, email: str, session: SessionDe
     }
 
     if formato == formato_arquivo.xml:
+        logger.info(f'O usuario com o email {email} requisitou um relatorio em xml das suas despesas e receitas')
         return gerar_xml(dados)
     elif formato == formato_arquivo.xls:
+        logger.info(f'O usuario com o email {email} requisitou um relatorio em xls das suas despesas e receitas')
         return gerar_xls(dados)
     elif formato == formato_arquivo.pdf:
+        logger.info(f'O usuario com o email {email} requisitou um relatorio em pdf das suas despesas e receitas')
         return gerar_pdf(dados)
-    return None
+    raise HTTPException(status_code=400, detail='tipo de formato não aceito no sistema')

@@ -19,7 +19,7 @@ def validacao_cpf(cpf: str) -> bool:
         return True
 
 def validacao_email(email) -> dict | bool:
-    api_key = '3f1c2d022729488da21f370e1a81ccf9'
+    api_key = 'dc54ead34c4e4dd7a0eba95d8bc5b237'
     url = "https://api.zerobounce.net/v2/validate"
 
     params = {
