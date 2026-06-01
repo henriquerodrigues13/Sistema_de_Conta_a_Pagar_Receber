@@ -300,7 +300,7 @@ function renderizarTabelaVendas(vendas) {
             criarBotaoAcao(
                 './assets/imgs/icons/taxa.png',
                 'Nota',
-                'btn-ver-nf',
+                'btn-emitir-nf',
                 'Emitir Nota Fiscal',
                 () => emitirNotaVenda()
             )
