@@ -34,7 +34,7 @@ def set_env():
 
 @pytest.fixture(autouse=True)
 def mock_validacao_email():
-    with patch("backend.API.routes.validacao_email") as mock:
+    with patch("backend.API.rotas.validacao_email") as mock:
         mock.return_value = True  
         yield mock
 
@@ -59,7 +59,7 @@ def override_get_session(app):
             db.close()
 
     # Sobrescreve a dependência do banco real pela do banco de teste
-    app.dependency_overrides[database_module.get_session] = _get_test_session
+    app.dependency_overrides[database_module.cria_sessao_banco_de_dados] = _get_test_session
     yield
     
     # Limpa as modificações após o término do teste

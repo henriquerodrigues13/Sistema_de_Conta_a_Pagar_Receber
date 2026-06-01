@@ -1,406 +1,278 @@
-Markdown
-# DOCUMENTAÇÃO OFICIAL DA SUÍTE DE TESTES
+# Documentação da Suite de Testes
 
-## SUMÁRIO
-
-- [1. Introdução](#1-introdução)
-- [2. Arquitetura dos Testes](#2-arquitetura-dos-testes)
-- [3. Arquivos de Teste](#3-arquivos-de-teste)
-    - [3.1 conftest.py - Configuração Global](#31-conftestpy---configuração-global)
-    - [3.2 test_criptografia.py - Testes Unitários](#32-test_criptografiapy---testes-unitários)
-    - [3.3 test_smoke.py - Testes de Saúde](#33-test_smokepy---testes-de-saúde)
-    - [3.4 test_validacoes.py - Testes de Validação](#34-test_validacoespy---testes-de-validação)
-    - [3.5 test_api.py - Testes de Integração](#35-test_apipy---testes-de-integração)
-- [4. Como Executar os Testes](#4-como-executar-os-testes)
-- [5. Estrutura e Padrões](#5-estrutura-e-padrões)
-- [6. Problemas Comuns e Soluções](#6-problemas-comuns-e-soluções)
-- [7. Próximas Etapas](#7-próximas-etapas)
-- [8. Referência Rápida](#8-referência-rápida)
-- [Apêndice: Arquivos Relacionados](#apêndice-arquivos-relacionados)
-
-
-**Sistema de Contas a Pagar e Receber** **Disciplina:** Teoria de Sistemas Aplicada a Informática  
-**Curso:** Sistemas de Informação - UFPA  
-**Data:** Maio de 2026  
-**Status:** 📝 Em Construção
+**Sistema:** Contas a Pagar/Receber  
+**Última atualização:** 2026-05-31  
+**Suite Status:** ✅ **64 passed + 4 xfailed = 68 testes**
 
 ---
 
-## 1. INTRODUÇÃO
+## Instalação
 
-Esta documentação descreve a suíte de testes do sistema de contas a pagar e receber. Os testes foram organizados para validar diferentes camadas da aplicação: desde funções unitárias até fluxos completos de integração.
+```bash
+# 1. Ative o virtualenv
+.venv\Scripts\activate          # Windows
+source .venv/bin/activate       # Linux/Mac
 
-### 1.1 Objetivo
+# 2. Instale as dependências (só precisa fazer uma vez)
+pip install -e ".[test]"
+playwright install chromium     # Para E2E tests (necessário uma única vez)
+```
 
-Os testes têm como objetivos:
-- ✅ Validar a corretude do código
-- ✅ Garantir que dados são armazenados corretamente
-- ✅ Verificar segurança (hash de senhas, validações)
-- ✅ Testar fluxos completos de usuário
-- ✅ Detectar regressões em novas versões
+## Como rodar os testes
 
+```bash
+# SUITE COMPLETA — 68 testes (unit + integração + E2E com navegador visível)
+pytest -v --headed
 
-### 1.2 Status Atual
+# SEM NAVEGADOR — unit + integração apenas (mais rápido)
+pytest tests/unit/ tests/integracao/ -v
 
-- Testes básicos de criptografia ✅
-- Testes de integração de API ✅
-- Testes de validação de dados ✅
-- Testes smoke (saúde da aplicação) ✅
+# SÓ E2E — com navegador
+pytest tests/e2e/ -v --headed
 
+# SÓ unit
+pytest tests/unit/ -v
 
----
+# SÓ integração
+pytest tests/integracao/ -v
+```
 
-## 2. ARQUITETURA DOS TESTES
-
-### 2.1 Estrutura de Diretórios
-
-Sistema_de_Conta_a_Pagar_Receber/
-├── backend/
-│   ├── API/
-│   └── models/
-├── tests/
-│   ├── unit/
-│   │   ├── test_criptografia.py
-│   │   └── test_smoke.py
-│   └── integracao/
-│       ├── test_api.py
-│       └── test_validacoes.py
-├── conftest.py
-├── requirements.txt
-└── ...
-
-
-### 2.2 Fluxo de Execução dos Testes
-
-pytest (comando)
-↓
-conftest.py (preparação)
-├─ Cria banco de dados SQLite em memória RAM
-├─ Cria automaticamnete TODAS as tabelas do ecossistema (Base.metadata)
-├─ Configura mock de email (API externa isolada)
-└─ Substitui dependência get_session globalmente
-↓
-test_*.py (testes)
-├─ test_unitário (rápido, isolado)
-├─ test_integração (completo, focado em endpoints)
-└─ test_smoke (saúde geral da API)
-↓
-Resultado (✅ ou ❌)
-
+**Importante:** O comando `pytest -v --headed` automaticamente:
+- Mata qualquer uvicorn rodando
+- Sobe um novo backend limpo (via `conftest.py`)
+- Roda todos os 68 testes (unit, integração, E2E)
+- E2E testes aparecem no Chromium (não headless)
+- Mata o backend ao final
 
 ---
 
-## 3. ARQUIVOS DE TESTE
-
-### 3.1 `conftest.py` - Configuração Global
+## Estrutura dos arquivos
+
+```
+tests/
+├── unit/                              testes de funções isoladas (sem API, sem banco)
+│   ├── test_backup.py                 lógica de rotação de backups
+│   ├── test_criptografia.py           hash e verificação de senha
+│   ├── test_validacoes.py             validação de email e schemas Pydantic
+│   └── test_smoke.py                  verifica se a API sobe corretamente
+│
+├── integracao/                        testes que chamam a API de verdade (banco em memória)
+│   ├── test_api.py                    usuários, login, produtos, vendas, receitas, recuperação de senha
+│   ├── test_servicos.py               CRUD completo de serviços
+│   ├── test_despesas.py               CRUD completo de despesas
+│   └── test_endpoints_com_bug.py      endpoints com bugs conhecidos (marcados como xfail)
+│
+├── e2e/                               testes com navegador real (requer Playwright)
+│   ├── conftest.py                    configura Chromium e reinicia backend automaticamente
+│   └── test_fluxo_usuario.py          4 fluxos: login, despesa, receitas, serviços
+│
+└── conftest.py (global)               fixtures compartilhadas entre unit, integração e E2E
+```
+
+---
+
+## O que cada arquivo testa
+
+### Testes unitários
+
+| Arquivo | O que testa |
+|---------|-------------|
+| `test_criptografia.py` | Hash da senha é diferente da original; senha certa → True; senha errada → False |
+| `test_validacoes.py` | API externa retorna "valid" → True; retorna "invalid" → False; conexão cai → False; Pydantic rejeita campos faltando → 422 |
+| `test_backup.py` | Rotacionamento mantém no máximo 3 backups; com menos de 3 não deleta nada |
+| `test_smoke.py` | GET /docs retorna 200; init_db() é chamado no startup |
+
+### Testes de integração — test_api.py
+
+**Usuários e login:**
+- Cadastro com sucesso → 200, nome correto na resposta, senha não aparece
+- Email duplicado → 409
+- Login com senha certa → 200
+- Login com senha errada → 401
+- Login com usuário inexistente → 404
+
+**Recuperação de senha:**
+- Usuário existe → 201 (email mockado, não envia de verdade)
+- Usuário não existe → 404
+- Reset com token válido (não expirado) → 200
+- Reset com token inexistente → 404
+- Reset com token expirado → 400
+
+**Produtos:**
+- Cadastro com sucesso
+- Cadastro com usuário inexistente → 404
+- Produto duplicado → 409
+- Listagem com headers X-Total-Items e X-Total-Pages
+- Atualização de valor e estoque
+- Atualização com payload vazio → 400
+- Atualização de produto inexistente → 404
+- Deleção e confirmação pela listagem
+
+**Fornecedores:**
+- GET /get_fornecedor → 200 (lista vazia no banco de testes)
+
+**Vendas de produto e serviço:**
+- Listagem por usuário com headers de paginação
+- Atualização pelo identificador real (nanoid)
+- Deleção e confirmação
+- Venda de serviço com sucesso
+- Venda de serviço com vendedor inexistente → 404
+- Venda de serviço com serviço inexistente → 404
+- Venda de serviço aparece na listagem
+
+**Receitas:**
+- Cadastro com sucesso
+- Dados inválidos (email e data errados) → 422
+- Listagem por email do recebedor
+- Atualização de valor e observação
+- Deleção e confirmação
+
+### Testes de integração — test_endpoints_com_bug.py
+
+Esses testes documentam o comportamento **esperado** de endpoints que têm bugs no fonte.
+Todos são marcados com `@pytest.mark.xfail` — falham esperadamente até os bugs serem corrigidos.
+Quando o dev corrigir um bug, o teste vai mostrar **XPASS** (passou inesperadamente) — sinal pra remover o xfail.
+
+| Teste | Bug | Comportamento esperado → atual |
+|-------|-----|-------------------------------|
+| `test_cadastro_nota_fiscal_usuario_existente_deve_retornar_sucesso` | BUG-001 | 200 → 404 |
+| `test_cadastro_nota_fiscal_usuario_inexistente_deve_retornar_404` | BUG-001 | 404 → 200 |
+| `test_get_produtos_fornecedor_retorna_lista_por_cnpj` | BUG-002 | 200 → 422 |
+| `test_get_servicos_fornecedor_retorna_lista_por_cnpj` | BUG-003 | 200 → 422 |
+
+### Testes de integração — test_servicos.py
+
+- Cadastro com sucesso
+- Cadastro com usuário inexistente → 404
+- Serviço duplicado → 409
+- Listagem com paginação
+- Usuário sem serviços → lista vazia
+- Atualização de valor
+- Atualização com payload vazio → 400
+- Atualização de serviço inexistente → 404
+- Deleção e confirmação
+- Deleção de serviço inexistente → 404
 
-**Propósito:** Definir fixtures compartilhadas entre todos os testes e isolar o ambiente real de desenvolvimento do ambiente de testes.
-
-**Principais Componentes:**
+### Testes de integração — test_despesas.py
 
-#### 3.1.1 Fixture `app`
+- Cadastro com sucesso
+- Cadastro com pagador inexistente → 404
+- Payload incompleto → 422
+- Listagem com paginação
+- Usuário sem despesas → lista vazia
+- Atualização pelo identificador real
+- Atualização com payload vazio → 400
+- Atualização de identificador inválido → 404
+- Deleção e confirmação
+- Deleção de identificador inválido → 404
 
-```python
-@pytest.fixture(scope="session")
-def app():
-    return backend_main.app
-O que faz: Retorna a instância da aplicação FastAPI.
+### Testes E2E — test_fluxo_usuario.py
 
-Escopo: session (criada uma única vez por sessão de testes).
-
-Usada por: Outras fixtures do sistema.
-
-3.1.2 Fixture client
-Python
-@pytest.fixture()
-def client(app, override_get_session):
-    with TestClient(app) as c:
-        yield c
-O que faz: Cria um cliente síncrono HTTP nativo para disparar requisições aos endpoints da API.
-
-Escopo: function (um cliente novo e zerado para cada função de teste).
-
-Como usar no teste:
-
-Python
-def test_algo(client):
-    response = client.post("/cadastro_usuario", json=dados)
-3.1.3 Fixture override_get_session
-Python
-@pytest.fixture()
-def override_get_session(app):
-    engine = create_engine(
-        "sqlite:///:memory:", 
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool
-    )
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    
-    # Cria a estrutura completa de tabelas mapeadas no ecossistema
-    Base.metadata.create_all(bind=engine)
-    
-    def _get_test_session():
-        db = TestingSessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
+| Teste | O que simula no navegador |
+|-------|--------------------------|
+| `test_fluxo_login_admin_com_sucesso` | Abre o sistema, clica em login, entra com admin/admin, verifica o layout |
+| `test_fluxo_cadastro_de_despesa_aparece_na_tabela` | Login real, preenche formulário de despesa, verifica na tabela |
+| `test_fluxo_navegacao_receitas` | Login real, navega para receitas, verifica tabela carregada |
+| `test_fluxo_navegacao_servicos` | Login real, navega para serviços (com aba), verifica tabela |
 
-    app.dependency_overrides[database_module.get_session] = _get_test_session
-    yield
-    
-    app.dependency_overrides.clear()
-    engine.dispose()
-O que faz:
+---
 
-Instancia um mecanismo de banco de dados SQLite volátil em memória RAM dedicado.
+## Como os testes de integração funcionam
 
-Executa a criação de todas as tabelas do projeto (Usuários, Contas, Fornecedores, etc.) mapeadas sob a classe declarativa Base.
+Os testes **não tocam o banco de dados real**. O `conftest.py` na raiz cria um banco SQLite em memória RAM para cada teste. Quando o teste termina, o banco é descartado. Isso significa que:
 
-Substitui de forma transparente a dependência get_session injetada nas rotas do FastAPI pela sessão de testes.
+- Cada teste começa com banco limpo
+- Um teste não afeta o outro
+- Não precisa configurar nenhum banco antes de rodar
 
-Limpa as sobreposições de dependência (clear()) e descarta a conexão do banco de dados ao final do ciclo de execução.
+A validação de email (que chamaria a API do ZeroBounce de verdade) também é mockada automaticamente, então os testes funcionam sem internet.
 
-Por que é importante:
+---
 
-Isolamento Total: Evita o acoplamento de estados. Cada teste roda em um ambiente limpo, impedindo que dados cadastrados em um teste quebrem outro.
+## Testes E2E — requer configuração especial
 
-Proteção contra Erros de Relacionamento: Ao gerar a árvore de tabelas unificada via Base.metadata.create_all, elimina falhas de restrições de chaves estrangeiras (Foreign Key) ou tabelas inexistentes ao testar fluxos integrados.
+Os testes em `tests/e2e/` abrem um navegador de verdade e clicam na tela. Para rodar:
 
-StaticPool?
+```bash
+# Dependências extras
+pip install pytest-playwright
+playwright install chromium
 
-Mantém a mesma conexão ativa em memória compartilhada pelas threads do teste. Sem isso, cada requisição HTTP disparada pelo TestClient destruiria e recriaria um banco zerado, estourando erros operacionais.
+# Subir o backend antes de rodar
+uvicorn backend.main:app --reload
 
-3.1.4 Fixture mock_validacao_email
-Python
-@pytest.fixture(autouse=True)
-def mock_validacao_email():
-    with patch("backend.API.routes.validacao_email") as mock:
-        mock.return_value = True  
-        yield mock
-O que faz: Intercepta e simula com sucesso chamadas para serviços externos de e-mail ou microsserviços de validação.
+# Rodar os testes E2E
+pytest tests/e2e/ -v
+```
 
-Por que é importante: Garante autonomia e velocidade na execução local dos testes, eliminando dependência de rede ou cota de requisições de APIs externas.
+Se o backend não estiver rodando, os testes E2E são **pulados automaticamente** (não falham).
 
-autouse=True: Ativada silenciosamente em todos os contextos de testes.
+---
 
-3.1.5 Fixture set_env
-Python
-@pytest.fixture(scope="session", autouse=True)
-def set_env():
-    os.environ.setdefault("TESTING", "1")
-    os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-    yield
-O que faz: Força as configurações globais do ambiente operacional a reconhecerem o modo de teste.
+## Endpoints sem teste (e o motivo)
 
-3.2 test_criptografia.py - Testes Unitários
-Tipo: Teste Unitário
+Todos os 29 endpoints têm testes. Os 3 com bugs têm testes com `xfail` que documentam o comportamento esperado e falham de forma controlada até os bugs serem corrigidos.
 
-Localização: tests/unit/test_criptografia.py
+| Endpoint | Status |
+|----------|--------|
+| `POST /cadastro_nota_fiscal` | `xfail` — BUG-001 (lógica invertida) |
+| `GET /get_produtos_fornecedor/{cnpj}` | `xfail` — BUG-002 (parâmetro errado) |
+| `GET /get_servicos_fornecedor/{cnpj}` | `xfail` — BUG-003 (parâmetro errado) |
 
-Objetivo: Validar a criptografia de senhas com bcrypt
+---
 
-3.2.1 Teste: test_criptografia_da_senha
-Python
-def test_criptografia_da_senha():
-    senha_original = "123456"
-    
-    hash_gerado = senha_hash(senha_original)
-    
-    # VALIDAÇÃO 1: Hash != Senha (criptografia funcionando)
-    assert hash_gerado != senha_original
-    
-    # VALIDAÇÃO 2: Senha correta retorna True
-    assert verificar_senha(senha_original, hash_gerado) is True
-    
-    # VALIDAÇÃO 3: Senha errada retorna False
-    assert verificar_senha("senha_errada", hash_gerado) is False
-O que testa:
+## Contagem de testes
 
-✅ Hash é diferente da senha (não texto puro)
+| Tipo | Quantidade |
+|------|-----------|
+| Unitários | 11 |
+| Integração | 53 (49 passando + 4 xfail) |
+| E2E | 4 (login, despesa, receita, serviço) |
+| **Total** | **68** |
 
-✅ Função verificar_senha funciona com senha correta
+Cobertura de endpoints: **29 de 29** (100% com testes, 3 falhando por bug no fonte)
 
-✅ Função verificar_senha rejeita senha incorreta
+---
 
-Resultado esperado: ✅ PASSOU
+## Problemas comuns
 
-Por que é importante: Garante segurança das senhas
+**"ModuleNotFoundError: No module named 'backend'"**  
+Rode `pip install -e .` na raiz do projeto.
 
-3.3 test_smoke.py - Testes de Saúde
-Tipo: Teste de Saúde (Smoke Test)
+**"no such table: usuarios"**  
+Provavelmente o `override_get_session` não está sendo passado como parâmetro da função de teste.
 
-Localização: tests/unit/test_smoke.py
+**Testes de reset de senha falhando**  
+Verifique se o mock do `fast_mail.send_message` está correto. Precisa ser `AsyncMock` porque o método é assíncrono.
 
-Objetivo: Verificar se a aplicação está "viva"
+---
 
-3.3.1 Teste: test_docs_available
-Python
-def test_docs_available(client):
-    resp = client.get("/docs")
-    assert resp.status_code == 200
-O que testa: Se a documentação Swagger está disponível
+## Configuração em máquinas diferentes (CI/CD)
 
-Por que importa: Indica que a aplicação subiu corretamente
+**Windows:**
+```bash
+.venv\Scripts\activate
+pip install -e ".[test]"
+playwright install chromium
+pytest -v --headed
+```
 
-Resultado esperado: Status 200
+**Linux/Mac:**
+```bash
+source .venv/bin/activate
+pip install -e ".[test]"
+playwright install chromium
+pytest -v --headed
+```
 
-3.3.2 Teste: test_docs_with_db_fixture
-Python
-def test_docs_with_db_fixture(client, override_get_session):
-    resp = client.get("/docs")
-    assert resp.status_code == 200
-O que testa: Se a documentação funciona COM banco de testes
+O `pyproject.toml` declara todas as dependências, então `pip install -e ".[test]"` instala tudo automaticamente em qualquer PC.
 
-Por que importa: Valida que as fixtures não quebram a aplicação
+---
 
-3.3.3 Teste: test_api_subida_e_chamada_init_db_no_lifespan
-Python
-def test_api_subida_e_chamada_init_db_no_lifespan():
-    with patch("backend.main.database.init_db") as mock_init_db:
-        with TestClient(main_modulo.app) as client:
-            response = client.get("/docs")
-            assert response.status_code == 200
-            assert mock_init_db.called is True
-O que testa: Verifica que a aplicação sobe e que database.init_db() é chamada durante o processo de startup/lifespan.
+## Arquivos relacionados
 
-Como funciona: o teste intercepta (patch) backend.main.database.init_db antes de instanciar o TestClient e então verifica se a chamada ocorreu quando o TestClient ativou o lifespan da aplicação.
-
-Por que é importante: garante que a rotina de inicialização do banco (criação de tabelas, migrações ou checks) seja executada automaticamente no startup da aplicação. Útil para detectar regressões onde o lifespan não esteja disparando corretamente.
-
-3.4 test_validacoes.py - Testes de Validação
-Tipo: Teste de Entrada de Dados
-
-Localização: tests/integracao/test_validacoes.py
-
-Objetivo: Validar regras de integridade e payloads na API
-
-Contém testes para:
-
-Validação de formato de e-mail (mockado).
-
-Rejeição de propriedades obrigatórias nulas via esquemas do Pydantic.
-
-Tratamento e retorno do código padrão HTTP 422 Unprocessable Entity para payloads malformados estruturalmente.
-
-3.5 test_api.py - Testes de Integração
-Tipo: Teste de Integração
-
-Localização: tests/integracao/test_api.py
-
-Objetivo: Testar ciclos completos de endpoints simulando o comportamento de clientes reais
-
-Contém testes para:
-
-Criação e persistência de novos registros de usuários no ecossistema isolado.
-
-Fluxo de autenticação e login (Verificação de credenciais corretas, senhas inválidas e restrição a contas inexistentes).
-
-4. COMO EXECUTAR OS TESTES
-4.1 Pré-requisitos
-Bash
-# Verificar Python
-python --version
-# Esperado: Python 3.8+
-
-# Instalar dependências em modo editável
-pip install -e .
-pip install pytest pytest-asyncio httpx
-4.2 Executar Todos os Testes
-Bash
-pytest
-Output esperado:
-
-tests/unit/test_criptografia.py::test_criptografia_da_senha PASSED
-tests/unit/test_smoke.py::test_docs_available PASSED
-tests/unit/test_smoke.py::test_docs_with_db_fixture PASSED
-tests/integracao/test_validacoes.py::test_validacao_email_com_resposta_valid PASSED
-tests/integracao/test_validacoes.py::test_validacao_email_com_resposta_invalid PASSED
-tests/integracao/test_validacoes.py::test_pydantic_rejeita_campos_obrigatorios_ausentes PASSED
-tests/integracao/test_validacoes.py::test_api_rejeita_payload_invalido_com_http_422 PASSED
-tests/integracao/test_api.py::test_cadastro_usuario_com_sucesso PASSED
-tests/integracao/test_api.py::test_fluxo_login_comportamento_real PASSED
-
-================== 9 passed in 0.45s ==================
-4.3 Executar Testes Específicos
-Bash
-# Apenas testes unitários
-pytest tests/unit/
-
-# Apenas testes de integração
-pytest tests/integracao/
-
-# Um teste específico
-pytest tests/unit/test_criptografia.py::test_criptografia_da_senha -v
-
-# Com mais verbosidade e prints expostos
-pytest -v -s
-
-# Com relatório HTML
-pytest --html=report.html --self-contained-html
-
-# Ver coverage (cobertura de código)
-pytest --cov=backend --cov-report=html
-5. ESTRUTURA E PADRÕES
-5.1 Padrão AAA (Arrange-Act-Assert)
-Todos os testes seguem rigorosamente este padrão:
-
-Python
-def test_exemplo(client):
-    # ARRANGE: Preparar dados e payloads
-    dados = {"nome": "Pedro Lucas", "email": "pedro@email.com"}
-    
-    # ACT: Executar ação / Disparar chamada HTTP
-    response = client.post("/cadastro_usuario", json=dados)
-    
-    # ASSERT: Verificar e validar resultados esperados
-    assert response.status_code == 200
-5.2 Nomeação de Testes
-Devem, obrigatoriamente, iniciar com o prefixo test_.
-
-Nomes descritivos detalhados.
-
-✅ test_cadastro_usuario_com_sucesso
-✅ test_validacao_email_rejeita_invalido
-❌ test_1
-❌ test_algo
-6. PROBLEMAS COMUNS E SOLUÇÕES
-6.1 Erro: "no such table: usuario" (ou outra tabela do CPR)
-Causa: Estrutura relacional do SQLAlchemy não carregada na memória RAM.
-
-Solução: Garantir que o conftest.py execute a criação mapeada do ecossistema inteiro:
-
-Python
-Base.metadata.create_all(bind=engine)
-6.2 Erro: "ModuleNotFoundError: No module named 'backend'"
-Causa: O caminho do diretório de desenvolvimento local não foi mapeado no escopo do sys.path.
-
-Solução: Rodar a instalação editável (pip install -e .) na pasta raiz ou incluir explicitamente no início dos scripts:
-
-Python
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-7. PRÓXIMAS ETAPAS
-Testes e melhorias futuras de cobertura automatizada de código do fluxo de caixa e regras de validação financeira (CPR) serão documentados conforme forem implementados pela equipe de desenvolvimento.
-
-8. REFERÊNCIA RÁPIDA
-Executar Testes
-Bash
-pytest                              # Executa toda a suíte
-pytest -v                           # Detalhado com logs
-pytest tests/unit/                  # Executa apenas unitários
-pytest -k "email"                   # Filtra testes por palavra-chave
-pytest --cov=backend                # Relatório de cobertura de código
-APÊNDICE: Arquivos Relacionados
-conftest.py - Configurações de ambientes de injeção e fixtures globais.
-
-pytest.ini - Parâmetros e marcas customizadas do framework.
-
-requirements.txt - Gerenciamento de dependências.
-
-RELATORIO_TESTES_UFPA.md - Compilação de relatórios acadêmicos.
-
-Documentação oficial atualizada v0.2 Última modificação: Maio de 2026
-
-Revisão técnica: Sincronizado com arquitetura global de tabelas do banco em memória.
+- `conftest.py` — fixtures globais (banco em memória, mock de email)
+- `BUG_REPORT.md` — bugs encontrados no código de produção
+- `CHANGELOG_TESTES.md` — o que foi mudado na suite e por quê
+- `pyproject.toml` — configuração do pytest e dependências
+- `../requirements.txt` — export de todas as versões exatas (gerado via `pip freeze`)

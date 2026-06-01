@@ -25,6 +25,15 @@ dependencies = [
     "reportlab"
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=9.0",
+    "pytest-asyncio>=1.4",
+    "pytest-playwright>=0.8",
+    "playwright>=1.60",
+    "httpx>=0.28",
+]
+
 [tool.setuptools]
 packages = ["backend"]
 
@@ -36,3 +45,6 @@ testpaths = [
 ]
 python_files = ["test_*.py", "*_test.py"]
 python_functions = ["test_*"]
+markers = [
+    "e2e: end-to-end tests using Playwright",
+]
